@@ -1,0 +1,4 @@
+# heroId hero archetype name level experience hitPoints attack defense
+# heroId artifact tier name hitPoints attack defense
+1 hero wizard Rincewind 1 10 5 7 0
+1 artifact Common "Common Sword" 0 2 0

@@ -13,7 +13,11 @@ public class Weapon extends Artifact {
     );
 
     public Weapon(ArtifactTier tier) {
-        super(tier);
+        super("weapon", tier);
+    }
+
+    public Weapon(String name, ArtifactTier tier, int attackBonus, int defenseBonus, int hitPointsBonus) {
+        super(name, "weapon", tier, attackBonus, defenseBonus, hitPointsBonus);
     }
 
     @Override

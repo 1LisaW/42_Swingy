@@ -15,7 +15,11 @@ public class Armor extends Artifact {
     );
 
     public Armor(ArtifactTier tier) {
-        super(tier);
+        super("armor", tier);
+    }
+
+    public Armor(String name, ArtifactTier tier, int attackBonus, int defenseBonus, int hitPointsBonus) {
+        super(name, "armor", tier, attackBonus, defenseBonus, hitPointsBonus);
     }
 
     @Override

@@ -18,5 +18,12 @@ public class GameController {
         // Logic to start the game
     }
 
+    public void saveGame() {
+        // Logic to save the game state
+    }
+
+    public void exitGame() {
+        // Logic to exit the game
+    }
 
 }

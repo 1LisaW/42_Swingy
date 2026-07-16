@@ -6,7 +6,7 @@ public class Villain {
     public static final int MIN_VILLAIN_STRENGTH = 10;
     public static final int MAX_VILLAIN_STRENGTH = 100;
     private int level;
-    private int health;
+    private int hitPoints;
     private int attack;
     private int defense;
 
@@ -22,12 +22,12 @@ public class Villain {
         this.level = level;
     }
 
-    public int getHealth() {
-        return health;
+    public int getHitPoints() {
+        return hitPoints;
     }
 
-    public void setHealth(int health) {
-        this.health = health;
+    public void setHitPoints(int hitPoints) {
+        this.hitPoints = hitPoints;
     }
 
     public int getAttack() {

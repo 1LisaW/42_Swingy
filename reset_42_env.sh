@@ -15,3 +15,5 @@ echo '{
 }' > ~/.config/docker/daemon.json
 systemctl --user start docker
 docker info | grep "Docker Root Dir"
+
+docker build -t swing-builder .

@@ -9,7 +9,7 @@ public class View {
         System.out.println("Name: " + hero.getName());
         System.out.println("Level: " + hero.getLevel());
         System.out.println("Experience: " + hero.getExperience());
-        System.out.println("Health: " + hero.getHealth());
+        System.out.println("Health: " + hero.getHitPoints());
         System.out.println("Attack: " + hero.getAttack());
         System.out.println("Defense: " + hero.getDefense());
         // if (hero.getArtifact() != null) {
@@ -26,7 +26,7 @@ public class View {
     public void displayVillainStats(Villain villain) {
         System.out.println("Villain Stats:");
         System.out.println("Level: " + villain.getLevel());
-        System.out.println("Health: " + villain.getHealth());
+        System.out.println("Hit Points: " + villain.getHitPoints());
         System.out.println("Attack: " + villain.getAttack());
         System.out.println("Defense: " + villain.getDefense());
     }

@@ -6,13 +6,15 @@ import java.util.Arrays;
 public abstract class Artifact {
     private String name;
     ArtifactTier tier;
+    String artifactType;
     private int attackBonus;
     private int defenseBonus;
     private int hitPointsBonus;
 
     protected static final Random RANDOM = new Random();
 
-    public Artifact(ArtifactTier tier) {
+    public Artifact(String artifactType, ArtifactTier tier) {
+        this.artifactType = artifactType;
         this.tier = tier;
         this.name = generateRandomArtifactName();
         this.attackBonus = calculateAttackBonus(tier);
@@ -20,8 +22,9 @@ public abstract class Artifact {
         this.hitPointsBonus = calculateHitPointsBonus(tier);
     }
 
-    public Artifact(String name, ArtifactTier tier, int attackBonus, int defenseBonus, int hitPointsBonus) {
+    public Artifact(String name, String artifactType, ArtifactTier tier, int attackBonus, int defenseBonus, int hitPointsBonus) {
         this.name = name;
+        this.artifactType = artifactType;
         this.tier = tier;
         this.attackBonus = attackBonus;
         this.defenseBonus = defenseBonus;
@@ -29,6 +32,9 @@ public abstract class Artifact {
     }
 
     protected abstract String generateRandomArtifactType();
+    public String getArtifactType() {
+        return artifactType;
+    }
 
     // Getters and setters for the fields
     public String getName() {

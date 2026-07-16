@@ -97,4 +97,20 @@ public class Hero {
         this.hitPointsArtifact = artifact;
         this.hitPoints += artifact.getHitPointsBonus();
     }
+
+    public void addArtifact(Artifact artifact) {
+        switch (artifact.getArtifactType()) {
+            case "armor":
+                setDefenseArtifact(artifact);
+                break;
+            case "weapon":
+                setAttackArtifact(artifact);
+                break;
+            case "helmet":
+                setHitPointsArtifact(artifact);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown artifact type: " + artifact.getArtifactType());
+        }
+    }
 }

@@ -45,6 +45,6 @@ public class HeroBuilder {
     }
 
     public Hero build() {
-        return new Hero(name, level, experience, hitPoints, attack, defense);
+        return new Hero(name, archetype, level, experience, hitPoints, attack, defense);
     }
 }

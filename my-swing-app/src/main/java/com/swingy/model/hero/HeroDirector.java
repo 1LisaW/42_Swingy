@@ -1,5 +1,7 @@
 package com.swingy.model;
 
+import com.swingy.model.HeroArchetype;
+
 public class HeroDirector {
 
     private HeroBuilder heroBuilder;
@@ -41,13 +43,13 @@ public class HeroDirector {
                 .build();
     }
 
-    public Hero constructNewHero(String name, String archetype) {
-        switch (archetype.toLowerCase()) {
-            case "wizard":
+    public Hero constructNewHero(String name, HeroArchetype archetype) {
+        switch (archetype) {
+            case WIZARD:
                 return constructNewWizard(name);
-            case "warrior":
+            case WARRIOR:
                 return constructNewWarrior(name);
-            case "barbarian":
+            case BARBARIAN:
                 return constructNewBarbarian(name);
             default:
                 throw new IllegalArgumentException("Invalid archetype: " + archetype);

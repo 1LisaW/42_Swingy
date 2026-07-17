@@ -1,16 +1,30 @@
-package com.example;
+package com.swingy;
 
 // import javax.swing.SwingUtilities;
 
-/**
- * Hello world!
- *
- */
+
+import com.swingy.controller.GameController;
+import com.swingy.view.View;
+import com.swingy.view.console.ConsoleView;
+import com.swingy.model.GameModel;
+
+
 public class App
 {
     public static void main( String[] args )
     {
-        if (args.length > 0 && args[0].equals("console")) {
+        if (args.length == 0)
+        {
+            System.out.println( "Please provide a mode argument: 'console' or 'gui'" );
+            return;
+        }
+
+        View view = new ConsoleView();
+        GameController gameController = new GameController(view);
+        gameController.loadHeroesFromFile("heroes.txt");
+        gameController.toMainMenu();
+
+        if (args[0].equals("console")) {
             // Start the console version of the game
             // ConsoleGame consoleGame = new ConsoleGame();
             // consoleGame.start();

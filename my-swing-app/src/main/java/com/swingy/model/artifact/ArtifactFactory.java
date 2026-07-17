@@ -33,6 +33,19 @@ public class ArtifactFactory {
         }
     }
 
+    public Artifact createArtifactFromRepo(String name, String artifactType, ArtifactTier tier, int attackBonus, int defenseBonus, int hitPointsBonus) {
+        switch (artifactType.toLowerCase()) {
+            case "weapon":
+                return new Weapon(name, tier, attackBonus, defenseBonus, hitPointsBonus);
+            case "armor":
+                return new Armor(name, tier, attackBonus, defenseBonus, hitPointsBonus);
+            case "helm":
+                return new Helm(name, tier, attackBonus, defenseBonus, hitPointsBonus);
+            default:
+                throw new IllegalArgumentException("Invalid artifact type: " + artifactType);
+        }
+    }
+
     private int calculateRandomProbability() {
         return random.nextInt(100) + 1; // Returns a random number between 1 and 100
     }

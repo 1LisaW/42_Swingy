@@ -2,21 +2,27 @@ package com.swingy.persistence;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.swingy.model.Hero;
 import com.swingy.model.HeroBuilder;
 import com.swingy.model.HeroDirector;
 import com.swingy.model.ArtifactTier;
 import com.swingy.model.Artifact;
-import com.swingy.model.Armor;
-import com.swingy.model.Weapon;
+import com.swingy.model.ArtifactFactory;
 
 public class HeroParser {
     private HeroDirector heroDirector;
-    private Map<String, Hero> heroMap;
+    private Map<String, Hero> heroMap = new HashMap();
 
     public HeroParser(HeroBuilder heroBuilder) {
         this.heroDirector = new HeroDirector(heroBuilder);
+    }
+
+    public List<Hero> getHeroes() {
+        return heroMap != null ? new ArrayList<>(heroMap.values()) : new ArrayList<>();
     }
 
     public void parseStringToHeroData(String heroData) {
@@ -30,8 +36,9 @@ public class HeroParser {
         if (dataType.equals("hero"))
         {
             Hero hero = parseHero(dataParts);
-            if (hero != null && heroMap != null) {
+            if (hero != null ) {
                 heroMap.put(heroId, hero);
+                System.out.println("HERO "+ heroId);
             }
         } else if (dataType.equals("artifact"))
         {
@@ -39,7 +46,6 @@ public class HeroParser {
             if (artifact != null && heroMap != null && heroMap.containsKey(heroId)) {
                 heroMap.get(heroId).addArtifact(artifact);
             }
-            // return null; // Placeholder for villain parsing
         }
         else
         {
@@ -48,7 +54,7 @@ public class HeroParser {
     }
 
     // name archetype level experience hitPoints attack defense
-    public Hero parseHero(String[] parts) {
+    private Hero parseHero(String[] parts) {
         if (parts.length != 7) {
             throw new IllegalArgumentException("Invalid hero data format");
         }
@@ -65,7 +71,7 @@ public class HeroParser {
     }
 
     // name artifactType tier hitPoints attack defense
-    public Artifact parseArtifact(String[] parts) {
+    private Artifact parseArtifact(String[] parts) {
         if (parts.length != 6) {
             throw new IllegalArgumentException("Invalid artifact data format");
         }
@@ -77,17 +83,8 @@ public class HeroParser {
         int attack = Integer.parseInt(parts[4].trim());
         int defense = Integer.parseInt(parts[5].trim());
 
-        switch (artifactType.toLowerCase()) {
-            case "weapon":
-                return new Weapon(name, tier, hitPoints, attack, defense);
-            case "armor":
-                return new Armor(name, tier, hitPoints, attack, defense);
-            case "helm":
-                return null; // Placeholder for helm parsing
-                // return new Helmet(name, tier, hitPoints, attack, defense);
-            default:
-                throw new IllegalArgumentException("Invalid artifact type: " + artifactType);
-        }        
+        // add Factory method to create artifact based on type
+        return ArtifactFactory.getInstance().createArtifactFromRepo(name, artifactType, tier, attack, defense, hitPoints);
     }
 
 }

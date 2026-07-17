@@ -5,6 +5,7 @@ public class Hero {
     private String archetype;
     private int level;
     private int experience;
+    private int maxLevelExperience;
     private int hitPoints;
     private int attack;
     private int defense;
@@ -23,6 +24,7 @@ public class Hero {
         this.defenseArtifact = null;
         this.attackArtifact = null;
         this.hitPointsArtifact = null;
+        this.setMaxExperience(level);
     }
 
     // Getters and setters for the fields
@@ -33,6 +35,9 @@ public class Hero {
     public void setName(String name) {
         this.name = name;
     }
+    public String getArchetype() {
+        return this.archetype;
+    }
 
     public int getLevel() {
         return level;
@@ -40,12 +45,20 @@ public class Hero {
 
     public void setLevel(int level) {
         this.level = level;
+        this.setMaxExperience(level);
     }
 
     public int getExperience() {
         return experience;
     }
 
+    public int getMaxExperience() {
+        return maxLevelExperience;
+    }
+
+    private void setMaxExperience(int level) {
+        this.maxLevelExperience = level * 1000 + (int)Math.pow(level - 1, 2) * 450;
+    }
     public void setExperience(int experience) {
         this.experience = experience;
     }
@@ -60,6 +73,41 @@ public class Hero {
 
     public int getAttack() {
         return attack;
+    }
+
+    public int getBaseAttack() {
+        if (this.attackArtifact != null)
+            return this.attack - this.attackArtifact.getAttackBonus();
+        return attack;
+    }
+
+     public int getBonusAttack() {
+        if (this.attackArtifact != null)
+            return this.attackArtifact.getAttackBonus();
+        return 0;
+    }
+
+     public int getBaseDefense() {
+        if (this.defenseArtifact != null)
+            return this.defense - this.defenseArtifact.getDefenseBonus();
+        return this.defense;
+    }
+
+     public int getBonusDefense() {
+        if (this.defenseArtifact != null)
+            return this.defenseArtifact.getDefenseBonus();
+        return 0;
+    }
+
+    public int getBaseHitPoints() {
+        if (this.hitPointsArtifact != null)
+            return this.hitPoints - this.hitPointsArtifact.getHitPointsBonus();
+        return this.hitPoints;
+    }
+     public int getBonusHitPoints() {
+        if (this.hitPointsArtifact != null)
+            return this.hitPointsArtifact.getHitPointsBonus();
+        return 0;
     }
 
     public void setAttack(int attack) {

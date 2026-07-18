@@ -8,10 +8,12 @@ import com.swingy.model.HeroDirector;
 import com.swingy.model.Hero;
 import com.swingy.view.View;
 import com.swingy.model.HeroCredentials;
+import com.swingy.model.GameModel;
 
 public class GameController {
     private HeroRepository heroRepository;
     private View view;
+    private GameModel gameModel;
 
     // Controller implementation
     public GameController(View view) {
@@ -20,16 +22,10 @@ public class GameController {
         this.view = view;
     }
 
-    public void createHero(String name) {
-        // Logic to create a new hero
-    }
-
-    public void loadHero(String name) {
-        // Logic to load an existing hero
-    }
-
-    public void startGame() {
+    public void startGame(Hero hero) {
         // Logic to start the game
+        this.gameModel = new GameModel(hero);
+        this.view.displayMap(this.gameModel.getMap());
     }
 
     public void saveGame() {
@@ -53,13 +49,13 @@ public class GameController {
         HeroCredentials heroCredentials = new HeroCredentials();
         heroCredentials.setName(view.getUserInput("Enter hero name"));
         while (heroCredentials.getName().isEmpty()) {
-            view.promptOnIncorrectInput();
+            view.displayOnIncorrectInput();
             heroCredentials.setName(view.getUserInput("Enter hero name"));
         }
         view.promptChooseHeroClass();
         String archetype = view.getUserInput("Choose an option ");
         while (!archetype.equals("1") && !archetype.equals("2") && !archetype.equals("3")) {
-            view.promptOnIncorrectInput();
+            view.displayOnIncorrectInput();
             archetype = view.getUserInput("Choose an option ");
         }
         switch (archetype) {
@@ -85,28 +81,30 @@ public class GameController {
 
     public void toMainMenu() {
         // Logic to return to the main menu
-        view.promptMainMenu();
-        String chosenOption = view.getUserInput("Please enter your choice").trim(); // Assuming getUserInput() is a method in the View class to get user input
-        while (!chosenOption.equals("1") && !chosenOption.equals("2") && !chosenOption.equals("3")) { // Assuming valid options are "1", "2", and "3"
-            view.promptOnIncorrectInput();
-            chosenOption = view.getUserInput("Please enter your choice").trim();
-        }
+        this.view.displayMainMenu();
+        int chosenOption = this.view.promptMainMenu();
+        this.view.displayMainMenuStatus(chosenOption);
         Hero currentHero = null;
         switch (chosenOption) {
-            case "1":
+            case 1:
                 currentHero = this.createHero();
                 this.view.displayHeroStats(currentHero);
+                this.startGame(currentHero);
                 // Logic to create a new hero
                 break;
-            case "2":
-                this.view.promptChooseFromHeroList(this.heroRepository.getHeroes());
-                // Logic to load an existing hero
+            case 2:
+                List<Hero> heroes = this.heroRepository.getHeroes();
+                this.view.displayChooseHeroFromList(heroes);
+                int choice = this.view.promptChooseHeroFromList(heroes.size());
+                currentHero = heroes.get(choice - 1);
+                this.view.displayChooseHeroFromListStatus(currentHero);
+                this.startGame(currentHero);
                 break;
-            case "3":
+            case 3:
                 exitGame();
                 break;
             default:
-                view.promptOnIncorrectInput();
+                view.displayOnIncorrectInput();
                 toMainMenu(); // Recursively call toMainMenu() for invalid input
                 break;
         }

@@ -3,6 +3,7 @@ package com.swingy.view;
 import java.util.List;
 
 import com.swingy.model.Hero;
+import com.swingy.model.GameMap;
 
 public abstract class View {
 
@@ -11,9 +12,25 @@ public abstract class View {
     }
 
     public abstract void displayHeroStats(Hero hero);
-    public abstract void promptMainMenu();
-    public abstract String getUserInput(String prompt);
-    public abstract void promptOnIncorrectInput();
+
+    public abstract void displayMap(GameMap gameMap);
+
+    public abstract void displayMainMenu();
+    public abstract int promptMainMenu();
+    public abstract void displayMainMenuStatus(int choice);
+
+    public abstract String getUserInput( String prompt);
+    // public abstract int getUserIntInputInRange(String prompt, int min, int max);
+    public abstract void displayOnIncorrectInput();
     public abstract void promptChooseHeroClass();
     public abstract void promptChooseFromHeroList(List<Hero> heroes);
+
+
+    // Choose hero from Repo
+    public abstract void displayChooseHeroFromList(List<Hero> heroes);
+    public abstract int promptChooseHeroFromList(int maxNum);
+    public abstract void displayChooseHeroFromListStatus(Hero hero);
+
+
+    // public abstract void
 }

@@ -26,4 +26,14 @@ public class GameModel {
         return this.gameMap;
     }
 
+    public boolean isGameOver() {
+        return (
+            this.hero.getHitPoints() <= 0 ||
+            this.gameMap.isHeroEscaped()
+        );
+    }
+    public void moveHero(String movement) {
+        this.gameMap.moveHero(movement);
+    }
+
 }

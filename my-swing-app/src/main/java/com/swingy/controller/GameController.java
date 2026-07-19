@@ -26,6 +26,16 @@ public class GameController {
         // Logic to start the game
         this.gameModel = new GameModel(hero);
         this.view.displayMap(this.gameModel.getMap());
+        this.gameLoop();
+    }
+
+    private void gameLoop() {
+        while (!(this.gameModel.isGameOver())) {
+            String movement = this.view.promptHeroMove();
+            this.gameModel.moveHero(movement);
+            this.view.displayMap(this.gameModel.getMap());
+        }
+        System.out.println("Well done!");
     }
 
     public void saveGame() {

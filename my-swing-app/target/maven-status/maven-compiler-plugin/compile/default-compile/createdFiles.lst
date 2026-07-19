@@ -6,6 +6,7 @@ com\swingy\App.class
 com\swingy\model\Artifact.class
 com\swingy\model\Hero.class
 com\swingy\model\HeroDirector.class
+com\swingy\model\BattleSimulator.class
 com\swingy\model\GameMap.class
 com\swingy\model\ArtifactFactory.class
 com\swingy\model\Weapon.class

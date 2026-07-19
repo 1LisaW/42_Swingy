@@ -30,7 +30,7 @@ public class GameMap {
         // Logic to generate the grid based on size
         // Placeholder implementation
         grid = new ArrayList<>(Collections.nCopies(size * size, (Villain) null));
-        heroPosition = size * size / 2 + size / 2; // Starting position of the hero
+        heroPosition = size * (size / 2) + size / 2; // Starting position of the hero
         int randomVillainAmount = (int) (Math.random() * (size * size / 4)); // Random number of villains
         for (int i = 0; i < randomVillainAmount; i++) {
             int villainPosition = getRandomPosition();
@@ -57,5 +57,36 @@ public class GameMap {
         if (villain == null)
             return 0;
         return villain.getLevel();
+    }
+
+    public void moveHero(String movement) {
+        // if (this.isHeroEscaped())
+        //     return;
+        switch(movement) {
+            case "up":
+                this.heroPosition -= this.size;
+                break;
+            case "down":
+                this.heroPosition += this.size;
+                break;
+            case "left":
+                this.heroPosition -= 1;
+                break;
+            case "right":
+                this.heroPosition += 1;
+                break;
+        }
+    }
+
+    public boolean isHeroEscaped() {
+        if (this.grid.get(this.heroPosition) != null)
+            return false;
+        if (this.heroPosition < this.size || this.heroPosition >= (this.size * (this.size - 1))) {
+            return true;
+        }
+        if (this.heroPosition % this.size == 0 || (this.heroPosition + 1) % this.size == 0 ) {
+            return true;
+        }
+        return false;
     }
 }

@@ -29,9 +29,12 @@ public class ConsoleView extends View {
 
     @Override
     public void displayMap(GameMap gameMap) {
+        displayTextAsTyped("Current map state:", 50, ANSI_GREEN);
         int heroPosition = gameMap.getHeroPosition();
         int size = gameMap.getSize();
         for (int i = 0; i < size * size; i++) {
+            if (i > 0 && i % size == 0)
+                System.out.println();
             int villainLevel = gameMap.getVillainAtPos(i);
             String ch = " . ";
             if (villainLevel > 0) {
@@ -55,11 +58,9 @@ public class ConsoleView extends View {
             }
             if (i == heroPosition)
                 ch =" H ";
-            if (i > 0 && i % (size - 1) == 0)
-                System.out.println();
             System.out.print(ch);
         }
-
+        System.out.println();
     }
 
     // public void displayVillainStats(Villain villain) {
@@ -185,4 +186,24 @@ public class ConsoleView extends View {
         displayHeroStats(hero);
     }
 
+    @Override
+    public String promptHeroMove() {
+        Scanner scanner = new Scanner(System.in);
+        displayTextAsTyped("Make a move (W,A,S,D) :", 50, ANSI_BLUE);
+        while (true) {
+            String move = scanner.nextLine().toLowerCase().trim();
+            switch (move) {
+                case "w":
+                    return "up";
+                case "s":
+                    return "down";
+                case "a":
+                    return "left";
+                case "d":
+                    return "right";
+            }
+            this.displayOnIncorrectInput();
+        }
+
+    }
 }

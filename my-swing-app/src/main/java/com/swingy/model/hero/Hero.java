@@ -24,7 +24,7 @@ public class Hero {
         this.defenseArtifact = null;
         this.attackArtifact = null;
         this.hitPointsArtifact = null;
-        this.setMaxExperience(level);
+        this.setMaxExperience();
     }
 
     // Getters and setters for the fields
@@ -32,9 +32,6 @@ public class Hero {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
     public String getArchetype() {
         return this.archetype;
     }
@@ -43,9 +40,13 @@ public class Hero {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-        this.setMaxExperience(level);
+    private void levelUp() {
+        this.level += 1;
+
+        this.hitPoints += 3;
+        this.attack += 1;
+        this.defense += 1;
+        this.setMaxExperience();
     }
 
     public int getExperience() {
@@ -56,11 +57,21 @@ public class Hero {
         return maxLevelExperience;
     }
 
-    private void setMaxExperience(int level) {
-        this.maxLevelExperience = level * 1000 + (int)Math.pow(level - 1, 2) * 450;
+    private void setMaxExperience() {
+        this.maxLevelExperience = this.level * 1000 + (int)Math.pow(this.level - 1, 2) * 450;
     }
+
     public void setExperience(int experience) {
-        this.experience = experience;
+        this.experience += experience;
+    }
+
+    public boolean checkLevelUp(){
+        if (this.experience >= this.maxLevelExperience) {
+            this.experience -= this.maxLevelExperience;
+            this.levelUp();
+            return true;
+        }
+        return false;
     }
 
     public int getHitPoints() {

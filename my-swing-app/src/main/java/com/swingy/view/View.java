@@ -20,7 +20,6 @@ public abstract class View {
     public abstract void displayMainMenuStatus(int choice);
 
     public abstract String getUserInput( String prompt);
-    // public abstract int getUserIntInputInRange(String prompt, int min, int max);
     public abstract void displayOnIncorrectInput();
     public abstract void promptChooseHeroClass();
     public abstract void promptChooseFromHeroList(List<Hero> heroes);
@@ -33,4 +32,6 @@ public abstract class View {
 
 
     // public abstract void
+
+    public abstract String promptHeroMove();
 }

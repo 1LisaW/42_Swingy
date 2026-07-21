@@ -9,6 +9,11 @@ import com.swingy.model.Hero;
 import com.swingy.view.View;
 import com.swingy.model.HeroCredentials;
 import com.swingy.model.GameModel;
+import com.swingy.model.BattleSimulator;
+import com.swingy.model.Villain;
+import com.swingy.model.Artifact;
+import com.swingy.model.ArtifactFactory;
+
 
 public class GameController {
     private HeroRepository heroRepository;
@@ -34,8 +39,57 @@ public class GameController {
             String movement = this.view.promptHeroMove();
             this.gameModel.moveHero(movement);
             this.view.displayMap(this.gameModel.getMap());
+            if (this.gameModel.getOpponent() != null)
+                this.initBattleSimulator();
         }
         System.out.println("Well done!");
+    }
+
+    private void simulateBattle(BattleSimulator battleSimulator) {
+        int fightResult = battleSimulator.fight();
+        if (fightResult != 1)
+            this.gameModel.retreatHero();
+        if (fightResult == 1) {
+            Villain villain = this.gameModel.removeOpponent();
+        }
+        this.view.displayBattleLog(battleSimulator);
+        if (fightResult == 1) {
+            Hero hero = this.gameModel.getHero();
+            hero.setExperience(battleSimulator.getExperience());
+            if (hero.checkLevelUp())
+                this.view.displayLevelUp(hero);
+
+             Artifact artifact = battleSimulator.generateArtifact();
+            if (artifact != null) {
+                this.view.displayUseArtifact(artifact);
+                if (this.view.promptUseArtifact() == 1) {
+                    hero.addArtifact(artifact);
+                }
+            }
+        }
+    }
+
+    private void initBattleSimulator() {
+        Hero hero = this.gameModel.getHero();
+        Villain villain = this.gameModel.getOpponent();
+        BattleSimulator battleSimulator = new BattleSimulator(hero, villain);
+        this.view.displayBattleParticipants(battleSimulator);
+        int option = this.view.promptBattleFightOrRun();
+        switch(option) {
+            case 1:
+                this.simulateBattle(battleSimulator);
+                break;
+            case 2:
+                if (battleSimulator.run() == 1) {
+                    this.view.displayOnHeroRun(true);
+                    this.gameModel.retreatHero();
+                }
+                else {
+                    this.view.displayOnHeroRun(false);
+                    this.simulateBattle(battleSimulator);
+                }
+                break;
+        }
     }
 
     public void saveGame() {

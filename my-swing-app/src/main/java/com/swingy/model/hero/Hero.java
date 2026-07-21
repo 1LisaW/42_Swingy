@@ -172,4 +172,9 @@ public class Hero {
                 throw new IllegalArgumentException("Unknown artifact type: " + artifact.getArtifactType());
         }
     }
+
+    public void applyDamage(int damage) {
+        this.hitPoints -= Math.min(this.hitPoints, damage);
+    }
+
 }

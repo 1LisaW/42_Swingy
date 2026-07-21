@@ -10,6 +10,7 @@ public class GameMap {
     private int size = 0;
     private List<Villain> grid = null;
     private int heroPosition = 0;
+    private int prevHeroPosition = 0;
 
     public GameMap(int level) {
         this.level = level;
@@ -29,8 +30,9 @@ public class GameMap {
     private void generateGrid() {
         // Logic to generate the grid based on size
         // Placeholder implementation
-        grid = new ArrayList<>(Collections.nCopies(size * size, (Villain) null));
-        heroPosition = size * (size / 2) + size / 2; // Starting position of the hero
+        this.grid = new ArrayList<>(Collections.nCopies(size * size, (Villain) null));
+        this.heroPosition = size * (size / 2) + size / 2; // Starting position of the hero
+        this.prevHeroPosition = this.heroPosition;
         int randomVillainAmount = (int) (Math.random() * (size * size / 4)); // Random number of villains
         for (int i = 0; i < randomVillainAmount; i++) {
             int villainPosition = getRandomPosition();
@@ -62,6 +64,7 @@ public class GameMap {
     public void moveHero(String movement) {
         // if (this.isHeroEscaped())
         //     return;
+        this.prevHeroPosition = this.heroPosition;
         switch(movement) {
             case "up":
                 this.heroPosition -= this.size;
@@ -88,5 +91,19 @@ public class GameMap {
             return true;
         }
         return false;
+    }
+
+    public Villain getOpponent(){
+        return this.grid.get(this.heroPosition);
+    }
+
+    public Villain removeOpponent(){
+        Villain villain = this.grid.get(this.heroPosition);
+        this.grid.set(this.heroPosition, null);
+        return villain;
+    }
+
+    public void retreatHero() {
+        this.heroPosition = this.prevHeroPosition;
     }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.swingy.model.Hero;
 import com.swingy.model.GameMap;
+import com.swingy.model.BattleSimulator;
+import com.swingy.model.Artifact;
 
 public abstract class View {
 
@@ -14,6 +16,11 @@ public abstract class View {
     public abstract void displayHeroStats(Hero hero);
 
     public abstract void displayMap(GameMap gameMap);
+
+    public abstract void displayBattleParticipants(BattleSimulator battleSimulator);
+    public abstract int promptBattleFightOrRun();
+    public abstract void displayBattleLog(BattleSimulator battleSimulator);
+
 
     public abstract void displayMainMenu();
     public abstract int promptMainMenu();
@@ -34,4 +41,10 @@ public abstract class View {
     // public abstract void
 
     public abstract String promptHeroMove();
+
+    public abstract void displayUseArtifact(Artifact artifact);
+    public abstract int promptUseArtifact();
+
+    public abstract void displayOnHeroRun(boolean isSuccessful);
+    public abstract void displayLevelUp(Hero hero);
 }

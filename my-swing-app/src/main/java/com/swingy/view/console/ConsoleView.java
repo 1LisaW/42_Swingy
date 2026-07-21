@@ -7,6 +7,9 @@ import com.swingy.view.View;
 import com.swingy.model.Hero;
 import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
+import com.swingy.model.BattleSimulator;
+
+import com.swingy.model.Artifact;
 
 public class ConsoleView extends View {
     static final String ANSI_RESET = "\u001B[0m";
@@ -25,6 +28,37 @@ public class ConsoleView extends View {
         System.out.printf ("║ ATK: %2d+%-2d    DEF: %2d+%-2d      %n",
                 hero.getBaseAttack(), hero.getBonusAttack(), hero.getBaseDefense(), hero.getBonusDefense());
         System.out.println("╚═══════════════════════════════╝");
+    }
+
+    @Override
+    public void displayBattleParticipants(BattleSimulator battleSimulator) {
+        Hero hero = battleSimulator.getHero();
+        Villain villain = battleSimulator.getVillain();
+        System.out.println("╔════════════ HERO vs Villain ═══════════╗");
+        System.out.printf ("║ HP: %3s+%-2s    %3s %n",
+                ANSI_GREEN + hero.getBaseHitPoints(), hero.getBonusHitPoints() + ANSI_RESET, ANSI_RED + villain.getHitPoints() + ANSI_RESET);
+        System.out.printf ("║ ATK: %2s+%-2s    %3s %n",
+                ANSI_GREEN + hero.getBaseAttack(), hero.getBonusAttack() + ANSI_RESET, ANSI_RED + villain.getAttack() + ANSI_RESET);
+        System.out.printf ("║ DEF: %2s+%-2s    %3s %n",
+                ANSI_GREEN + hero.getBaseDefense(), hero.getBonusDefense() + ANSI_RESET, ANSI_RED + villain.getDefense() + ANSI_RESET);
+        System.out.println("╚════════════════════════════════════════╝");
+    }
+
+    @Override
+    public int promptBattleFightOrRun(){
+        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
+        displayTextAsTyped("    1. Fight", 50, ANSI_YELLOW);
+        displayTextAsTyped("    2. Run", 50, ANSI_YELLOW);
+        return getUserIntInputInRange(2);
+    }
+
+    @Override
+    public void displayBattleLog(BattleSimulator battleSimulator) {
+        List<String> log = battleSimulator.getLog();
+        displayTextAsTyped("BATTLE LOG :", 50, ANSI_GREEN);
+        for (String record:log) {
+            displayTextAsTyped("    "  + record, 50, ANSI_GREEN);
+        }
     }
 
     @Override
@@ -177,7 +211,6 @@ public class ConsoleView extends View {
     public int promptChooseHeroFromList(int maxNum) {
         displayTextAsTyped("Choose a hero from list :", 50, ANSI_BLUE);
         return getUserIntInputInRange(maxNum);
-
     }
 
     @Override
@@ -205,5 +238,43 @@ public class ConsoleView extends View {
             this.displayOnIncorrectInput();
         }
 
+    }
+
+    public void displayArtifact(Artifact artifact) {
+        System.out.println("╔═════════ Artifact ═════════════════════╗");
+        System.out.printf ("║ %-15s %n", artifact.getName());
+
+        System.out.printf ("║ ATK: %3d  DEF: %3d  HP: %3d  %n",
+                artifact.getAttackBonus(), artifact.getDefenseBonus() ,artifact.getHitPointsBonus());
+        System.out.println("╚════════════════════════════════════════╝");
+    }
+
+    @Override
+    public void displayUseArtifact(Artifact artifact) {
+        displayTextAsTyped("Congrats! You got a new Artifact!", 50, ANSI_BLUE);
+        this.displayArtifact(artifact);
+        displayTextAsTyped("What you can do with an artifact :", 50, ANSI_BLUE);
+        displayTextAsTyped("    1. use", 50, ANSI_YELLOW);
+        displayTextAsTyped("    2. drop", 50, ANSI_YELLOW);
+    }
+
+    @Override
+    public int promptUseArtifact() {
+        displayTextAsTyped("Choose an option from list :", 50, ANSI_BLUE);
+        return getUserIntInputInRange(2);
+    }
+
+    @Override
+    public void displayOnHeroRun(boolean isSuccessful)  {
+        if (isSuccessful)
+            displayTextAsTyped("Hero successfully ran out of danger.", 50, ANSI_GREEN);
+        else
+            displayTextAsTyped("Hero couldn't ran away. Prepare for a fight!", 50, ANSI_GREEN);
+
+    }
+
+    public void displayLevelUp(Hero hero) {
+        displayTextAsTyped("HERO LEVELED UP!", 50, ANSI_YELLOW);
+        displayHeroStats(hero);
     }
 }

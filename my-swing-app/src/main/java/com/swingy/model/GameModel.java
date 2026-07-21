@@ -36,4 +36,15 @@ public class GameModel {
         this.gameMap.moveHero(movement);
     }
 
+    public Villain getOpponent(){
+        return this.gameMap.getOpponent();
+    }
+
+    public Villain removeOpponent(){
+        return this.gameMap.removeOpponent();
+    }
+
+    public void retreatHero() {
+        this.gameMap.retreatHero();
+    }
 }

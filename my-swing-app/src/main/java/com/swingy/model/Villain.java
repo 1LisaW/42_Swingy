@@ -44,4 +44,8 @@ public class Villain {
         return defense;
     }
 
+    public void applyDamage(int damage) {
+        this.hitPoints -= Math.min(this.hitPoints, damage);
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.swingy.model;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Hero {
     private String name;
     private String archetype;
@@ -177,9 +179,19 @@ public class Hero {
         this.hitPoints -= Math.min(this.hitPoints, damage);
     }
 
-    public String toString() {
+    public String toFormattedString() {
         return "hero" + "|" + this.name + "|" + this.archetype
             + "|" + this.level + "|" + this.experience + "|"
             + this.hitPoints + "|" + this.attack + "|" + this.defense + "\n";
+    }
+
+    public String toRepoFormat(AtomicInteger index) {
+        int i = index.getAndIncrement();
+        return (i + "|" + this.toFormattedString()
+            + ( this.hitPointsArtifact == null ? "" : i + "|" + this.hitPointsArtifact.toString())
+            + ( this.attackArtifact == null ? "" : i + "|" + this.attackArtifact.toString() )
+            + ( this.defenseArtifact == null ? "" : i + "|" + this.defenseArtifact.toString() )
+
+        );
     }
 }

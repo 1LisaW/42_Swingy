@@ -3,6 +3,7 @@ package com.swingy.persistence;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.swingy.model.Hero;
 import com.swingy.model.HeroBuilder;
@@ -34,8 +35,9 @@ public class HeroRepository {
     }
 
     public void saveHeroesToFile(Path file) throws Exception {
+        AtomicInteger index = new AtomicInteger();
         List<String> heroDataList = this.heroes.stream()
-                .map(Hero::toString)
+                .map(hero -> hero.toRepoFormat(index))
                 .toList();
         Files.write(file, heroDataList);
     }

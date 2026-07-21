@@ -52,12 +52,16 @@ public class GameController {
                 this.heroRepository.addHero(hero);
                 // this.heroRepository.saveHeroesToFile("save.txt");
             }
-            this.view.displayGameResult(true);
+            this.view.displayGameResult(false);
         }
         else
-            this.view.displayGameResult(false);
+            this.view.displayGameResult(true);
         this.gameModel = null;
-        this.heroRepository.saveHeroesToFile(java.nio.file.Paths.get("save.txt"));
+        try {
+            this.heroRepository.saveHeroesToFile(java.nio.file.Paths.get("save.txt"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.toMainMenu();
     }
 

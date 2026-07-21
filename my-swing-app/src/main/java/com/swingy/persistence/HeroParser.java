@@ -26,7 +26,7 @@ public class HeroParser {
     }
 
     public void parseStringToHeroData(String heroData) {
-        String[] parts = heroData.split(" ");
+        String[] parts = heroData.split("[|]");
         if (parts.length < 2) {
             throw new IllegalArgumentException("Invalid hero data format");
         }

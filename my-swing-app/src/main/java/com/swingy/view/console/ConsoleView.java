@@ -159,7 +159,7 @@ public class ConsoleView extends View {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("Please enter your choice: ");
-            if (!scanner.hasNextInt()) {
+            while (!scanner.hasNextInt()) {
                 scanner.nextLine();
                 this.displayOnIncorrectInput();
             }
@@ -186,6 +186,7 @@ public class ConsoleView extends View {
         }
         System.out.println();
     }
+
     @Override
     public void promptChooseFromHeroList(List<Hero> heroes) {
         displayTextAsTyped("Choose a hero from list :", 50, ANSI_BLUE);
@@ -269,7 +270,7 @@ public class ConsoleView extends View {
         if (isSuccessful)
             displayTextAsTyped("Hero successfully ran out of danger.", 50, ANSI_GREEN);
         else
-            displayTextAsTyped("Hero couldn't ran away. Prepare for a fight!", 50, ANSI_GREEN);
+            displayTextAsTyped("Hero couldn't ran away. Prepare for a fight!", 50, ANSI_RED);
 
     }
 
@@ -277,4 +278,13 @@ public class ConsoleView extends View {
         displayTextAsTyped("HERO LEVELED UP!", 50, ANSI_YELLOW);
         displayHeroStats(hero);
     }
+
+    @Override
+    public void displayGameResult(boolean isWin) {
+        if (isWin)
+            displayTextAsTyped("CONGRATS! HERO SUCCESSFULY ESCAPED MAP.", 50, ANSI_GREEN);
+        else
+            displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
+    }
+
 }

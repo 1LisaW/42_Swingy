@@ -6,7 +6,6 @@ import com.swingy.model.GameMap;
 
 public class GameModel {
     private Hero hero;
-    // private Villain villain;
     private GameMap gameMap;
 
     public GameModel(Hero hero) {
@@ -19,7 +18,7 @@ public class GameModel {
     }
 
     public Hero getHero() {
-        return hero;
+        return this.hero;
     }
 
     public GameMap getMap() {
@@ -32,6 +31,9 @@ public class GameModel {
             this.gameMap.isHeroEscaped()
         );
     }
+
+
+
     public void moveHero(String movement) {
         this.gameMap.moveHero(movement);
     }

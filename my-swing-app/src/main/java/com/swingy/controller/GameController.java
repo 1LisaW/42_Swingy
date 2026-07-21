@@ -42,7 +42,23 @@ public class GameController {
             if (this.gameModel.getOpponent() != null)
                 this.initBattleSimulator();
         }
-        System.out.println("Well done!");
+        this.gameEnd();
+    }
+
+    private void gameEnd() {
+        Hero hero = this.gameModel.getHero();
+        if (hero.getHitPoints() == 0) {
+            if (!this.heroRepository.containsHero(hero)) {
+                this.heroRepository.addHero(hero);
+                // this.heroRepository.saveHeroesToFile("save.txt");
+            }
+            this.view.displayGameResult(true);
+        }
+        else
+            this.view.displayGameResult(false);
+        this.gameModel = null;
+        this.heroRepository.saveHeroesToFile(java.nio.file.Paths.get("save.txt"));
+        this.toMainMenu();
     }
 
     private void simulateBattle(BattleSimulator battleSimulator) {

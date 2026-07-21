@@ -73,6 +73,23 @@ public abstract class Artifact {
         this.hitPointsBonus = hitPointsBonus;
     }
 
+    protected String getTierText() {
+        switch (this.tier) {
+            case COMMON:
+                return "Common";
+            case UNCOMMON:
+                return "Uncommon";
+            case RARE:
+                return "Rare";
+            case EPIC:
+                return "Epic";
+            case LEGENDARY:
+                return "Legendary";
+            default:
+                return "";
+        }
+    }
+
     protected String generateRandomArtifactName() {
         String artifactType = generateRandomArtifactType();
         switch (tier) {
@@ -89,5 +106,10 @@ public abstract class Artifact {
             default:
                 return artifactType;
         }
+    }
+
+    public String toString() {
+        return "artifact" + "|" + this.name + "|" + this.artifactType + "|" +  this.getTierText()
+            + "|" + this.hitPointsBonus + "|" + this.attackBonus + "|" + this.defenseBonus + "\n";
     }
 }

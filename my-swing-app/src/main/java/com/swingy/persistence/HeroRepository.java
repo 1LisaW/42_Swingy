@@ -33,8 +33,8 @@ public class HeroRepository {
         return heroDataList;
     }
 
-    public void saveHeroesToFile(Path file, List<Hero> heroes) throws Exception {
-        List<String> heroDataList = heroes.stream()
+    public void saveHeroesToFile(Path file) throws Exception {
+        List<String> heroDataList = this.heroes.stream()
                 .map(Hero::toString)
                 .toList();
         Files.write(file, heroDataList);
@@ -51,5 +51,11 @@ public class HeroRepository {
         return this.heroes;
     }
 
+    public void addHero(Hero hero) {
+        this.heroes.add(hero);
+    }
 
+    public boolean containsHero(Hero hero) {
+        return this.heroes.contains(hero);
+    }
 }

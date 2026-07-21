@@ -177,4 +177,9 @@ public class Hero {
         this.hitPoints -= Math.min(this.hitPoints, damage);
     }
 
+    public String toString() {
+        return "hero" + "|" + this.name + "|" + this.archetype
+            + "|" + this.level + "|" + this.experience + "|"
+            + this.hitPoints + "|" + this.attack + "|" + this.defense + "\n";
+    }
 }

@@ -47,4 +47,6 @@ public abstract class View {
 
     public abstract void displayOnHeroRun(boolean isSuccessful);
     public abstract void displayLevelUp(Hero hero);
+
+    public abstract void displayGameResult(boolean isWin);
 }

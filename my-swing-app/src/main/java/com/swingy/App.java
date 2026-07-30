@@ -1,11 +1,12 @@
 package com.swingy;
 
-// import javax.swing.SwingUtilities;
+import javax.swing.SwingUtilities;
 
 
 import com.swingy.controller.GameController;
 import com.swingy.view.View;
 import com.swingy.view.console.ConsoleView;
+import com.swingy.view.gui.GuiView;
 import com.swingy.model.GameModel;
 
 
@@ -19,23 +20,28 @@ public class App
             return;
         }
 
-        View view = new ConsoleView();
-        GameController gameController = new GameController(view);
-        gameController.loadHeroesFromFile("heroes.txt");
-        gameController.toMainMenu();
+        View view = null;
 
         if (args[0].equals("console")) {
+            view = new ConsoleView();
             // Start the console version of the game
             // ConsoleGame consoleGame = new ConsoleGame();
             // consoleGame.start();
             System.out.println( "Console version started!" );
 
         } else {
+            view = new GuiView();
             // Start the Swing GUI version of the game
             // SwingUtilities.invokeLater(() -> {
             //     new MainFrame();
             // });
         }
+        GameController gameController = new GameController(view);
+        if (args[0].equals("gui"))
+            SwingUtilities.invokeLater(view::start);
+        gameController.loadHeroesFromFile("heroes.txt");
+        gameController.toMainMenu();
+
         System.out.println( "Hello World!" );
 
 

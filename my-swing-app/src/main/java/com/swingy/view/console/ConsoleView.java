@@ -19,6 +19,9 @@ public class ConsoleView extends View {
     static final String ANSI_GREEN = "\u001B[32m";
 
     @Override
+    public void start() {}
+
+    @Override
     public void displayHeroStats(Hero hero) {
         String heroClass = Character.toUpperCase(hero.getArchetype().charAt(0)) + hero.getArchetype().substring(1);
         System.out.println("╔════ HERO ═════════════════════╗");

@@ -1,6 +1,5 @@
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\App.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\controller\GameController.java
-D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\MainFrame.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\model\artifact\Armor.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\model\artifact\Artifact.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\model\artifact\ArtifactArchetype.java
@@ -20,4 +19,7 @@ D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\model\Villain.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\persistence\HeroParser.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\persistence\HeroRepository.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\view\console\ConsoleView.java
+D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\view\gui\GuiView.java
+D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\view\gui\panels\GamePanel.java
+D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\view\gui\panels\MainMenuPanel.java
 D:\42_projects\Swingy\my-swing-app\src\main\java\com\swingy\view\View.java

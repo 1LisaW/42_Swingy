@@ -13,6 +13,8 @@ public abstract class View {
         // Initialize the view
     }
 
+    public abstract void start();
+
     public abstract void displayHeroStats(Hero hero);
 
     public abstract void displayMap(GameMap gameMap);

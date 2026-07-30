@@ -19,29 +19,31 @@ import javax.swing.SwingConstants;
 
 
 public class GuiView extends View {
-    private JFrame frame;
-    private JPanel mainPanel;
-    private CardLayout cardLayout;
+    private MainFrame frame;
+    // private JPanel mainPanel;
+    // private CardLayout cardLayout;
 
 
     public GuiView() {
+        frame = new MainFrame();
         // Initialize the view
-        this.frame = new JFrame("Swingy");
-        this.cardLayout = new CardLayout();
-        this.mainPanel = new JPanel(this.cardLayout);
-        this.mainPanel.add(new MainMenuPanel(), "MENU");
-        this.mainPanel.add(new GamePanel(), "GAME");
-        this.mainPanel.add(new CreateHeroPanel(), "CREATE");
-        this.frame.setContentPane(this.mainPanel);
+        // this.frame = new JFrame("Swingy");
+        // this.cardLayout = new CardLayout();
+        // this.mainPanel = new JPanel(this.cardLayout);
+        // this.mainPanel.add(new MainMenuPanel(), "MENU");
+        // this.mainPanel.add(new GamePanel(), "GAME");
+        // this.mainPanel.add(new CreateHeroPanel(), "CREATE");
+        // this.frame.setContentPane(this.mainPanel);
 
-        this.frame.setSize(1200, 600);
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // this.frame.setSize(1200, 600);
+        // this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// frame.setVisible(true);
     }
 
     @Override
     public void start() {
+        // this.frame.showPanel("MENU");
         this.frame.setVisible(true);
         // this
     }
@@ -72,7 +74,9 @@ public class GuiView extends View {
 
     @Override
     public void displayMainMenu() {
-       this.cardLayout.show(this.mainPanel, "MENU");
+        this.frame.showPanel("MENU");
+
+    //    this.cardLayout.show(this.mainPanel, "MENU");
 
     }
 
@@ -109,7 +113,10 @@ public class GuiView extends View {
     // Choose hero from Repo
     @Override
     public void displayChooseHeroFromList(List<Hero> heroes) {
-
+        // this.frame.showPanel("CREATE");
+        System.out.println("Opening hero selection");
+        this.frame.getSelectHeroFromListPanel().updateHeroList(heroes);
+        // this.frame.showPanel("SELECT");
     }
 
     @Override

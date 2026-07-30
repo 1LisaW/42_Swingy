@@ -25,6 +25,7 @@ public class GameController {
         // Initialize the game controller
         this.heroRepository = HeroRepository.getInstance();
         this.view = view;
+        // this.view.addLoadHeroesButtonListener()
     }
 
     public void startGame(Hero hero) {
@@ -193,5 +194,11 @@ public class GameController {
                 break;
         }
     }
+
+    public List<Hero> getHeroes() {
+        return heroRepository.getHeroes();
+    }
+
+    
 
 }

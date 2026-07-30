@@ -37,9 +37,11 @@ public class App
             // });
         }
         GameController gameController = new GameController(view);
-        if (args[0].equals("gui"))
-            SwingUtilities.invokeLater(view::start);
         gameController.loadHeroesFromFile("heroes.txt");
+        if (args[0].equals("gui")) {
+            view.displayChooseHeroFromList(gameController.getHeroes());
+            SwingUtilities.invokeLater(view::start);
+        }
         gameController.toMainMenu();
 
         System.out.println( "Hello World!" );

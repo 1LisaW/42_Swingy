@@ -1,4 +1,4 @@
-0|hero|Rincewind|wizard|1|910|5|11|10
-0|artifact|"CommonSword"|weapon|Common|0|2|0
-0|artifact|Common Sabatons|armor|Common|0|0|5
+0|hero|Rincewind|wizard|2|210|8|15|11
+0|artifact|Common Sword|weapon|Common|0|5|0
+0|artifact|Common Gauntlets|armor|Common|0|0|5
 

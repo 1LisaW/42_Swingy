@@ -1,3 +1,5 @@
+package com.swingy.view.gui;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +9,7 @@ public class CreateHeroPanel extends JPanel {
     private JComboBox<String> heroClassBox;
     private JButton submitButton;
 
-    public PlayerForm() {
+    public CreateHeroPanel() {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -19,9 +21,9 @@ public class CreateHeroPanel extends JPanel {
         gbc.gridy = 0;
         add(new JLabel("Hero's name:"), gbc);
 
-        nameField = new JTextField(15);
+        heroNameField = new JTextField(15);
         gbc.gridx = 1;
-        add(nameField, gbc);
+        add(heroNameField, gbc);
 
 
         // Hero class

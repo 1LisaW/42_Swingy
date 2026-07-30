@@ -13,7 +13,7 @@ public class MainMenuPanel extends JPanel {
     private Image background;
 
     private final JButton newGameButton = new JButton("Create new hero");
-    private final JButton settingsButton = new JButton("Load hero");
+    private final JButton loadHeroesButton = new JButton("Load hero");
     private final JButton exitButton = new JButton("Exit");
 
     public MainMenuPanel() {
@@ -35,9 +35,9 @@ public class MainMenuPanel extends JPanel {
         newGameButton.setPreferredSize(buttonSize);
         newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        settingsButton.setMaximumSize(buttonSize);
-        settingsButton.setPreferredSize(buttonSize);
-        settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loadHeroesButton.setMaximumSize(buttonSize);
+        loadHeroesButton.setPreferredSize(buttonSize);
+        loadHeroesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         exitButton.setMaximumSize(buttonSize);
         exitButton.setPreferredSize(buttonSize);
@@ -45,7 +45,7 @@ public class MainMenuPanel extends JPanel {
 
         buttonPanel.add(newGameButton);
         buttonPanel.add(Box.createVerticalStrut(15));
-        buttonPanel.add(settingsButton);
+        buttonPanel.add(loadHeroesButton);
         buttonPanel.add(Box.createVerticalStrut(15));
         buttonPanel.add(exitButton);
         buttonPanel.setOpaque(false);
@@ -85,8 +85,8 @@ public class MainMenuPanel extends JPanel {
         newGameButton.addActionListener(listener);
     }
 
-    public void addSettingsListener(ActionListener listener) {
-        settingsButton.addActionListener(listener);
+    public void addLoadHeroesButtonListener(ActionListener listener) {
+        loadHeroesButton.addActionListener(listener);
     }
 
     public void addExitListener(ActionListener listener) {

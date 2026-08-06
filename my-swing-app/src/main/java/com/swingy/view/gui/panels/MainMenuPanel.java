@@ -8,17 +8,18 @@ import javax.swing.SwingConstants;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import com.swingy.controller.ExitAction;
 
 public class MainMenuPanel extends JPanel {
     private Image background;
 
     private final JButton newGameButton = new JButton("Create new hero");
     private final JButton loadHeroesButton = new JButton("Load hero");
-    private final JButton exitButton = new JButton("Exit");
+    private JButton exitButton;
 
-    public MainMenuPanel() {
+    public MainMenuPanel(ExitAction exitAction) {
     // (GuiView view) {
-
+        exitButton = new JButton(exitAction);
         setLayout(new GridBagLayout());
         // setLayout(new BorderLayout());
 

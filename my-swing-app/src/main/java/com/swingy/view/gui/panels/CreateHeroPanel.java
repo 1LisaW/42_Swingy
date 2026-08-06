@@ -9,7 +9,7 @@ public class CreateHeroPanel extends JPanel {
     private JComboBox<String> heroClassBox;
     private JButton submitButton;
 
-    public CreateHeroPanel() {
+    public CreateHeroPanel(Action mainMenuAction) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -42,5 +42,10 @@ public class CreateHeroPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(submitButton, gbc);
+
+        JButton backButton = new JButton(mainMenuAction);
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        add(backButton, gbc);
     }
 }

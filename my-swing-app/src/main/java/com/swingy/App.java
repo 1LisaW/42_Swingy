@@ -44,7 +44,7 @@ public class App
         }
         gameController.toMainMenu();
 
-        System.out.println( "Hello World!" );
+        // System.out.println( "Hello World!" );
 
 
         // SwingUtilities.invokeLater(() -> {

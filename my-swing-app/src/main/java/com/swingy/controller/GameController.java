@@ -25,7 +25,6 @@ public class GameController {
         // Initialize the game controller
         this.heroRepository = HeroRepository.getInstance();
         this.view = view;
-        // this.view.addLoadHeroesButtonListener()
     }
 
     public void startGame(Hero hero) {
@@ -33,6 +32,12 @@ public class GameController {
         this.gameModel = new GameModel(hero);
         this.view.displayMap(this.gameModel.getMap());
         this.gameLoop();
+    }
+
+    public void handleMovement() {
+        if (this.gameModel.isGameOver())
+            return ;
+
     }
 
     private void gameLoop() {
@@ -44,6 +49,13 @@ public class GameController {
                 this.initBattleSimulator();
         }
         this.gameEnd();
+    }
+
+    public void moveHero(String movement) {
+        this.gameModel.moveHero(movement);
+        this.view.displayMap(this.gameModel.getMap());
+        if (this.gameModel.getOpponent() != null)
+            this.initBattleSimulator();
     }
 
     private void gameEnd() {
@@ -199,6 +211,6 @@ public class GameController {
         return heroRepository.getHeroes();
     }
 
-    
+
 
 }

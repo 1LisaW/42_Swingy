@@ -6,11 +6,15 @@ import com.swingy.model.Hero;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Artifact;
+import com.swingy.model.HeroCredentials;
+import com.swingy.controller.GameController;
 
 public abstract class View {
 
-    public View() {
-        // Initialize the view
+    protected final GameController controller;
+
+    public View(GameController controller) {
+        this.controller = controller;
     }
 
     public abstract void start();
@@ -35,7 +39,7 @@ public abstract class View {
 
 
     // Choose hero from Repo
-    public abstract void displayChooseHeroFromList(List<Hero> heroes);
+    public abstract void displayChooseHeroFromList();
     public abstract int promptChooseHeroFromList(int maxNum);
     public abstract void displayChooseHeroFromListStatus(Hero hero);
 
@@ -51,4 +55,16 @@ public abstract class View {
     public abstract void displayLevelUp(Hero hero);
 
     public abstract void displayGameResult(boolean isWin);
+
+    public abstract void mainMenu();
+
+    public abstract void startGame(Hero hero);
+
+    protected abstract HeroCredentials createHeroCredentials();
+
+
+    // public abstract void onCreateHero();
+
+    // public abstract void onChooseHero();
+
 }

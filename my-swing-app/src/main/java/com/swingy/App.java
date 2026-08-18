@@ -19,36 +19,20 @@ public class App
             System.out.println( "Please provide a mode argument: 'console' or 'gui'" );
             return;
         }
+        
+        GameController gameController = new GameController();
+        gameController.loadHeroesFromFile("heroes.txt");
 
         View view = null;
 
         if (args[0].equals("console")) {
-            view = new ConsoleView();
-            // Start the console version of the game
-            // ConsoleGame consoleGame = new ConsoleGame();
-            // consoleGame.start();
-            System.out.println( "Console version started!" );
+            view = new ConsoleView(gameController);
 
         } else {
-            view = new GuiView();
-            // Start the Swing GUI version of the game
-            // SwingUtilities.invokeLater(() -> {
-            //     new MainFrame();
-            // });
-        }
-        GameController gameController = new GameController(view);
-        gameController.loadHeroesFromFile("heroes.txt");
-        if (args[0].equals("gui")) {
-            view.displayChooseHeroFromList(gameController.getHeroes());
+            view = new GuiView(gameController);
+            // view.displayChooseHeroFromList(gameController.getHeroes());
             SwingUtilities.invokeLater(view::start);
         }
-        gameController.toMainMenu();
-
-        // System.out.println( "Hello World!" );
-
-
-        // SwingUtilities.invokeLater(() -> {
-        //     new MainFrame();
-        // });
+        view.mainMenu();
     }
 }

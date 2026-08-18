@@ -5,11 +5,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import java.awt.*;
 
 import com.swingy.model.GameMap;
 
+
 public class GamePanel extends JPanel {
-    private GameMap map;
+    private GameMap gameMap;
 
     public GamePanel() {
     // (GuiView view) {
@@ -26,13 +28,13 @@ public class GamePanel extends JPanel {
         add(back, BorderLayout.SOUTH);
     }
 
-    public void setMap(GameMap map) {
-        this.map = map;
+    public void setMap(GameMap gameMap) {
+        this.gameMap = gameMap;
     }
 
     public void update() {
         // Update the game panel based on the current map state
-        if (map == null) {
+        if (gameMap == null) {
             return;
         }
     }
@@ -97,15 +99,15 @@ public class GamePanel extends JPanel {
             int cellWidth,
             int cellHeight) {
 
-        List<Villain> villains = gameMap.getGrid();
+        // List<Villain> villains = gameMap.getGrid();
 
         g.setColor(Color.RED);
 
-        for (int position = 0; position < villains.size(); position++) {
+        for (int position = 0; position < size; position++) {
 
-            Villain villain = villains.get(position);
+            int villainLevel = gameMap.getVillainAtPos(position);
 
-            if (villain == null) {
+            if (villainLevel == 0) {
                 continue;
             }
 

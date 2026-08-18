@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.swingy.view.View;
 import com.swingy.model.Hero;
+import com.swingy.model.HeroCredentials;
 import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
-
 import com.swingy.model.Artifact;
+import com.swingy.controller.GameController;
+
 
 public class ConsoleView extends View {
     static final String ANSI_RESET = "\u001B[0m";
@@ -17,6 +19,10 @@ public class ConsoleView extends View {
     static final String ANSI_YELLOW = "\u001B[33m";
     static final String ANSI_RED = "\u001B[31m";
     static final String ANSI_GREEN = "\u001B[32m";
+
+    public ConsoleView(GameController controller) {
+        super(controller);
+    }
 
     @Override
     public void start() {}
@@ -201,7 +207,8 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public void displayChooseHeroFromList(List<Hero> heroes) {
+    public void displayChooseHeroFromList() {
+        List<Hero> heroes = this.controller.getHeroes();
         displayTextAsTyped("Choose a hero from a list :", 50, ANSI_BLUE);
         int i = 1;
         for (Hero hero: heroes) {
@@ -290,4 +297,82 @@ public class ConsoleView extends View {
             displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
     }
 
+    @Override
+    public void mainMenu() {
+        displayMainMenu();
+        int chosenOption = promptMainMenu();
+        displayMainMenuStatus(chosenOption);
+        Hero currentHero = null;
+        switch (chosenOption) {
+            case 1:
+                currentHero = this.controller.createHero(createHeroCredentials());
+                displayHeroStats(currentHero);
+                startGame(currentHero);
+                // Logic to create a new hero
+                break;
+            case 2:
+                List<Hero> heroes = this.controller.getHeroes();
+                displayChooseHeroFromList();
+                int choice = promptChooseHeroFromList(heroes.size());
+                currentHero = heroes.get(choice - 1);
+                displayChooseHeroFromListStatus(currentHero);
+                startGame(currentHero);
+                break;
+            case 3:
+                this.controller.exitGame();
+                break;
+            default:
+                displayOnIncorrectInput();
+                mainMenu(); // Recursively call toMainMenu() for invalid input
+                break;
+        }
+    }
+
+    @Override
+    public void startGame(Hero hero) {
+        this.controller.startGame(hero);
+        while (!this.controller.isGameOver()) {
+            displayMap(this.controller.getGameMap());
+            String move = promptHeroMove();
+            this.controller.moveHero(move);
+        }
+
+    }
+    // @Override
+    // public void onCreateHero() {
+
+    // }
+
+    // @Override
+    // public void onChooseHero() {
+
+    // }
+
+    @Override
+    protected HeroCredentials createHeroCredentials() {
+        HeroCredentials heroCredentials = new HeroCredentials();
+        heroCredentials.setName(getUserInput("Enter hero name"));
+        while (heroCredentials.getName().isEmpty()) {
+            displayOnIncorrectInput();
+            heroCredentials.setName(getUserInput("Enter hero name"));
+        }
+        promptChooseHeroClass();
+        String archetype = getUserInput("Choose an option ");
+        while (!archetype.equals("1") && !archetype.equals("2") && !archetype.equals("3")) {
+            displayOnIncorrectInput();
+            archetype = getUserInput("Choose an option ");
+        }
+        switch (archetype) {
+            case "1":
+                heroCredentials.setHeroArchetype("wizard");
+                break;
+             case "2":
+                heroCredentials.setHeroArchetype("warrior");
+                break;
+             case "3":
+                heroCredentials.setHeroArchetype("barbarian");
+                break;
+        }
+        return heroCredentials;
+    }
 }

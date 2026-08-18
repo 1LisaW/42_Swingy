@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.swingy.view.View;
 import com.swingy.model.Hero;
+import com.swingy.model.HeroCredentials;
 import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
-
 import com.swingy.model.Artifact;
+import com.swingy.controller.GameController;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -24,29 +25,17 @@ public class GuiView extends View {
     // private CardLayout cardLayout;
 
 
-    public GuiView() {
+    public GuiView(GameController controller) {
+        super(controller);
         frame = new MainFrame();
-        // Initialize the view
-        // this.frame = new JFrame("Swingy");
-        // this.cardLayout = new CardLayout();
-        // this.mainPanel = new JPanel(this.cardLayout);
-        // this.mainPanel.add(new MainMenuPanel(), "MENU");
-        // this.mainPanel.add(new GamePanel(), "GAME");
-        // this.mainPanel.add(new CreateHeroPanel(), "CREATE");
-        // this.frame.setContentPane(this.mainPanel);
-
-        // this.frame.setSize(1200, 600);
-        // this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// frame.setVisible(true);
+        frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
     }
 
     @Override
     public void start() {
-        // this.frame.showPanel("MENU");
         this.frame.setVisible(true);
-        // this
     }
+
     @Override
     public void displayHeroStats(Hero hero) {
 
@@ -75,8 +64,6 @@ public class GuiView extends View {
     @Override
     public void displayMainMenu() {
         this.frame.showPanel("MENU");
-
-    //    this.cardLayout.show(this.mainPanel, "MENU");
 
     }
 
@@ -112,7 +99,9 @@ public class GuiView extends View {
 
     // Choose hero from Repo
     @Override
-    public void displayChooseHeroFromList(List<Hero> heroes) {
+    public void displayChooseHeroFromList() {
+        List<Hero> heroes = this.controller.getHeroes();
+        System.out.println(heroes);
         // this.frame.showPanel("CREATE");
         System.out.println("Opening hero selection");
         this.frame.getSelectHeroFromListPanel().updateHeroList(heroes);
@@ -157,5 +146,31 @@ public class GuiView extends View {
     @Override
     public void displayGameResult(boolean isWin) {
 
+    }
+
+    @Override
+    public void mainMenu() {
+        // this.frame.showPanel("MENU");
+    }
+
+    @Override
+    public void startGame(Hero hero) {
+        this.controller.startGame(hero);
+
+    }
+
+    //     @Override
+    // public void onCreateHero() {
+        
+    // }
+
+    // @Override
+    // public void onChooseHero() {
+
+    // }
+        @Override
+    protected HeroCredentials createHeroCredentials() {
+        HeroCredentials heroCredentials = new HeroCredentials();
+        return heroCredentials;
     }
 }

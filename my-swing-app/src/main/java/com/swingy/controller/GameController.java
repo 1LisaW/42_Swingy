@@ -6,7 +6,7 @@ import com.swingy.persistence.HeroRepository;
 import com.swingy.model.HeroBuilder;
 import com.swingy.model.HeroDirector;
 import com.swingy.model.Hero;
-import com.swingy.view.View;
+// import com.swingy.view.View;
 import com.swingy.model.HeroCredentials;
 import com.swingy.model.GameModel;
 import com.swingy.model.GameMap;
@@ -80,7 +80,6 @@ public class GameController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.toMainMenu();
     }
 
     private void simulateBattle(BattleSimulator battleSimulator) {
@@ -179,39 +178,6 @@ public class GameController {
         HeroDirector director = new HeroDirector(new HeroBuilder());
         return director.constructNewHero(heroCredentials.getName(), heroCredentials.getHeroType());
         // Logic to create a new hero with the given name and archetype
-    }
-
-    public void toMainMenu() {
-        // this.view.onMainMenu();
-        // return;
-        // // Logic to return to the main menu
-        // this.view.displayMainMenu();
-        // int chosenOption = this.view.promptMainMenu();
-        // this.view.displayMainMenuStatus(chosenOption);
-        // Hero currentHero = null;
-        // switch (chosenOption) {
-        //     case 1:
-        //         currentHero = this.createHero();
-        //         this.view.displayHeroStats(currentHero);
-        //         this.startGame(currentHero);
-        //         // Logic to create a new hero
-        //         break;
-        //     case 2:
-        //         List<Hero> heroes = this.heroRepository.getHeroes();
-        //         this.view.displayChooseHeroFromList(heroes);
-        //         int choice = this.view.promptChooseHeroFromList(heroes.size());
-        //         currentHero = heroes.get(choice - 1);
-        //         this.view.displayChooseHeroFromListStatus(currentHero);
-        //         this.startGame(currentHero);
-        //         break;
-        //     case 3:
-        //         exitGame();
-        //         break;
-        //     default:
-        //         view.displayOnIncorrectInput();
-        //         toMainMenu(); // Recursively call toMainMenu() for invalid input
-        //         break;
-        // }
     }
 
     public List<Hero> getHeroes() {

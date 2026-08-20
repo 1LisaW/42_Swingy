@@ -6,6 +6,7 @@ import java.awt.*;
 public class CreateHeroPanel extends JPanel {
 
     private JTextField heroNameField;
+    private JLabel heroNameErrorLabel;
     private JComboBox<String> heroClassBox;
     private JButton submitButton;
 
@@ -25,6 +26,9 @@ public class CreateHeroPanel extends JPanel {
         gbc.gridx = 1;
         add(heroNameField, gbc);
 
+        heroNameErrorLabel = new JLabel("Please fill in heroes name");
+        heroNameErrorLabel.setForeground(Color.RED);
+
 
         // Hero class
         gbc.gridx = 0;
@@ -43,9 +47,39 @@ public class CreateHeroPanel extends JPanel {
         gbc.gridy = 3;
         add(submitButton, gbc);
 
+        submitButton.addActionListener(e -> {
+            if (heroNameField.getText().trim().isEmpty()
+                ) {
+                gbc.gridx = 0;
+                gbc.gridy = 1;
+                add(heroNameErrorLabel, gbc);
+                revalidate();
+                repaint();
+            }
+            else {
+                remove(heroNameErrorLabel);
+                revalidate();
+                repaint();
+            }
+        });
+
         JButton backButton = new JButton(mainMenuAction);
         gbc.gridx = 1;
         gbc.gridy = 4;
         add(backButton, gbc);
     }
+
+    public String getHeroName() {
+        return heroNameField.getText();
+    }
+
+    public String getHeroClass() {
+        return (String) heroClassBox.getSelectedItem();
+    }
+
+    // public void addStartGameListener(ActionListener listener) {
+    //     submitButton.addActionListener(listener);
+    // }
+
+
 }

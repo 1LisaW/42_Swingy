@@ -27,7 +27,7 @@ public class GuiView extends View {
 
     public GuiView(GameController controller) {
         super(controller);
-        frame = new MainFrame();
+        frame = new MainFrame(controller);
         frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
     }
 

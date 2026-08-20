@@ -19,7 +19,7 @@ class SelectHeroFromListPanel extends JPanel {
     private JPanel buttonPanel;
 
 
-    public SelectHeroFromListPanel(Action mainMenuAction) {
+    public SelectHeroFromListPanel(Action mainMenuAction, Action gamePanelAction) {
         // List<Hero> list = new ArrayList();
         // list.add(new Hero("Rinswind", "wizard", 1, 0, 3, 3, 4 ));
         // list.add(new Hero("Hercules", "warrior", 2, 0, 8, 3, 4 ));

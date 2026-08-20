@@ -22,6 +22,7 @@ com/swingy/model/Villain.class
 com/swingy/model/Artifact.class
 com/swingy/persistence/HeroRepository.class
 com/swingy/model/HeroDirector.class
+com/swingy/controller/GamePanelAction.class
 com/swingy/view/console/ConsoleView.class
 com/swingy/model/GameMap.class
 com/swingy/model/Hero.class

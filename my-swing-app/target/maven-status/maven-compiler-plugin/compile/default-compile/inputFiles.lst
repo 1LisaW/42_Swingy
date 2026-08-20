@@ -3,6 +3,7 @@
 /workspace/my-swing-app/src/main/java/com/swingy/controller/Movement.java
 /workspace/my-swing-app/src/main/java/com/swingy/controller/NavigationController.java
 /workspace/my-swing-app/src/main/java/com/swingy/controller/actions/ExitAction.java
+/workspace/my-swing-app/src/main/java/com/swingy/controller/actions/GamePanelAction.java
 /workspace/my-swing-app/src/main/java/com/swingy/controller/actions/MainMenuAction.java
 /workspace/my-swing-app/src/main/java/com/swingy/model/BattleSimulator.java
 /workspace/my-swing-app/src/main/java/com/swingy/model/GameMap.java

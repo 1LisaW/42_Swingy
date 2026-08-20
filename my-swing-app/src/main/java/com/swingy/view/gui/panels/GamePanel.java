@@ -8,12 +8,16 @@ import javax.swing.SwingConstants;
 import java.awt.*;
 
 import com.swingy.model.GameMap;
+import com.swingy.controller.GameController;
 
 
 public class GamePanel extends JPanel {
-    private GameMap gameMap;
+    private final GameController controller;
+    // private GameMap gameMap;
 
-    public GamePanel() {
+    public GamePanel(GameController controller) {
+        this.controller = controller;
+        // this.gameMap = gameMap;
     // (GuiView view) {
 
         setLayout(new BorderLayout());
@@ -28,18 +32,19 @@ public class GamePanel extends JPanel {
         add(back, BorderLayout.SOUTH);
     }
 
-    public void setMap(GameMap gameMap) {
-        this.gameMap = gameMap;
-    }
+    // public void setMap(GameMap gameMap) {
+    //     this.gameMap = gameMap;
+    // }
 
-    public void update() {
-        // Update the game panel based on the current map state
-        if (gameMap == null) {
-            return;
-        }
-    }
+    // public void update() {
+    //     // Update the game panel based on the current map state
+    //     if (gameMap == null) {
+    //         return;
+    //     }
+    // }
     @Override
     protected void paintComponent(Graphics g) {
+        GameMap gameMap = controller.getGameMap();
         super.paintComponent(g);
 
         int size = gameMap.getSize();
@@ -75,6 +80,8 @@ public class GamePanel extends JPanel {
             int cellWidth,
             int cellHeight) {
 
+        GameMap gameMap = controller.getGameMap();
+
         int position = gameMap.getHeroPosition();
 
         int row = position / gameMap.getSize();
@@ -100,6 +107,7 @@ public class GamePanel extends JPanel {
             int cellHeight) {
 
         // List<Villain> villains = gameMap.getGrid();
+        GameMap gameMap = controller.getGameMap();
 
         g.setColor(Color.RED);
 

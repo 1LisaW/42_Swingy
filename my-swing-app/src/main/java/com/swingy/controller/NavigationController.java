@@ -15,4 +15,8 @@ public class NavigationController {
     public void showMainMenu() {
         layout.show(cards, "MENU");
     }
+
+    public void showGamePanel() {
+        layout.show(cards, "GAME");
+    }
 }

@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 import com.swingy.controller.GameController;
 import com.swingy.controller.NavigationController;
 import com.swingy.controller.MainMenuAction;
+import com.swingy.controller.GamePanelAction;
 import com.swingy.controller.ExitAction;
 
 class MainFrame extends JFrame {
@@ -27,17 +28,16 @@ class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         container = new JPanel(cardLayout);
         NavigationController navigator = new NavigationController(cardLayout, container);
+        
         MainMenuAction mainMenuAction = new MainMenuAction(navigator);
+        GamePanelAction gamePanelAction = new GamePanelAction(navigator);
         ExitAction exitAction = new ExitAction(this);
 
         // Create panels
         mainMenuPanel = new MainMenuPanel(exitAction);
-        createHeroPanel = new CreateHeroPanel(mainMenuAction);
-        gamePanel = new GamePanel();
-        selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction);
-        // this.frame = new JFrame("Swingy");
-        // this.cardLayout = new CardLayout();
-        // this.mainPanel = new JPanel(this.cardLayout);
+        createHeroPanel = new CreateHeroPanel(mainMenuAction, gamePanelAction, controller);
+        gamePanel = new GamePanel(controller);
+        selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction, gamePanelAction);
 
         // Register panels with names
         container.add(mainMenuPanel, "MENU");

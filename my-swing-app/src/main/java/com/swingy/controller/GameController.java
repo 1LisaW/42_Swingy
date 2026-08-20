@@ -31,6 +31,7 @@ public class GameController {
     public void startGame(Hero hero) {
         // Logic to start the game
         this.gameModel = new GameModel(hero);
+        System.out.println("Game started with hero: " + hero.getName() + ", class: ");
         // this.view.displayMap(this.gameModel.getMap());
         // this.gameLoop();
     }

@@ -3,6 +3,10 @@ package com.swingy.view.gui;
 import javax.swing.*;
 import java.awt.*;
 
+import com.swingy.controller.GameController;
+import com.swingy.model.HeroCredentials;
+
+
 public class CreateHeroPanel extends JPanel {
 
     private JTextField heroNameField;
@@ -10,7 +14,10 @@ public class CreateHeroPanel extends JPanel {
     private JComboBox<String> heroClassBox;
     private JButton submitButton;
 
-    public CreateHeroPanel(Action mainMenuAction) {
+    private final GameController controller;
+
+    public CreateHeroPanel(Action mainMenuAction, Action gamePanelAction, GameController controller) {
+        this.controller = controller;
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -48,25 +55,52 @@ public class CreateHeroPanel extends JPanel {
         add(submitButton, gbc);
 
         submitButton.addActionListener(e -> {
-            if (heroNameField.getText().trim().isEmpty()
-                ) {
-                gbc.gridx = 0;
-                gbc.gridy = 1;
-                add(heroNameErrorLabel, gbc);
-                revalidate();
-                repaint();
+            if (validatePanel(gbc)) {
+                this.controller.startGame(
+                    this.controller.createHero(
+                        new HeroCredentials(getHeroName(), getHeroClass())
+                    )
+                );
+                gamePanelAction.actionPerformed(e);
             }
-            else {
-                remove(heroNameErrorLabel);
-                revalidate();
-                repaint();
-            }
+            // if (heroNameField.getText().trim().isEmpty()
+            //     ) {
+            //     gbc.gridx = 0;
+            //     gbc.gridy = 1;
+            //     add(heroNameErrorLabel, gbc);
+            //     revalidate();
+            //     repaint();
+            // }
+            // else {
+            //     remove(heroNameErrorLabel);
+            //     revalidate();
+            //     repaint();
+            // }
         });
 
         JButton backButton = new JButton(mainMenuAction);
         gbc.gridx = 1;
         gbc.gridy = 4;
         add(backButton, gbc);
+    }
+
+    private boolean validatePanel(GridBagConstraints gbc) {
+        if (heroNameField.getText().trim().isEmpty()) {
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            add(heroNameErrorLabel, gbc);
+
+            revalidate();
+            repaint();
+
+            return false;
+        }
+
+        remove(heroNameErrorLabel);
+        revalidate();
+        repaint();
+
+        return true;
     }
 
     public String getHeroName() {

@@ -106,4 +106,5 @@ public class GameMap {
     public void retreatHero() {
         this.heroPosition = this.prevHeroPosition;
     }
+
 }

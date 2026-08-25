@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 
 import com.swingy.model.Hero;
+import com.swingy.controller.GameController;
+
 
 class SelectHeroFromListPanel extends JPanel {
     private Image background;
@@ -19,7 +21,7 @@ class SelectHeroFromListPanel extends JPanel {
     private JPanel buttonPanel;
 
 
-    public SelectHeroFromListPanel(Action mainMenuAction, Action gamePanelAction) {
+    public SelectHeroFromListPanel(Action mainMenuAction, Action gamePanelAction, GameController controller) {
         // List<Hero> list = new ArrayList();
         // list.add(new Hero("Rinswind", "wizard", 1, 0, 3, 3, 4 ));
         // list.add(new Hero("Hercules", "warrior", 2, 0, 8, 3, 4 ));
@@ -98,6 +100,13 @@ class SelectHeroFromListPanel extends JPanel {
 
         // Button
         submitButton = new JButton("Start");
+
+        submitButton.addActionListener(e -> {
+            if (chosenHero != null) {
+                controller.startGame(chosenHero);
+                gamePanelAction.actionPerformed(e);
+            }
+        });
         buttonPanel.add(submitButton);
 
         JButton backButton = new JButton(mainMenuAction);

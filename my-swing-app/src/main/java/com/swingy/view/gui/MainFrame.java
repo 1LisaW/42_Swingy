@@ -28,7 +28,7 @@ class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         container = new JPanel(cardLayout);
         NavigationController navigator = new NavigationController(cardLayout, container);
-        
+
         MainMenuAction mainMenuAction = new MainMenuAction(navigator);
         GamePanelAction gamePanelAction = new GamePanelAction(navigator);
         ExitAction exitAction = new ExitAction(this);
@@ -37,7 +37,7 @@ class MainFrame extends JFrame {
         mainMenuPanel = new MainMenuPanel(exitAction);
         createHeroPanel = new CreateHeroPanel(mainMenuAction, gamePanelAction, controller);
         gamePanel = new GamePanel(controller);
-        selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction, gamePanelAction);
+        selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction, gamePanelAction, controller);
 
         // Register panels with names
         container.add(mainMenuPanel, "MENU");

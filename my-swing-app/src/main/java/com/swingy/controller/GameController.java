@@ -18,8 +18,9 @@ import com.swingy.model.ArtifactFactory;
 
 public class GameController {
     private HeroRepository heroRepository;
-    // private View view;
     private GameModel gameModel;
+
+    private BattleSimulator currentBattle = null;
 
     // Controller implementation
     public GameController() {
@@ -55,6 +56,10 @@ public class GameController {
 
     public boolean isGameOver() {
         return this.gameModel.isGameOver();
+    }
+
+    public boolean isBattleTriggered() {
+        return this.gameModel.getOpponent() != null;
     }
 
     public void moveHero(String movement) {
@@ -110,7 +115,7 @@ public class GameController {
     private void initBattleSimulator() {
         Hero hero = this.gameModel.getHero();
         Villain villain = this.gameModel.getOpponent();
-        BattleSimulator battleSimulator = new BattleSimulator(hero, villain);
+        this.currentBattle = new BattleSimulator(hero, villain);
         // this.view.displayBattleParticipants(battleSimulator);
         // int option = this.view.promptBattleFightOrRun();
         // switch(option) {
@@ -129,6 +134,30 @@ public class GameController {
         //         break;
         // }
     }
+
+    public int runFromBattle() {
+        if (this.currentBattle != null) {
+            int result = this.currentBattle.run();
+            if (result == 1) {
+                this.currentBattle = null;
+                this.gameModel.retreatHero();
+            } 
+            return result;
+        }
+        return -1; // No battle to run from
+    }
+    // public void runBattle() {
+    //     if (this.currentBattle != null) {
+    //         if (this.currentBattle.run() == 1) {
+    //             // this.view.displayOnHeroRun(true);
+    //             this.gameModel.retreatHero();
+    //         } else {
+    //             // this.view.displayOnHeroRun(false);
+    //             this.simulateBattle(this.currentBattle);
+    //         }
+    //         this.currentBattle = null;
+    //     }
+    // }
 
     public void saveGame() {
         // Logic to save the game state

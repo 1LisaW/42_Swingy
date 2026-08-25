@@ -12,6 +12,8 @@ import com.swingy.controller.GameController;
 import com.swingy.controller.NavigationController;
 import com.swingy.controller.MainMenuAction;
 import com.swingy.controller.GamePanelAction;
+import com.swingy.controller.GameOverWonPanelAction;
+import com.swingy.controller.GameOverLostPanelAction;
 import com.swingy.controller.ExitAction;
 
 class MainFrame extends JFrame {
@@ -22,6 +24,8 @@ class MainFrame extends JFrame {
     private GamePanel gamePanel;
     private CreateHeroPanel createHeroPanel;
     private SelectHeroFromListPanel selectHeroFromListPanel;
+    private GameOverPanel gameOverPanelWon;
+    private GameOverPanel gameOverPanelLost;
 
     public MainFrame(GameController controller) {
         this.controller = controller;
@@ -32,18 +36,24 @@ class MainFrame extends JFrame {
         MainMenuAction mainMenuAction = new MainMenuAction(navigator);
         GamePanelAction gamePanelAction = new GamePanelAction(navigator);
         ExitAction exitAction = new ExitAction(this);
+        GameOverWonPanelAction gameOverWonPanelAction = new GameOverWonPanelAction(navigator);
+        GameOverLostPanelAction gameOverLostPanelAction = new GameOverLostPanelAction(navigator);
 
         // Create panels
         mainMenuPanel = new MainMenuPanel(exitAction);
         createHeroPanel = new CreateHeroPanel(mainMenuAction, gamePanelAction, controller);
-        gamePanel = new GamePanel(controller);
+        gamePanel = new GamePanel(gameOverWonPanelAction, gameOverLostPanelAction, controller);
         selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction, gamePanelAction, controller);
+        gameOverPanelWon = new GameOverPanel(true, () -> showPanel("CREATE"), () -> System.exit(0));
+        gameOverPanelLost = new GameOverPanel(false, () -> showPanel("CREATE"), () -> System.exit(0));
 
         // Register panels with names
         container.add(mainMenuPanel, "MENU");
         container.add(gamePanel, "GAME");
         container.add(createHeroPanel, "CREATE");
         container.add(selectHeroFromListPanel, "SELECT");
+        container.add(gameOverPanelWon, "GAME_OVER_WON");
+        container.add(gameOverPanelLost, "GAME_OVER_LOST");
 
         add(container);
         setTitle("Swingy");
@@ -73,6 +83,10 @@ class MainFrame extends JFrame {
 
     public GamePanel getGamePanel() {
         return gamePanel;
+    }
+
+    public GameOverPanel getGameOverPanel(boolean won) {
+        return won ? gameOverPanelWon : gameOverPanelLost;
     }
 
     public SelectHeroFromListPanel getSelectHeroFromListPanel() {

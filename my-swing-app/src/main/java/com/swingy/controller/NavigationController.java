@@ -19,4 +19,12 @@ public class NavigationController {
     public void showGamePanel() {
         layout.show(cards, "GAME");
     }
+
+    public void showGameOverPanel(boolean won) {
+        if (won) {
+            layout.show(cards, "GAME_OVER_WON");
+        } else {
+            layout.show(cards, "GAME_OVER_LOST");
+        }
+    }
 }

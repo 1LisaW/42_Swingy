@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.*;
 import javax.swing.*;
@@ -11,16 +12,22 @@ import java.awt.event.ActionEvent;
 
 import com.swingy.model.GameMap;
 import com.swingy.controller.GameController;
+import com.swingy.controller.GameOverWonPanelAction;
+import com.swingy.controller.GameOverLostPanelAction;
 
 
 public class GamePanel extends JPanel {
     private static final int CELL_SIZE = 52;
     private final GameController controller;
+    private final GameOverWonPanelAction gameOverWonPanelAction;
+    private final GameOverLostPanelAction gameOverLostPanelAction;
 
     // private GameMap gameMap;
 
-    public GamePanel(GameController controller) {
+    public GamePanel(GameOverWonPanelAction gameOverWonPanelAction, GameOverLostPanelAction gameOverLostPanelAction, GameController controller) {
         this.controller = controller;
+        this.gameOverWonPanelAction = gameOverWonPanelAction;
+        this.gameOverLostPanelAction = gameOverLostPanelAction;
 
         setLayout(new BorderLayout());
 
@@ -76,9 +83,15 @@ public class GamePanel extends JPanel {
     }
 
     private void moveHero(String movement) {
-        if (controller.isGameOver())
+        if (controller.isGameOver()) {
+            gameOverWonPanelAction.actionPerformed(null);
             return;
+        }
         controller.moveHero(movement);
+        repaint();
+        if (controller.isBattleTriggered()) {
+            startBattle();
+        }
         repaint();
     }
 
@@ -185,23 +198,52 @@ public class GamePanel extends JPanel {
                         CELL_SIZE,
                         CELL_SIZE
                 );
-                 g.setColor(Color.GRAY);
-            g.setFont(new Font("Arial", Font.BOLD, 14));
+            //      g.setColor(Color.GRAY);
+            // g.setFont(new Font("Arial", Font.BOLD, 14));
 
-            // String level = String.valueOf(villainLevel);
-            String level = String.valueOf(x) + "," + String.valueOf(y); // Display position instead of level
+            // // String level = String.valueOf(villainLevel);
+            // String level = String.valueOf(x) + "," + String.valueOf(y); // Display position instead of level
 
-            FontMetrics metrics = g.getFontMetrics();
+            // FontMetrics metrics = g.getFontMetrics();
 
-            int textWidth = metrics.stringWidth(level);
-            int textHeight = metrics.getAscent();
+            // int textWidth = metrics.stringWidth(level);
+            // int textHeight = metrics.getAscent();
 
-            int textX = screenX + (CELL_SIZE - textWidth) / 2;
-            int textY = screenY + (CELL_SIZE + textHeight) / 2;
+            // int textX = screenX + (CELL_SIZE - textWidth) / 2;
+            // int textY = screenY + (CELL_SIZE + textHeight) / 2;
 
-            g.drawString(level, textX, textY);
+            // g.drawString(level, textX, textY);
             };
         };
+    }
+
+    private void startBattle() {
+        // Implement battle logic here
+        // For example, you can show a dialog or switch to a battle panel
+        Object[] options = {"Run", "Fight"};
+            JPanel panel = new JPanel();
+            int result = JOptionPane.showOptionDialog(
+                panel,
+                "You met a villain! What do you want to do?",
+                "Battle!",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+            );
+
+            if (result == 0) {
+                if (controller.runFromBattle() == 1) {
+                    JOptionPane.showMessageDialog(panel, "You successfully ran away!");
+                } else {
+                    JOptionPane.showMessageDialog(panel, "You failed to run away! Prepare to fight!");
+                    // Fight
+                }
+                // Run
+            } else if (result == 1) {
+                // Fight
+            }
     }
 
     private void drawHero(
@@ -213,8 +255,10 @@ public class GamePanel extends JPanel {
 
         GameMap gameMap = controller.getGameMap();
 
-        int row = position / gameMap.getSize();
-        int col = position % gameMap.getSize();
+        int mapSize = gameMap.getSize();
+
+        int row = position / mapSize;
+        int col = position % mapSize;
 
         int screenX = col * CELL_SIZE - cameraX;
         int screenY = row * CELL_SIZE - cameraY;
@@ -239,7 +283,6 @@ public class GamePanel extends JPanel {
         // List<Villain> villains = gameMap.getGrid();
         // GameMap gameMap = controller.getGameMap();
 
-        g.setColor(Color.RED);
         int mapSize = gameMap.getSize();
         int startX = Math.max(0, cameraX / CELL_SIZE);
         int startY = Math.max(0, cameraY / CELL_SIZE);
@@ -253,7 +296,7 @@ public class GamePanel extends JPanel {
                 mapSize,
                 (cameraY + getHeight()) / CELL_SIZE + 1
         );
-
+        System.out.println("Drawing villains from position: " + startX + "," + startY + " to " + endX + "," + endY);
 
         for (int position = 0; position < mapSize * mapSize; position++) {
             int villainLevel = gameMap.getVillainAtPos(position);
@@ -261,7 +304,6 @@ public class GamePanel extends JPanel {
             if (villainLevel == 0) {
                 continue;
             }
-            System.out.println("Villain at position: " + position + " with level: " + villainLevel);
 
             int row = position / mapSize;
             int col = position % mapSize;
@@ -269,24 +311,25 @@ public class GamePanel extends JPanel {
             int screenX  = col * CELL_SIZE - cameraX;
             int screenY = row * CELL_SIZE - cameraY;
 
-            if (screenX + CELL_SIZE < startX ||
-            screenY + CELL_SIZE < startY ||
-            screenX > endX ||
-            screenY > endY) {
+            if (col < startX ||
+            row < startY ||
+            col > endX ||
+            row > endY) {
                 continue;
             }
-
+            // System.out.println("Villain at position: " + position + " with level: " + villainLevel);
+            g.setColor(Color.RED);
             g.fillRect(
-                    screenX,
-                    screenY,
-                    CELL_SIZE,
-                    CELL_SIZE
+                    screenX+5,
+                    screenY+5,
+                    CELL_SIZE-10,
+                    CELL_SIZE-10
             );
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 14));
 
-            // String level = String.valueOf(villainLevel);
-            String level = String.valueOf(position); // Display position instead of level
+            String level = String.valueOf(villainLevel);
+            // String level = String.valueOf(position); // Display position instead of level
 
             FontMetrics metrics = g.getFontMetrics();
 

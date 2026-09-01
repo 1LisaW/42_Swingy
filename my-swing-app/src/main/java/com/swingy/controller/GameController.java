@@ -88,8 +88,15 @@ public class GameController {
         }
     }
 
-    private void simulateBattle(BattleSimulator battleSimulator) {
-        int fightResult = battleSimulator.fight();
+    public int getBattleResult() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getBattleResult();
+        }
+        return -1; // No battle result available
+    }
+
+    public void simulateBattle() {
+        int fightResult = this.currentBattle.fight();
         if (fightResult != 1)
             this.gameModel.retreatHero();
         if (fightResult == 1) {
@@ -141,10 +148,17 @@ public class GameController {
             if (result == 1) {
                 this.currentBattle = null;
                 this.gameModel.retreatHero();
-            } 
+            }
             return result;
         }
         return -1; // No battle to run from
+    }
+
+    public List<String> getBattleLog() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getLog();
+        }
+        return null; // No battle log available
     }
     // public void runBattle() {
     //     if (this.currentBattle != null) {
@@ -216,6 +230,13 @@ public class GameController {
 
     public GameMap getGameMap() {
         return this.gameModel.getMap();
+    }
+
+    public Hero getHero() {
+        if (this.gameModel != null) {
+            return this.gameModel.getHero();
+        }
+        return null;
     }
 
 }

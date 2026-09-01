@@ -22,6 +22,8 @@ public class GamePanel extends JPanel {
     private final GameOverWonPanelAction gameOverWonPanelAction;
     private final GameOverLostPanelAction gameOverLostPanelAction;
 
+    private JLabel gameLabel;
+
     // private GameMap gameMap;
 
     public GamePanel(GameOverWonPanelAction gameOverWonPanelAction, GameOverLostPanelAction gameOverLostPanelAction, GameController controller) {
@@ -31,13 +33,13 @@ public class GamePanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel game = new JLabel("Game Screen", SwingConstants.CENTER);
 
         JButton back = new JButton("Back to Menu");
 
         // back.addActionListener(e -> view.showScreen("MENU"));
 
-        add(game, BorderLayout.CENTER);
+        gameLabel = new JLabel("Game Screen", SwingConstants.CENTER);
+        add(gameLabel, BorderLayout.NORTH);
         add(back, BorderLayout.SOUTH);
 
         setFocusable(true);
@@ -83,16 +85,19 @@ public class GamePanel extends JPanel {
     }
 
     private void moveHero(String movement) {
-        if (controller.isGameOver()) {
-            gameOverWonPanelAction.actionPerformed(null);
-            return;
-        }
         controller.moveHero(movement);
         repaint();
         if (controller.isBattleTriggered()) {
             startBattle();
         }
         repaint();
+         if (controller.isGameOver() && controller.getBattleResult() == 1) {
+            gameOverWonPanelAction.actionPerformed(null);
+            // return;
+        } else if (controller.isGameOver() && controller.getBattleResult() == 0) {
+            gameOverLostPanelAction.actionPerformed(null);
+            // return;
+        }
     }
 
     // public void setMap(GameMap gameMap) {
@@ -119,8 +124,16 @@ public class GamePanel extends JPanel {
          Point camera = calculateCamera(new Point(heroPosition % size, heroPosition / size), gameMap);
         // int cameraX = heroPosition % size * CELL_SIZE - getWidth() / 2 + CELL_SIZE / 2;
         // int cameraY = heroPosition / size * CELL_SIZE - getHeight() / 2 + CELL_SIZE / 2;
-        int cameraX = camera.x;
-        int cameraY = camera.y;
+        int adjustedCameraX = Math.max(0, getWidth() / 4 - camera.x / 2);
+        int cameraX = camera.x - adjustedCameraX; // Adjust for the hero's position
+        int cameraY = camera.y - 50; // Adjust for the title label height
+
+        if (controller.getHero() != null) {
+            System.out.println("Updating game label with hero info: " + controller.getHero().getName() + " - Level: " + controller.getHero().getLevel() + ", XP: " + controller.getHero().getExperience() + "/" + controller.getHero().getMaxExperience());
+            gameLabel.setText(controller.getHero().getName() + " - Game Screen - " + controller.getHero().getLevel() + " " + controller.getHero().getExperience() + " XP/ " + controller.getHero().getMaxExperience() + " XP");
+            // JLabel game = new JLabel(controller.getHero().getName() + " - Game Screen - " + controller.getHero().getLevel() + " " + controller.getHero().getExperience() + " XP/ " + controller.getHero().getMaxExperience() + " XP" , SwingConstants.CENTER);
+            // add(game, BorderLayout.NORTH);
+        }
 
         drawBoard(g, gameMap, cameraX, cameraY);
         drawVillains(g, gameMap, cameraX, cameraY);
@@ -163,7 +176,7 @@ public class GamePanel extends JPanel {
         int cameraY
     ) {
 
-        g.setColor(Color.LIGHT_GRAY);
+        // g.setColor(Color.LIGHT_GRAY);
 
         int mapSize = gameMap.getSize();
 
@@ -217,6 +230,33 @@ public class GamePanel extends JPanel {
         };
     }
 
+    private void showBattleResultPopup(int battleResult) {
+        ImageIcon icon = null;
+        if (battleResult == 1) {
+            icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
+        } else if (battleResult == 0) {
+            icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
+        }
+        Image scaled = icon.getImage().getScaledInstance(
+            150, 150, Image.SCALE_SMOOTH
+        );
+        ImageIcon resultIcon = new ImageIcon(scaled);
+        JPanel panel = new JPanel();
+        JOptionPane.showMessageDialog(
+            panel,
+            controller.getBattleLog().stream().reduce("", (acc, line) -> acc + line + "\n"),
+            "Battle Results",
+            JOptionPane.INFORMATION_MESSAGE,
+            resultIcon
+        );
+    }
+
+    private void runBattle() {
+            controller.simulateBattle();
+            int battleResult = controller.getBattleResult();
+            showBattleResultPopup(battleResult);
+    }
+
     private void startBattle() {
         // Implement battle logic here
         // For example, you can show a dialog or switch to a battle panel
@@ -238,13 +278,17 @@ public class GamePanel extends JPanel {
                     JOptionPane.showMessageDialog(panel, "You successfully ran away!");
                 } else {
                     JOptionPane.showMessageDialog(panel, "You failed to run away! Prepare to fight!");
+                    runBattle();
                     // Fight
                 }
                 // Run
             } else if (result == 1) {
+                runBattle();
                 // Fight
             }
     }
+
+
 
     private void drawHero(
             Graphics g,

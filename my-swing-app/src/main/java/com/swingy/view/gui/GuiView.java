@@ -101,7 +101,7 @@ public class GuiView extends View {
     @Override
     public void displayChooseHeroFromList() {
         List<Hero> heroes = this.controller.getHeroes();
-        System.out.println(heroes);
+        // System.out.println(heroes);
         // this.frame.showPanel("CREATE");
         System.out.println("Opening hero selection");
         this.frame.getSelectHeroFromListPanel().updateHeroList(heroes);
@@ -161,7 +161,7 @@ public class GuiView extends View {
 
     //     @Override
     // public void onCreateHero() {
-        
+
     // }
 
     // @Override

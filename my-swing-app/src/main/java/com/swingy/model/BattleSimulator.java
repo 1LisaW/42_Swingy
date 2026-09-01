@@ -13,6 +13,8 @@ public class BattleSimulator {
     private Hero hero;
     private Villain villain;
     private List<String> log = new ArrayList<>();
+    private int battleResult = -1; // -1: not started, 0: lost, 1: won
+    private Artifact artifact = null;
 
     public BattleSimulator(Hero hero, Villain villain) {
         this.hero = hero;
@@ -70,9 +72,11 @@ public class BattleSimulator {
         }
         if (this.hero.getHitPoints() <= 0) {
             this.log.add("Hero lost the battle.");
+            this.battleResult = 0;
             return -1;
         }
         this.log.add("Hero won the battle!");
+        this.battleResult = 1;
         return 1;
     }
 
@@ -98,7 +102,12 @@ public class BattleSimulator {
     public Villain getVillain() {
         return this.villain;
     }
+
     public List<String> getLog() {
         return this.log;
+    }
+
+    public int getBattleResult() {
+        return this.battleResult;
     }
 }

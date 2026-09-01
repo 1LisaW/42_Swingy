@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import com.swingy.controller.ExitAction;
 
 public class MainMenuPanel extends JPanel {
-    private Image background;
+    // private Image background;
 
     private final JButton newGameButton = new JButton("Create new hero");
     private final JButton loadHeroesButton = new JButton("Load hero");
@@ -58,29 +58,29 @@ public class MainMenuPanel extends JPanel {
         // add(play, BorderLayout.SOUTH);
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    // @Override
+    // protected void paintComponent(Graphics g) {
+    //     super.paintComponent(g);
 
-        Graphics2D g2 = (Graphics2D) g.create();
+    //     Graphics2D g2 = (Graphics2D) g.create();
 
-        g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+    //     g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
 
-        RadialGradientPaint paint = new RadialGradientPaint(
-                getWidth() / 2f,
-                getHeight() / 2f,
-                getWidth() / 2f,
-                new float[]{0f, 1f},
-                new Color[]{
-                        new Color(255, 255, 255, 0),
-                        new Color(0, 0, 0, 180)
-                });
+    //     RadialGradientPaint paint = new RadialGradientPaint(
+    //             getWidth() / 2f,
+    //             getHeight() / 2f,
+    //             getWidth() / 2f,
+    //             new float[]{0f, 1f},
+    //             new Color[]{
+    //                     new Color(255, 255, 255, 0),
+    //                     new Color(0, 0, 0, 180)
+    //             });
 
-        g2.setPaint(paint);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+    //     g2.setPaint(paint);
+    //     g2.fillRect(0, 0, getWidth(), getHeight());
 
-        g2.dispose();
-    }
+    //     g2.dispose();
+    // }
 
     public void addNewGameListener(ActionListener listener) {
         newGameButton.addActionListener(listener);

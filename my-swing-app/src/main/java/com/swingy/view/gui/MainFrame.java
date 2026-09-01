@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import javax.swing.SwingConstants;
 
+import javax.swing.UIManager;
+
 import com.swingy.controller.GameController;
 import com.swingy.controller.NavigationController;
 import com.swingy.controller.MainMenuAction;
@@ -28,6 +30,13 @@ class MainFrame extends JFrame {
     private GameOverPanel gameOverPanelLost;
 
     public MainFrame(GameController controller) {
+        UIManager.put("OptionPane.background", Color.DARK_GRAY);
+        UIManager.put("Panel.background", Color.DARK_GRAY);
+        UIManager.put("Panel.foreground", Color.WHITE);
+        UIManager.put("Label.foreground", Color.WHITE);
+        UIManager.put("OptionPane.messageForeground", Color.WHITE);
+
+
         this.controller = controller;
         cardLayout = new CardLayout();
         container = new JPanel(cardLayout);
@@ -66,6 +75,7 @@ class MainFrame extends JFrame {
 
         mainMenuPanel.addNewGameListener(e -> showPanel("CREATE"));
         mainMenuPanel.addLoadHeroesButtonListener(e -> showPanel("SELECT"));
+
 
     }
 

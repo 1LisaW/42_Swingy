@@ -10,13 +10,17 @@ import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Artifact;
 import com.swingy.controller.GameController;
+import com.swingy.view.ViewManager;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 
 public class GuiView extends View {
@@ -25,10 +29,11 @@ public class GuiView extends View {
     // private CardLayout cardLayout;
 
 
-    public GuiView(GameController controller) {
-        super(controller);
+    public GuiView(GameController controller, ViewManager viewManager) {
+        super(controller, viewManager);
         frame = new MainFrame(controller);
         frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
+        setupKeyBindings();
     }
 
     @Override
@@ -168,9 +173,42 @@ public class GuiView extends View {
     // public void onChooseHero() {
 
     // }
-        @Override
+    @Override
     protected HeroCredentials createHeroCredentials() {
         HeroCredentials heroCredentials = new HeroCredentials();
         return heroCredentials;
+    }
+
+    private void setupKeyBindings() {
+        JRootPane root = frame.getRootPane();
+
+        KeyStroke ctrlC = KeyStroke.getKeyStroke(
+                KeyEvent.VK_C,
+                InputEvent.CTRL_DOWN_MASK
+        );
+
+        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(ctrlC, "switchToConsole");
+
+        root.getActionMap()
+            .put("switchToConsole", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    viewManager.switchToConsole();
+                }
+            });
+    }
+
+     @Override
+    public void show() {
+        SwingUtilities.invokeLater(() -> {
+            frame.setVisible(true);
+            frame.requestFocus();
+        });
+    }
+
+    @Override
+    public void hide() {
+        SwingUtilities.invokeLater(() -> frame.setVisible(false));
     }
 }

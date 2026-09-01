@@ -11,6 +11,7 @@ import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Artifact;
 import com.swingy.controller.GameController;
+import com.swingy.view.ViewManager;
 
 
 public class ConsoleView extends View {
@@ -20,8 +21,20 @@ public class ConsoleView extends View {
     static final String ANSI_RED = "\u001B[31m";
     static final String ANSI_GREEN = "\u001B[32m";
 
-    public ConsoleView(GameController controller) {
-        super(controller);
+    private Thread consoleThread;
+    private boolean isRunning = false;
+
+    public ConsoleView(GameController controller, ViewManager viewManager) {
+        super(controller, viewManager);
+    }
+
+    private boolean checkOnSwitchToGui(String input) {
+        System.out.println("Input received: " + input);
+        if (input.equalsIgnoreCase("gui")) {
+            viewManager.switchToSwing();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -166,17 +179,20 @@ public class ConsoleView extends View {
 
     public int getUserIntInputInRange(int maxNum) {
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        while (isRunning) {
             System.out.print("Please enter your choice: ");
-            while (!scanner.hasNextInt()) {
-                scanner.nextLine();
+            String input = scanner.nextLine();
+            while (!input.matches("\\d+")) {
+                checkOnSwitchToGui(input.trim());
+                input = scanner.nextLine();
                 this.displayOnIncorrectInput();
             }
-            int choice = scanner.nextInt();
+            int choice = Integer.parseInt(input);
             if (choice > 0 && choice <= maxNum)
                 return choice;
             this.displayOnIncorrectInput();
         }
+        return -1; // Return -1 if the loop is exited
     }
 
 
@@ -234,7 +250,7 @@ public class ConsoleView extends View {
     public String promptHeroMove() {
         Scanner scanner = new Scanner(System.in);
         displayTextAsTyped("Make a move (W,A,S,D) :", 50, ANSI_BLUE);
-        while (true) {
+        while (isRunning) {
             String move = scanner.nextLine().toLowerCase().trim();
             switch (move) {
                 case "w":
@@ -248,7 +264,7 @@ public class ConsoleView extends View {
             }
             this.displayOnIncorrectInput();
         }
-
+        return null; // Return null if the loop is exited
     }
 
     public void displayArtifact(Artifact artifact) {
@@ -319,7 +335,7 @@ public class ConsoleView extends View {
                 startGame(currentHero);
                 break;
             case 3:
-                this.controller.exitGame();
+                // this.controller.exitGame();
                 break;
             default:
                 displayOnIncorrectInput();
@@ -374,5 +390,31 @@ public class ConsoleView extends View {
                 break;
         }
         return heroCredentials;
+    }
+
+    private void runConsole() {
+        System.out.println("Console view active");
+        String gamePhase = this.controller.getGamePhase();
+        switch (gamePhase) {
+            case "NO_GAME":
+                mainMenu();
+                break;
+        }
+    }
+    @Override
+    public void show() {
+        // Logic to show the console view
+        // mainMenu();
+        isRunning = true;
+        consoleThread = new Thread(this::runConsole);
+        consoleThread.start();
+    }
+
+    @Override
+    public void hide() {
+        // Logic to hide the console view
+        System.out.println("Console view hidden.");
+        isRunning = false;
+        consoleThread.interrupt();
     }
 }

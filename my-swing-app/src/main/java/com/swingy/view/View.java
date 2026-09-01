@@ -8,13 +8,16 @@ import com.swingy.model.BattleSimulator;
 import com.swingy.model.Artifact;
 import com.swingy.model.HeroCredentials;
 import com.swingy.controller.GameController;
+import com.swingy.view.ViewManager;
 
 public abstract class View {
 
     protected final GameController controller;
+    protected final ViewManager viewManager;
 
-    public View(GameController controller) {
+    public View(GameController controller, ViewManager viewManager) {
         this.controller = controller;
+        this.viewManager = viewManager;
     }
 
     public abstract void start();
@@ -62,7 +65,9 @@ public abstract class View {
 
     protected abstract HeroCredentials createHeroCredentials();
 
+    public abstract void show();
 
+    public abstract void hide();
     // public abstract void onCreateHero();
 
     // public abstract void onChooseHero();

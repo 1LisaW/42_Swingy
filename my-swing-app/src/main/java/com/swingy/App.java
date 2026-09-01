@@ -9,6 +9,9 @@ import com.swingy.view.console.ConsoleView;
 import com.swingy.view.gui.GuiView;
 import com.swingy.model.GameModel;
 
+import com.swingy.view.ViewManager;
+
+
 
 public class App
 {
@@ -23,16 +26,19 @@ public class App
         GameController gameController = new GameController();
         gameController.loadHeroesFromFile("heroes.txt");
 
-        View view = null;
+        // View view = null;
+        ViewManager viewManager = new ViewManager(gameController);
 
         if (args[0].equals("console")) {
-            view = new ConsoleView(gameController);
+            viewManager.switchToConsole();
+            // view = new ConsoleView(gameController);
 
         } else {
-            view = new GuiView(gameController);
+            viewManager.switchToSwing();
+            // view = new GuiView(gameController);
             // view.displayChooseHeroFromList(gameController.getHeroes());
-            SwingUtilities.invokeLater(view::start);
+            // SwingUtilities.invokeLater(view::start);
         }
-        view.mainMenu();
+        // view.mainMenu();
     }
 }

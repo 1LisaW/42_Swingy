@@ -21,6 +21,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+
 
 
 public class GuiView extends View {
@@ -33,7 +35,8 @@ public class GuiView extends View {
         super(controller, viewManager);
         frame = new MainFrame(controller);
         frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
-        setupKeyBindings();
+        // setupKeyBindings();
+        setupGlobalKeyBindings();
     }
 
     @Override
@@ -179,27 +182,46 @@ public class GuiView extends View {
         return heroCredentials;
     }
 
-    private void setupKeyBindings() {
-        JRootPane root = frame.getRootPane();
+    // private void setupKeyBindings() {
+    //     JRootPane root = frame.getRootPane();
 
-        KeyStroke ctrlC = KeyStroke.getKeyStroke(
-                KeyEvent.VK_C,
-                InputEvent.CTRL_DOWN_MASK
-        );
+    //     KeyStroke ctrlC = KeyStroke.getKeyStroke(
+    //             KeyEvent.VK_C,
+    //             InputEvent.CTRL_DOWN_MASK
+    //     );
 
-        root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-            .put(ctrlC, "switchToConsole");
+    //     root.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    //         .put(ctrlC, "switchToConsole");
 
-        root.getActionMap()
-            .put("switchToConsole", new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    viewManager.switchToConsole();
-                }
-            });
+    //     root.getActionMap()
+    //         .put("switchToConsole", new AbstractAction() {
+    //             @Override
+    //             public void actionPerformed(ActionEvent e) {
+    //                 viewManager.switchToConsole();
+    //             }
+    //         });
+    // }
+    private void setupGlobalKeyBindings() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+        .addKeyEventDispatcher(e -> {
+            if (e.getID() != KeyEvent.KEY_PRESSED
+                    || e.getKeyCode() != KeyEvent.VK_C
+                    || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
+                return false;
+            }
+
+            Component focused = e.getComponent();
+
+            if (focused instanceof JTextComponent) {
+                return false;
+            }
+
+            viewManager.switchToConsole();
+            return true;
+        });
     }
 
-     @Override
+    @Override
     public void show() {
         SwingUtilities.invokeLater(() -> {
             switch(this.controller.getGamePhase()) {
@@ -224,7 +246,6 @@ public class GuiView extends View {
                     break;
                 case BATTLE_RESULT:
                     frame.showPanel("GAME");
-                    frame.showGamePanelPopup();
                     break;
                 case BATTLE_ARTIFACT:
                     frame.showPanel("GAME");

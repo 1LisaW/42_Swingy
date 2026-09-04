@@ -8,6 +8,8 @@ import java.awt.*;
 
 import com.swingy.model.Hero;
 import com.swingy.controller.GameController;
+import com.swingy.controller.Phases;
+
 
 
 class SelectHeroFromListPanel extends JPanel {
@@ -103,6 +105,7 @@ class SelectHeroFromListPanel extends JPanel {
 
         submitButton.addActionListener(e -> {
             if (chosenHero != null) {
+                controller.setGamePhase(Phases.GAMEPLAY);
                 controller.startGame(chosenHero);
                 gamePanelAction.actionPerformed(e);
             }

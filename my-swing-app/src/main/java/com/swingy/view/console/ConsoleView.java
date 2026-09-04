@@ -331,6 +331,8 @@ public class ConsoleView extends View {
         List<Hero> heroes = this.controller.getHeroes();
         displayChooseHeroFromList();
         int choice = promptChooseHeroFromList(heroes.size());
+        if (!isRunning)
+            return;
         Hero currentHero = heroes.get(choice - 1);
         displayChooseHeroFromListStatus(currentHero);
         controller.setGamePhase(Phases.GAMEPLAY);
@@ -412,6 +414,8 @@ public class ConsoleView extends View {
         while (!this.controller.isGameOver()) {
             displayMap(this.controller.getGameMap());
             String move = promptHeroMove();
+            if (!isRunning)
+                return;
             this.controller.moveHero(move);
         }
     }

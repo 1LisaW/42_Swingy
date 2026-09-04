@@ -62,7 +62,7 @@ public class GuiView extends View {
     }
 
     @Override
-    public void displayBattleLog(BattleSimulator battleSimulator) {
+    public void displayBattleLog(List<String> log) {
 
     }
 
@@ -202,6 +202,40 @@ public class GuiView extends View {
      @Override
     public void show() {
         SwingUtilities.invokeLater(() -> {
+            switch(this.controller.getGamePhase()) {
+                case MAIN_MENU:
+                    frame.showPanel("MENU");
+                    break;
+                case HERO_CREATION:
+                    frame.showPanel("CREATE");
+                    break;
+                case HERO_SELECTION:
+                    frame.showPanel("SELECT");
+                    break;
+                case GAMEPLAY:
+                    frame.showPanel("GAME");
+                    break;
+                case BATTLE_RUN_OR_FIGHT:
+                    frame.showPanel("GAME");
+                    break;
+                case BATTLE_RUN_RESULT:
+                    frame.showPanel("GAME");
+                    frame.showGamePanelPopup();
+                    break;
+                case BATTLE_RESULT:
+                    frame.showPanel("GAME");
+                    frame.showGamePanelPopup();
+                    break;
+                case BATTLE_ARTIFACT:
+                    frame.showPanel("GAME");
+                    frame.showGamePanelPopup();
+                    break;
+                // case GAME_OVER:
+                //     frame.showPanel("GAME_OVER");
+                //     break;
+                default:
+                    frame.showPanel("MENU");
+            }
             frame.setVisible(true);
             frame.requestFocus();
         });

@@ -3,7 +3,6 @@ package com.swingy.controller;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
-
 public class MainMenuAction extends AbstractAction {
     private final NavigationController navigation;
 

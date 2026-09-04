@@ -13,7 +13,7 @@ public class BattleSimulator {
     private Hero hero;
     private Villain villain;
     private List<String> log = new ArrayList<>();
-    private int battleResult = -1; // -1: not started, 0: lost, 1: won
+    private BattleResult battleResult = BattleResult.NOT_STARTED;
     private Artifact artifact = null;
 
     public BattleSimulator(Hero hero, Villain villain) {
@@ -56,6 +56,7 @@ public class BattleSimulator {
         int damageFromVillain = this.villain.getAttack() - this.hero.getDefense();
         if (damageFromVillain <= 0 && damageFromHero <= 0) {
             this.log.add("This villain is too tough for you. Just as you are for him. Come back when you are stronger.");
+            battleResult = BattleResult.DRAW;
             return 0;
         }
         while(this.hero.getHitPoints() > 0 && this.villain.getHitPoints() > 0) {
@@ -72,11 +73,11 @@ public class BattleSimulator {
         }
         if (this.hero.getHitPoints() <= 0) {
             this.log.add("Hero lost the battle.");
-            this.battleResult = 0;
+            battleResult = BattleResult.LOSE;
             return -1;
         }
         this.log.add("Hero won the battle!");
-        this.battleResult = 1;
+        battleResult = BattleResult.WIN;
         return 1;
     }
 
@@ -107,7 +108,7 @@ public class BattleSimulator {
         return this.log;
     }
 
-    public int getBattleResult() {
+    public BattleResult getBattleResult() {
         return this.battleResult;
     }
 }

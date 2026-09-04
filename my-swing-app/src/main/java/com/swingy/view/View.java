@@ -28,7 +28,7 @@ public abstract class View {
 
     public abstract void displayBattleParticipants(BattleSimulator battleSimulator);
     public abstract int promptBattleFightOrRun();
-    public abstract void displayBattleLog(BattleSimulator battleSimulator);
+    public abstract void displayBattleLog(List<String> log);
 
 
     public abstract void displayMainMenu();

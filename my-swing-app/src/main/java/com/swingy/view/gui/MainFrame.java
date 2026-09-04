@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
 import com.swingy.controller.GameController;
+import com.swingy.controller.Phases;
 import com.swingy.controller.NavigationController;
 import com.swingy.controller.MainMenuAction;
 import com.swingy.controller.GamePanelAction;
@@ -73,14 +74,24 @@ class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         // mainMenuPanel = new MainMenuPanel();
 
-        mainMenuPanel.addNewGameListener(e -> showPanel("CREATE"));
-        mainMenuPanel.addLoadHeroesButtonListener(e -> showPanel("SELECT"));
+        mainMenuPanel.addNewGameListener(e -> {
+            showPanel("CREATE");
+            this.controller.setGamePhase(Phases.HERO_CREATION);
+        });
+        mainMenuPanel.addLoadHeroesButtonListener(e -> {
+            showPanel("SELECT");
+            this.controller.setGamePhase(Phases.HERO_SELECTION);
+        });
 
 
     }
 
     public void showPanel(String name) {
         cardLayout.show(container, name);
+    }
+
+    public void showGamePanelPopup() {
+        gamePanel.showPopup(this.controller.getGamePhase());
     }
 
     public MainMenuPanel getMainMenuPanel() {

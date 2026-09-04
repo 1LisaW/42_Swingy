@@ -11,6 +11,7 @@ import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Artifact;
 import com.swingy.controller.GameController;
+import com.swingy.controller.Phases;
 import com.swingy.view.ViewManager;
 
 
@@ -75,8 +76,7 @@ public class ConsoleView extends View {
     }
 
     @Override
-    public void displayBattleLog(BattleSimulator battleSimulator) {
-        List<String> log = battleSimulator.getLog();
+    public void displayBattleLog(List<String> log) {
         displayTextAsTyped("BATTLE LOG :", 50, ANSI_GREEN);
         for (String record:log) {
             displayTextAsTyped("    "  + record, 50, ANSI_GREEN);
@@ -133,6 +133,8 @@ public class ConsoleView extends View {
     //  MainMenu
     @Override
     public void displayMainMenu() {
+        if (!isRunning)
+            return;
         displayTextAsTyped("WELCOME TO SWINGY!", 50, ANSI_BLUE);
         System.out.println();
         displayTextAsTyped("Please choose an option:", 50, ANSI_BLUE);
@@ -148,6 +150,8 @@ public class ConsoleView extends View {
 
     @Override
     public void displayMainMenuStatus(int choice) {
+        if (!isRunning)
+            return;
         switch (choice) {
             case 1:
                 displayTextAsTyped("Creating new hero ...", 50, ANSI_GREEN);
@@ -182,8 +186,9 @@ public class ConsoleView extends View {
         while (isRunning) {
             System.out.print("Please enter your choice: ");
             String input = scanner.nextLine();
-            while (!input.matches("\\d+")) {
-                checkOnSwitchToGui(input.trim());
+            while (!input.matches("\\d+") ) {
+                if (checkOnSwitchToGui(input.trim()))
+                    return -1;
                 input = scanner.nextLine();
                 this.displayOnIncorrectInput();
             }
@@ -252,6 +257,8 @@ public class ConsoleView extends View {
         displayTextAsTyped("Make a move (W,A,S,D) :", 50, ANSI_BLUE);
         while (isRunning) {
             String move = scanner.nextLine().toLowerCase().trim();
+                if (checkOnSwitchToGui(move))
+                    return null;
             switch (move) {
                 case "w":
                     return "up";
@@ -313,26 +320,41 @@ public class ConsoleView extends View {
             displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
     }
 
+    private void toCreateHero() {
+        Hero currentHero = this.controller.createHero(createHeroCredentials());
+        displayHeroStats(currentHero);
+        controller.setGamePhase(Phases.GAMEPLAY);
+        startGame(currentHero);
+    }
+
+    private void toSelectHero() {
+        List<Hero> heroes = this.controller.getHeroes();
+        displayChooseHeroFromList();
+        int choice = promptChooseHeroFromList(heroes.size());
+        Hero currentHero = heroes.get(choice - 1);
+        displayChooseHeroFromListStatus(currentHero);
+        controller.setGamePhase(Phases.GAMEPLAY);
+        startGame(currentHero);
+    }
+
     @Override
     public void mainMenu() {
+        this.controller.setGamePhase(Phases.MAIN_MENU);
         displayMainMenu();
         int chosenOption = promptMainMenu();
+        if (!isRunning)
+            return;
         displayMainMenuStatus(chosenOption);
         Hero currentHero = null;
         switch (chosenOption) {
             case 1:
-                currentHero = this.controller.createHero(createHeroCredentials());
-                displayHeroStats(currentHero);
-                startGame(currentHero);
+                this.controller.setGamePhase(Phases.HERO_CREATION);
+                toCreateHero();
                 // Logic to create a new hero
                 break;
             case 2:
-                List<Hero> heroes = this.controller.getHeroes();
-                displayChooseHeroFromList();
-                int choice = promptChooseHeroFromList(heroes.size());
-                currentHero = heroes.get(choice - 1);
-                displayChooseHeroFromListStatus(currentHero);
-                startGame(currentHero);
+                this.controller.setGamePhase(Phases.HERO_SELECTION);
+                toSelectHero();
                 break;
             case 3:
                 // this.controller.exitGame();
@@ -347,13 +369,54 @@ public class ConsoleView extends View {
     @Override
     public void startGame(Hero hero) {
         this.controller.startGame(hero);
+        toPlayGame();
+
+    }
+
+    private void runBattle() {
+        // this.controller.simulateBattle();
+        displayBattleLog(this.controller.getBattleLog());
+        // showBattleResultPopup(battleResult);
+    }
+
+    private void toBattleRunOrFight() {
+        int choice = promptBattleFightOrRun();
+        switch (choice) {
+            case 1:
+                runBattle();
+                this.controller.setGamePhase(Phases.BATTLE_RESULT);
+
+                runBattle();
+                break;
+            case 2:
+                this.controller.setGamePhase(Phases.BATTLE_RUN_RESULT);
+                int runResult = this.controller.runFromBattle();
+                if (runResult == 1) {
+                    toBattleRunResult(true);
+                    runBattle();
+                    // toPlayGame();
+                } else if (runResult == 0) {
+                    toBattleRunResult(false);
+                }
+                break;
+        }
+        // displayBattleParticipants();
+    }
+
+    private void toBattleRunResult(boolean isSuccessful) {
+        displayOnHeroRun(isSuccessful);
+    }
+
+
+    private void toPlayGame() {
         while (!this.controller.isGameOver()) {
             displayMap(this.controller.getGameMap());
             String move = promptHeroMove();
             this.controller.moveHero(move);
         }
-
     }
+
+
     // @Override
     // public void onCreateHero() {
 
@@ -394,11 +457,22 @@ public class ConsoleView extends View {
 
     private void runConsole() {
         System.out.println("Console view active");
-        String gamePhase = this.controller.getGamePhase();
-        switch (gamePhase) {
-            case "NO_GAME":
+        Phases gamePhase = this.controller.getGamePhase();
+        switch (this.controller.getGamePhase()) {
+            case MAIN_MENU:
                 mainMenu();
                 break;
+             case HERO_CREATION:
+                toCreateHero();
+                break;
+            case HERO_SELECTION:
+                toSelectHero();
+                break;
+             case GAMEPLAY:
+                toPlayGame();
+                break;
+            default:
+                mainMenu();
         }
     }
     @Override
@@ -415,6 +489,7 @@ public class ConsoleView extends View {
         // Logic to hide the console view
         System.out.println("Console view hidden.");
         isRunning = false;
-        consoleThread.interrupt();
+        if (consoleThread != Thread.currentThread())
+            consoleThread.interrupt();
     }
 }

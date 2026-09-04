@@ -11,9 +11,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import com.swingy.model.GameMap;
+import com.swingy.model.BattleResult;
 import com.swingy.controller.GameController;
 import com.swingy.controller.GameOverWonPanelAction;
 import com.swingy.controller.GameOverLostPanelAction;
+import com.swingy.controller.Phases;
 
 
 public class GamePanel extends JPanel {
@@ -91,10 +93,10 @@ public class GamePanel extends JPanel {
             startBattle();
         }
         repaint();
-         if (controller.isGameOver() && controller.getBattleResult() == 1) {
+         if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
             gameOverWonPanelAction.actionPerformed(null);
             // return;
-        } else if (controller.isGameOver() && controller.getBattleResult() == 0) {
+        } else if (controller.isGameOver() && controller.getBattleResult() == BattleResult.LOSE) {
             gameOverLostPanelAction.actionPerformed(null);
             // return;
         }
@@ -230,11 +232,12 @@ public class GamePanel extends JPanel {
         };
     }
 
-    private void showBattleResultPopup(int battleResult) {
+    private void showBattleResultPopup() {
         ImageIcon icon = null;
-        if (battleResult == 1) {
+        BattleResult battleResult = controller.getBattleResult();
+        if (battleResult == BattleResult.WIN) {
             icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
-        } else if (battleResult == 0) {
+        } else if (battleResult == BattleResult.LOSE) {
             icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
         }
         Image scaled = icon.getImage().getScaledInstance(
@@ -253,8 +256,8 @@ public class GamePanel extends JPanel {
 
     private void runBattle() {
             controller.simulateBattle();
-            int battleResult = controller.getBattleResult();
-            showBattleResultPopup(battleResult);
+            BattleResult battleResult = controller.getBattleResult();
+            showBattleResultPopup();
     }
 
     private void startBattle() {
@@ -274,18 +277,23 @@ public class GamePanel extends JPanel {
             );
 
             if (result == 0) {
-                if (controller.runFromBattle() == 1) {
-                    JOptionPane.showMessageDialog(panel, "You successfully ran away!");
-                } else {
-                    JOptionPane.showMessageDialog(panel, "You failed to run away! Prepare to fight!");
-                    runBattle();
-                    // Fight
-                }
+                showBattleRunResultPopup();
                 // Run
             } else if (result == 1) {
                 runBattle();
                 // Fight
             }
+    }
+
+    private void showBattleRunResultPopup() {
+        JPanel panel = new JPanel();
+        if (controller.runFromBattle() == 1) {
+            JOptionPane.showMessageDialog(panel, "You successfully ran away!");
+        } else {
+            JOptionPane.showMessageDialog(panel, "You failed to run away! Prepare to fight!");
+            runBattle();
+            // Fight
+        }
     }
 
 
@@ -384,6 +392,14 @@ public class GamePanel extends JPanel {
             int textY = screenY + (CELL_SIZE + textHeight) / 2;
 
             g.drawString(level, textX, textY);
+        }
+    }
+    public void showPopup(Phases phase) {
+        if (phase == Phases.BATTLE_RUN_OR_FIGHT) {
+            startBattle();
+        }
+        if (phase == Phases.BATTLE_RUN_RESULT) {
+            showBattleRunResultPopup();
         }
     }
 }

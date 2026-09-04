@@ -14,6 +14,7 @@ import com.swingy.model.BattleSimulator;
 import com.swingy.model.Villain;
 import com.swingy.model.Artifact;
 import com.swingy.model.ArtifactFactory;
+import com.swingy.model.BattleResult;
 
 
 public class GameController {
@@ -21,6 +22,8 @@ public class GameController {
     private GameModel gameModel;
 
     private BattleSimulator currentBattle = null;
+
+    private Phases currentPhase = Phases.MAIN_MENU;
 
     // Controller implementation
     public GameController() {
@@ -50,8 +53,10 @@ public class GameController {
 
     public void moveHero(String movement) {
         this.gameModel.moveHero(movement);
-        if (this.gameModel.getOpponent() != null)
+        if (this.gameModel.getOpponent() != null) {
             this.initBattleSimulator();
+            this.currentPhase = Phases.BATTLE_RUN_OR_FIGHT;
+        }
     }
 
     private void gameEnd() {
@@ -90,11 +95,11 @@ public class GameController {
         }
     }
 
-    public int getBattleResult() {
+    public BattleResult getBattleResult() {
         if (this.currentBattle != null) {
             return this.currentBattle.getBattleResult();
         }
-        return -1; // No battle in progress
+        return BattleResult.NOT_STARTED; // No battle in progress
     }
 
     public List<String> getBattleLog() {
@@ -116,7 +121,7 @@ public class GameController {
             if (result == 1) {
                 this.currentBattle = null;
                 this.gameModel.retreatHero();
-            } 
+            }
             return result;
         }
         return -1; // No battle to run from
@@ -153,14 +158,12 @@ public class GameController {
         return this.gameModel.getHero();
     }
 
-    public String getGamePhase() {
-        if (this.gameModel == null) {
-            return "NO_GAME";
-        } else if (this.currentBattle != null) {
-            return "BATTLE";
-        } else {
-            return "EXPLORATION";
-        }
+    public Phases getGamePhase() {
+        return this.currentPhase;
+    }
+
+    public void setGamePhase(Phases phase) {
+        this.currentPhase = phase;
     }
 
 }

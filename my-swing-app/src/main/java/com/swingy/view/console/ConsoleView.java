@@ -9,6 +9,7 @@ import com.swingy.model.HeroCredentials;
 import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
+import com.swingy.model.BattleResult;
 import com.swingy.model.Artifact;
 import com.swingy.controller.GameController;
 import com.swingy.controller.Phases;
@@ -58,7 +59,7 @@ public class ConsoleView extends View {
         Hero hero = battleSimulator.getHero();
         Villain villain = battleSimulator.getVillain();
         System.out.println("╔════════════ HERO vs Villain ═══════════╗");
-        System.out.printf ("║ HP: %3s+%-2s    %3s %n",
+        System.out.printf ("║ HP:  %3s+%-2s    %3s %n",
                 ANSI_GREEN + hero.getBaseHitPoints(), hero.getBonusHitPoints() + ANSI_RESET, ANSI_RED + villain.getHitPoints() + ANSI_RESET);
         System.out.printf ("║ ATK: %2s+%-2s    %3s %n",
                 ANSI_GREEN + hero.getBaseAttack(), hero.getBonusAttack() + ANSI_RESET, ANSI_RED + villain.getAttack() + ANSI_RESET);
@@ -142,6 +143,7 @@ public class ConsoleView extends View {
         displayTextAsTyped("    2. Load Hero", 50, ANSI_YELLOW);
         displayTextAsTyped("    3. Exit", 50, ANSI_YELLOW);
     }
+
 
     @Override
     public int promptMainMenu() {
@@ -372,22 +374,56 @@ public class ConsoleView extends View {
     public void startGame(Hero hero) {
         this.controller.startGame(hero);
         toPlayGame();
-
     }
 
     private void runBattle() {
         // this.controller.simulateBattle();
+        controller.runBattle();
         displayBattleLog(this.controller.getBattleLog());
+        toArtifactPhase();
+         //   this.controller.proceedToNextLevel();
+       //     toPlayGame();
+        // } else if (this.controller.isGameOver()) {
+        //     toGameOver(false);
+        // } else {
+        //     toPlayGame();
+        // }
         // showBattleResultPopup(battleResult);
     }
 
+    private void toArtifactPhase() {
+        this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
+        BattleResult battleResult = this.controller.getBattleResult();
+        if (battleResult == BattleResult.WIN) {
+            Artifact artifact = this.controller.getCurrentBattleSimulator().generateArtifact();
+            if (artifact != null) {
+                displayUseArtifact(artifact);
+                if (promptUseArtifact() == 1) {
+                    this.controller.updateHeroArtifact();
+                }
+            }
+        }
+        else if (battleResult == BattleResult.LOSE) {
+            toGameOver(false);
+        }
+        else if (battleResult == BattleResult.DRAW) {
+            displayTextAsTyped("Battle ended in a draw.", 50, ANSI_YELLOW);
+            toGameOver(false);
+        }
+    }
+
+    private void toGameOver(boolean isWin) {
+        this.controller.setGamePhase(Phases.GAME_OVER);
+        displayGameResult(isWin);
+    }
+
     private void toBattleRunOrFight() {
+        displayBattleParticipants(this.controller.getCurrentBattleSimulator());
         int choice = promptBattleFightOrRun();
         switch (choice) {
             case 1:
-                runBattle();
+                // runBattle();
                 this.controller.setGamePhase(Phases.BATTLE_RESULT);
-
                 runBattle();
                 break;
             case 2:
@@ -395,10 +431,10 @@ public class ConsoleView extends View {
                 int runResult = this.controller.runFromBattle();
                 if (runResult == 1) {
                     toBattleRunResult(true);
-                    runBattle();
                     // toPlayGame();
-                } else if (runResult == 0) {
+                } else {//if (runResult == 0) {
                     toBattleRunResult(false);
+                    runBattle();
                 }
                 break;
         }
@@ -409,6 +445,48 @@ public class ConsoleView extends View {
         displayOnHeroRun(isSuccessful);
     }
 
+    private void moveHero(String move) {
+        this.controller.moveHero(move);
+        if (controller.isBattleTriggered()) {
+            toBattleRunOrFight();
+        }
+        if (this.controller.levelCleared()) {
+            displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
+            onLevelCleared();
+        }
+    }
+
+    private void onLevelCleared() {
+        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
+        displayTextAsTyped("    1. Save hero and proceed", 50, ANSI_YELLOW);
+        displayTextAsTyped("    2. Proceed to next level without saving", 50, ANSI_YELLOW);
+        displayTextAsTyped("    3. To main menu", 50, ANSI_YELLOW);
+        displayTextAsTyped("    4. Quit game", 50, ANSI_YELLOW);
+
+        int choice = getUserIntInputInRange(4);
+        Hero hero = this.controller.getHero();
+        switch (choice) {
+            case 1:
+                //this.controller.saveHero();
+                this.controller.startGame(hero);
+                break;
+            case 2:
+                this.controller.startGame(hero);
+                break;
+            case 3:
+                mainMenu();
+                break;
+            case 4:
+                hide();
+                break;
+            default:
+                displayOnIncorrectInput();
+                onLevelCleared(); // Recursively call toMainMenu() for invalid input
+                break;
+        }
+        //this.controller.proceedToNextLevel();
+    }
+
 
     private void toPlayGame() {
         while (!this.controller.isGameOver()) {
@@ -416,7 +494,7 @@ public class ConsoleView extends View {
             String move = promptHeroMove();
             if (!isRunning)
                 return;
-            this.controller.moveHero(move);
+            moveHero(move);
         }
     }
 

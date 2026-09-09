@@ -32,7 +32,9 @@ public class GameModel {
         );
     }
 
-
+    public boolean levelCleared() {
+        return this.gameMap.isHeroEscaped() && this.hero.isAlive();
+    }
 
     public void moveHero(String movement) {
         this.gameMap.moveHero(movement);

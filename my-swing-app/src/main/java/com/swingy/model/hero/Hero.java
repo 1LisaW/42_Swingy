@@ -80,6 +80,10 @@ public class Hero {
         return hitPoints;
     }
 
+    public boolean isAlive() {
+        return this.hitPoints > 0;
+    }
+
     public void setHitPoints(int hitPoints) {
         this.hitPoints = hitPoints;
     }

@@ -93,7 +93,14 @@ public class BattleSimulator {
 
     public Artifact generateArtifact() {
         ArtifactFactory artifactFactory = ArtifactFactory.getInstance();
-        return (artifactFactory.createArtifact(this.villain.getAttack()));
+        artifact = artifactFactory.createArtifact(this.villain.getAttack());
+        return (artifact);
+    }
+
+    public void updateHeroArtifact() {
+        if (artifact != null) {
+            this.hero.addArtifact(artifact);
+        }
     }
 
     public Hero getHero() {

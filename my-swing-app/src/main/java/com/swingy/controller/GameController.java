@@ -33,6 +33,7 @@ public class GameController {
 
     public void startGame(Hero hero) {
         // Logic to start the game
+        currentPhase = Phases.GAMEPLAY;
         this.gameModel = new GameModel(hero);
         System.out.println("Game started with hero: " + hero.getName() + ", class: ");
     }
@@ -40,7 +41,10 @@ public class GameController {
     public void handleMovement() {
         if (this.gameModel.isGameOver())
             return ;
+    }
 
+    public boolean levelCleared() {
+        return this.gameModel.levelCleared();
     }
 
     public boolean isGameOver() {
@@ -110,6 +114,7 @@ public class GameController {
     }
 
     private void initBattleSimulator() {
+        System.out.println("Battle triggered (NEW CREATED)!");
         Hero hero = this.gameModel.getHero();
         Villain villain = this.gameModel.getOpponent();
         this.currentBattle = new BattleSimulator(hero, villain);
@@ -125,6 +130,12 @@ public class GameController {
             return result;
         }
         return -1; // No battle to run from
+    }
+
+    public void updateHeroArtifact() {
+        if (this.currentBattle != null) {
+            this.currentBattle.updateHeroArtifact();
+        }
     }
 
     public void loadHeroesFromFile(String filePath) {
@@ -164,6 +175,10 @@ public class GameController {
 
     public void setGamePhase(Phases phase) {
         this.currentPhase = phase;
+    }
+
+    public BattleSimulator getCurrentBattleSimulator() {
+        return this.currentBattle;
     }
 
 }

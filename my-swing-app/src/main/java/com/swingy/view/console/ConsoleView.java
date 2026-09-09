@@ -475,6 +475,18 @@ public class ConsoleView extends View {
              case GAMEPLAY:
                 toPlayGame();
                 break;
+            case BATTLE_RUN_OR_FIGHT:
+                toPlayGame();
+                break;
+            case BATTLE_RUN_RESULT:
+                toPlayGame();
+                break;
+            case BATTLE_RESULT:
+                toPlayGame();
+                break;
+            case BATTLE_ARTIFACT:
+                toPlayGame();
+                break;
             default:
                 mainMenu();
         }

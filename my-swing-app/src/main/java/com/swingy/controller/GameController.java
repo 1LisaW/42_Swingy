@@ -166,7 +166,10 @@ public class GameController {
     }
 
     public Hero getHero() {
-        return this.gameModel.getHero();
+        if (this.gameModel != null) {
+            return this.gameModel.getHero();
+        }
+        return null;
     }
 
     public Phases getGamePhase() {
@@ -179,6 +182,43 @@ public class GameController {
 
     public BattleSimulator getCurrentBattleSimulator() {
         return this.currentBattle;
+    }
+
+
+    // battle data
+
+    public boolean isBattleProduceArtifact() {
+        if (this.currentBattle != null) {
+            Artifact artifact = this.currentBattle.generateArtifact();
+            return artifact != null;
+        }
+        return false;
+    }
+
+    public String getBattleArtifactType(){
+        if (this.currentBattle != null) {
+            Artifact artifact = this.currentBattle.getArtifact();
+            if (artifact != null) {
+                return artifact.getArtifactType();
+            }
+        }
+        return null;
+    }
+
+    public String getBattleArtifactName(){
+        if (this.currentBattle != null) {
+        Artifact artifact = this.currentBattle.getArtifact();
+            if (artifact != null) {
+                return artifact.toString();
+            }
+        }
+        return null;
+    }
+
+    public void collectBattleExperience() {
+        if (this.currentBattle != null) {
+            this.currentBattle.collectBattleExperience();
+        }
     }
 
 }

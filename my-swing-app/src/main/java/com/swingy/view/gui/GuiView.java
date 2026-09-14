@@ -235,6 +235,7 @@ public class GuiView extends View {
                     frame.showPanel("SELECT");
                     break;
                 case GAMEPLAY:
+                    frame.getGamePanel().onHide(); // Call onHide when switching to GAMEPLAY
                     frame.showPanel("GAME");
                     break;
                 case BATTLE_RUN_OR_FIGHT:

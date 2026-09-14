@@ -91,10 +91,20 @@ public class BattleSimulator {
         return this.villain.getLevel() * 300;
     }
 
+    public void collectBattleExperience() {
+        int experience = this.getExperience();
+        this.hero.setExperience(experience);
+        this.hero.checkLevelUp();
+    }
+
     public Artifact generateArtifact() {
         ArtifactFactory artifactFactory = ArtifactFactory.getInstance();
         artifact = artifactFactory.createArtifact(this.villain.getAttack());
         return (artifact);
+    }
+
+    public Artifact getArtifact() {
+        return artifact;
     }
 
     public void updateHeroArtifact() {

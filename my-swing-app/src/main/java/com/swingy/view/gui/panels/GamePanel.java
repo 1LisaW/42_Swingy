@@ -12,21 +12,50 @@ import java.awt.event.ActionEvent;
 
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleResult;
+import com.swingy.model.Hero;
 import com.swingy.controller.GameController;
 import com.swingy.controller.GameOverWonPanelAction;
 import com.swingy.controller.GameOverLostPanelAction;
 import com.swingy.controller.Phases;
 
+import com.swingy.view.gui.ArtifactPopup;
 
 public class GamePanel extends JPanel {
-    private static final int CELL_SIZE = 52;
+    private static final int CELL_SIZE = 82;
     private final GameController controller;
     private final GameOverWonPanelAction gameOverWonPanelAction;
     private final GameOverLostPanelAction gameOverLostPanelAction;
 
-    private JLabel gameLabel;
+    private JLabel gameLabelLeft;
+    private JLabel gameLabelCenter;
+    private JLabel gameLabelRight;
+
+    private ImageIcon heroIcon = null;
+    final private ImageIcon weakerVillainIcon = getVillainIcon("goblin");
+    final private ImageIcon equalVillainIcon = getVillainIcon("orc");
+    final private ImageIcon strongerVillainIcon = getVillainIcon("golem");
 
     // private GameMap gameMap;
+    private ImageIcon getVillainIcon(String name) {
+        String imagePath = "/images/villain/" + name.toLowerCase() + ".png";
+        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+        Image scaled = icon.getImage().getScaledInstance(
+            CELL_SIZE - 2, CELL_SIZE - 2, Image.SCALE_SMOOTH
+        );
+        return new ImageIcon(scaled);
+    }
+
+    private ImageIcon getHeroIcon() {
+        if (controller.getHero() == null) {
+            return null;
+        }
+        String imagePath = "/images/hero/" + controller.getHero().getArchetype().toLowerCase() + ".png";
+        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+        Image scaled = icon.getImage().getScaledInstance(
+            CELL_SIZE, CELL_SIZE, Image.SCALE_SMOOTH
+        );
+        return new ImageIcon(scaled);
+    }
 
     public GamePanel(GameOverWonPanelAction gameOverWonPanelAction, GameOverLostPanelAction gameOverLostPanelAction, GameController controller) {
         this.controller = controller;
@@ -39,9 +68,34 @@ public class GamePanel extends JPanel {
         JButton back = new JButton("Back to Menu");
 
         // back.addActionListener(e -> view.showScreen("MENU"));
+        JPanel header = new JPanel(new GridBagLayout());
 
-        gameLabel = new JLabel("Game Screen", SwingConstants.CENTER);
-        add(gameLabel, BorderLayout.NORTH);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridy = 0;
+        gbc.weighty = 1;
+
+        gameLabelLeft = new JLabel("Left", SwingConstants.CENTER);
+        gameLabelCenter = new JLabel("Game Screen", SwingConstants.CENTER);
+        gameLabelRight = new JLabel("Right", SwingConstants.CENTER);
+
+        gbc.gridx = 0;
+        gbc.weightx = 0.2;
+        header.add(gameLabelLeft, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.6;
+        header.add(gameLabelCenter, gbc);
+
+        gbc.gridx = 2;
+        gbc.weightx = 0.2;
+        header.add(gameLabelRight, gbc);
+
+        add(header, BorderLayout.NORTH);
+
+
+        // gameLabel = new JLabel("Game Screen", SwingConstants.CENTER);
+        // add(gameLabel, BorderLayout.NORTH);
         add(back, BorderLayout.SOUTH);
 
         setFocusable(true);
@@ -120,31 +174,47 @@ public class GamePanel extends JPanel {
         int size = gameMap.getSize();
         int heroPosition = gameMap.getHeroPosition();
 
-        // int cellWidth = getWidth() / size;
-        // int cellHeight = getHeight() / size;
          // Camera follows the hero
          Point camera = calculateCamera(new Point(heroPosition % size, heroPosition / size), gameMap);
-        // int cameraX = heroPosition % size * CELL_SIZE - getWidth() / 2 + CELL_SIZE / 2;
-        // int cameraY = heroPosition / size * CELL_SIZE - getHeight() / 2 + CELL_SIZE / 2;
         int adjustedCameraX = Math.max(0, getWidth() / 4 - camera.x / 2);
         int cameraX = camera.x - adjustedCameraX; // Adjust for the hero's position
         int cameraY = camera.y - 50; // Adjust for the title label height
 
-        if (controller.getHero() != null) {
+        Hero hero = controller.getHero();
+        if (hero != null) {
             System.out.println("Updating game label with hero info: " + controller.getHero().getName() + " - Level: " + controller.getHero().getLevel() + ", XP: " + controller.getHero().getExperience() + "/" + controller.getHero().getMaxExperience());
-            gameLabel.setText(controller.getHero().getName() + " - Game Screen - " + controller.getHero().getLevel() + " " + controller.getHero().getExperience() + " XP/ " + controller.getHero().getMaxExperience() + " XP");
-            // JLabel game = new JLabel(controller.getHero().getName() + " - Game Screen - " + controller.getHero().getLevel() + " " + controller.getHero().getExperience() + " XP/ " + controller.getHero().getMaxExperience() + " XP" , SwingConstants.CENTER);
-            // add(game, BorderLayout.NORTH);
+            gameLabelLeft.setText("Hero: " + hero.getName() + " | Level: " + hero.getLevel());
+            gameLabelCenter.setText(" HP:   " + hero.getBaseHitPoints() + " + " + hero.getBonusHitPoints() + "   "
+                + "ATK:   " + hero.getBaseAttack() + " + " + hero.getBonusAttack() + "   "
+                + "DEF:   " + hero.getBaseDefense() + " + " + hero.getBonusDefense() + "");
+            gameLabelRight.setText(hero.getExperience() + " XP/ " + hero.getMaxExperience() + " XP");
         }
+        //     gameLabel.setText(
+        //         controller.getHero().getName()
+        //         + " - Game Screen - "
+        //         + controller.getHero().getLevel() + " "
+        //         + "(HP: " + hero.getBaseHitPoints() + " + " + hero.getBonusHitPoints() + ") "
+        //         + "(ATK: " + hero.getBaseAttack() + " + " + hero.getBonusAttack() + ") "
+        //         + "(DEF: " + hero.getBaseDefense() + " + " + hero.getBonusDefense() + ")     "
+        //         + controller.getHero().getExperience() + " XP/ "
+        //         + controller.getHero().getMaxExperience() + " XP");
+        // }
 
         drawBoard(g, gameMap, cameraX, cameraY);
         drawVillains(g, gameMap, cameraX, cameraY);
-        drawHero(g, heroPosition, cameraX, cameraY);
+        if (hero != null && heroIcon == null) {
+            heroIcon = getHeroIcon();
+            System.out.println("Hero icon set for archetype: " + controller.getHero().getArchetype());
+        }
+        if (hero != null) {
+            drawHero(g, heroPosition, cameraX, cameraY);
+        }
+        // drawHero(g, heroPosition, cameraX, cameraY);
     }
 
     private Point calculateCamera(Point heroPos, GameMap gameMap) {
         int mapPixelWidth = gameMap.getSize() * CELL_SIZE;
-        int mapPixelHeight = gameMap.getSize() * CELL_SIZE;
+        int mapPixelHeight = gameMap.getSize() * CELL_SIZE + CELL_SIZE;
 
         int cameraX = heroPos.x * CELL_SIZE
                 + CELL_SIZE / 2
@@ -213,21 +283,6 @@ public class GamePanel extends JPanel {
                         CELL_SIZE,
                         CELL_SIZE
                 );
-            //      g.setColor(Color.GRAY);
-            // g.setFont(new Font("Arial", Font.BOLD, 14));
-
-            // // String level = String.valueOf(villainLevel);
-            // String level = String.valueOf(x) + "," + String.valueOf(y); // Display position instead of level
-
-            // FontMetrics metrics = g.getFontMetrics();
-
-            // int textWidth = metrics.stringWidth(level);
-            // int textHeight = metrics.getAscent();
-
-            // int textX = screenX + (CELL_SIZE - textWidth) / 2;
-            // int textY = screenY + (CELL_SIZE + textHeight) / 2;
-
-            // g.drawString(level, textX, textY);
             };
         };
     }
@@ -252,6 +307,14 @@ public class GamePanel extends JPanel {
             JOptionPane.INFORMATION_MESSAGE,
             resultIcon
         );
+
+        if (battleResult == BattleResult.WIN) {
+            if (this.controller.isBattleProduceArtifact()) {
+                this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
+                ArtifactPopup artifactPopup = new ArtifactPopup(this.controller);
+            }
+            this.controller.collectBattleExperience();
+        }
     }
 
     private void runBattle() {
@@ -315,14 +378,15 @@ public class GamePanel extends JPanel {
         int screenX = col * CELL_SIZE - cameraX;
         int screenY = row * CELL_SIZE - cameraY;
 
-        g.setColor(Color.BLUE);
+        // g.setColor(Color.BLUE);
 
-        g.fillOval(
-                screenX,
-                screenY,
-                CELL_SIZE,
-                CELL_SIZE
-        );
+        // g.fillOval(
+        //         screenX,
+        //         screenY,
+        //         CELL_SIZE,
+        //         CELL_SIZE
+        // );
+        g.drawImage(heroIcon.getImage(), screenX + 1, screenY + 1, CELL_SIZE - 2, CELL_SIZE - 2, null);
     }
 
     private void drawVillains(
@@ -369,19 +433,22 @@ public class GamePanel extends JPanel {
             row > endY) {
                 continue;
             }
-            // System.out.println("Villain at position: " + position + " with level: " + villainLevel);
-            g.setColor(Color.RED);
-            g.fillRect(
-                    screenX+5,
-                    screenY+5,
-                    CELL_SIZE-10,
-                    CELL_SIZE-10
-            );
+
+            int heroLevel = controller.getHero().getLevel();
+            ImageIcon villainIcon;
+            if (villainLevel < heroLevel) {
+                villainIcon = weakerVillainIcon;
+            } else if (villainLevel == heroLevel) {
+                villainIcon = equalVillainIcon;
+            } else {
+                villainIcon = strongerVillainIcon;
+            }
+            g.drawImage(villainIcon.getImage(), screenX + 1, screenY + 1, CELL_SIZE - 2, CELL_SIZE - 2, null);
+
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 14));
 
             String level = String.valueOf(villainLevel);
-            // String level = String.valueOf(position); // Display position instead of level
 
             FontMetrics metrics = g.getFontMetrics();
 
@@ -401,5 +468,11 @@ public class GamePanel extends JPanel {
         if (phase == Phases.BATTLE_RUN_RESULT) {
             showBattleRunResultPopup();
         }
+    }
+
+    public void onHide() {
+        // This method can be used to perform any cleanup or state saving when the panel is hidden
+        heroIcon = null; // Reset hero icon to ensure it gets updated when the panel is shown again
+        System.out.println("GamePanel onHide called. Hero icon reset.");
     }
 }

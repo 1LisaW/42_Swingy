@@ -1,13 +1,14 @@
 package com.swingy.controller;
 
 public enum Phases {
-    MAIN_MENU,
-    HERO_CREATION,
-    HERO_SELECTION,
-    GAMEPLAY,
-    BATTLE_RUN_OR_FIGHT,
-    BATTLE_RUN_RESULT,
-    BATTLE_RESULT,
-    BATTLE_ARTIFACT,
-    GAME_OVER
+    MAIN_MENU,            //toMainMenu
+    HERO_CREATION,        //toHeroCreation
+    HERO_SELECTION,       //toHeroSelection
+    GAMEPLAY,             //toGameplay
+    // BATTLE,               //toBattle
+    BATTLE_RUN_OR_FIGHT,  //toBattleRunOrFight
+    BATTLE_RUN_RESULT,    //toBattleRunResult
+    BATTLE_RESULT,        //toBattleResult
+    BATTLE_ARTIFACT,      //toBattleArtifact
+    GAME_OVER             //toGameOver
 }

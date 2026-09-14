@@ -316,20 +316,23 @@ public class ConsoleView extends View {
 
     @Override
     public void displayGameResult(boolean isWin) {
-        if (isWin)
-            displayTextAsTyped("CONGRATS! HERO SUCCESSFULY ESCAPED MAP.", 50, ANSI_GREEN);
+        if (isWin) {
+            displayTextAsTyped("CONGRATS! HERO SUCCESSFULLY ESCAPED MAP.", 50, ANSI_GREEN);
+            onLevelCleared();
+        }
         else
             displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
+
     }
 
-    private void toCreateHero() {
+    private void toHeroCreation() {
         Hero currentHero = this.controller.createHero(createHeroCredentials());
         displayHeroStats(currentHero);
         controller.setGamePhase(Phases.GAMEPLAY);
         startGame(currentHero);
     }
 
-    private void toSelectHero() {
+    private void toHeroSelection() {
         List<Hero> heroes = this.controller.getHeroes();
         displayChooseHeroFromList();
         int choice = promptChooseHeroFromList(heroes.size());
@@ -353,12 +356,12 @@ public class ConsoleView extends View {
         switch (chosenOption) {
             case 1:
                 this.controller.setGamePhase(Phases.HERO_CREATION);
-                toCreateHero();
+                toHeroCreation();
                 // Logic to create a new hero
                 break;
             case 2:
                 this.controller.setGamePhase(Phases.HERO_SELECTION);
-                toSelectHero();
+                toHeroSelection();
                 break;
             case 3:
                 // this.controller.exitGame();
@@ -373,26 +376,26 @@ public class ConsoleView extends View {
     @Override
     public void startGame(Hero hero) {
         this.controller.startGame(hero);
-        toPlayGame();
+        toGameplay();
     }
 
     private void runBattle() {
         // this.controller.simulateBattle();
         controller.runBattle();
         displayBattleLog(this.controller.getBattleLog());
+        this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
         toArtifactPhase();
          //   this.controller.proceedToNextLevel();
-       //     toPlayGame();
+       //     toGameplay();
         // } else if (this.controller.isGameOver()) {
         //     toGameOver(false);
         // } else {
-        //     toPlayGame();
+        //     toGameplay();
         // }
         // showBattleResultPopup(battleResult);
     }
 
     private void toArtifactPhase() {
-        this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
         BattleResult battleResult = this.controller.getBattleResult();
         if (battleResult == BattleResult.WIN) {
             Artifact artifact = this.controller.getCurrentBattleSimulator().generateArtifact();
@@ -403,19 +406,29 @@ public class ConsoleView extends View {
                 }
             }
         }
-        else if (battleResult == BattleResult.LOSE) {
-            toGameOver(false);
-        }
-        else if (battleResult == BattleResult.DRAW) {
-            displayTextAsTyped("Battle ended in a draw.", 50, ANSI_YELLOW);
-            toGameOver(false);
-        }
+        if (this.controller.isGameOver())
+            this.controller.setGamePhase(Phases.GAME_OVER);
+        toGameOver();
+        // else if (battleResult == BattleResult.LOSE) {
+        //     toGameOver(false);
+        // }
+        // else if (battleResult == BattleResult.DRAW) {
+        //     displayTextAsTyped("Battle ended in a draw.", 50, ANSI_YELLOW);
+        //     toGameOver(false);
+        // }
     }
 
-    private void toGameOver(boolean isWin) {
-        this.controller.setGamePhase(Phases.GAME_OVER);
+    private void toGameOver() {
+        if (this.controller.getGamePhase() != Phases.GAME_OVER)
+            return;
+        boolean isWin = this.controller.levelCleared();
         displayGameResult(isWin);
     }
+
+    // private void toGameOver(boolean isWin) {
+    //     this.controller.setGamePhase(Phases.GAME_OVER);
+    //     displayGameResult(isWin);
+    // }
 
     private void toBattleRunOrFight() {
         displayBattleParticipants(this.controller.getCurrentBattleSimulator());
@@ -431,7 +444,7 @@ public class ConsoleView extends View {
                 int runResult = this.controller.runFromBattle();
                 if (runResult == 1) {
                     toBattleRunResult(true);
-                    // toPlayGame();
+                    // toGameplay();
                 } else {//if (runResult == 0) {
                     toBattleRunResult(false);
                     runBattle();
@@ -450,13 +463,13 @@ public class ConsoleView extends View {
         if (controller.isBattleTriggered()) {
             toBattleRunOrFight();
         }
-        if (this.controller.levelCleared()) {
-            displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
-            onLevelCleared();
-        }
+        // if (this.controller.levelCleared()) {
+        //     onLevelCleared();
+        // }
     }
 
     private void onLevelCleared() {
+        displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
         displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
         displayTextAsTyped("    1. Save hero and proceed", 50, ANSI_YELLOW);
         displayTextAsTyped("    2. Proceed to next level without saving", 50, ANSI_YELLOW);
@@ -488,7 +501,7 @@ public class ConsoleView extends View {
     }
 
 
-    private void toPlayGame() {
+    private void toGameplay() {
         while (!this.controller.isGameOver()) {
             displayMap(this.controller.getGameMap());
             String move = promptHeroMove();
@@ -545,25 +558,28 @@ public class ConsoleView extends View {
                 mainMenu();
                 break;
              case HERO_CREATION:
-                toCreateHero();
+                toHeroCreation();
                 break;
             case HERO_SELECTION:
-                toSelectHero();
+                toHeroSelection();
                 break;
              case GAMEPLAY:
-                toPlayGame();
+                toGameplay();
                 break;
             case BATTLE_RUN_OR_FIGHT:
-                toPlayGame();
+                toGameplay();
                 break;
             case BATTLE_RUN_RESULT:
-                toPlayGame();
+                toGameplay();
                 break;
             case BATTLE_RESULT:
-                toPlayGame();
+                toGameplay();
                 break;
             case BATTLE_ARTIFACT:
-                toPlayGame();
+                toGameplay();
+                break;
+            case GAME_OVER:
+                toGameOver();
                 break;
             default:
                 mainMenu();

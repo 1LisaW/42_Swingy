@@ -19,6 +19,8 @@ import com.swingy.controller.GameOverLostPanelAction;
 import com.swingy.controller.Phases;
 
 import com.swingy.view.gui.ArtifactPopup;
+import com.swingy.view.gui.APopup;
+import com.swingy.view.gui.BattleRunOrFightPopup;
 
 public class GamePanel extends JPanel {
     private static final int CELL_SIZE = 82;
@@ -34,6 +36,8 @@ public class GamePanel extends JPanel {
     final private ImageIcon weakerVillainIcon = getVillainIcon("goblin");
     final private ImageIcon equalVillainIcon = getVillainIcon("orc");
     final private ImageIcon strongerVillainIcon = getVillainIcon("golem");
+
+    private APopup currentPopup = null;
 
     // private GameMap gameMap;
     private ImageIcon getVillainIcon(String name) {
@@ -294,6 +298,8 @@ public class GamePanel extends JPanel {
             icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
         } else if (battleResult == BattleResult.LOSE) {
             icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
+        } else {
+            icon = new ImageIcon(getClass().getResource("/images/battle_draw.png"));
         }
         Image scaled = icon.getImage().getScaledInstance(
             150, 150, Image.SCALE_SMOOTH
@@ -462,11 +468,37 @@ public class GamePanel extends JPanel {
         }
     }
     public void showPopup(Phases phase) {
-        if (phase == Phases.BATTLE_RUN_OR_FIGHT) {
-            startBattle();
+        switch (phase) {
+            case BATTLE_RUN_OR_FIGHT:
+                startBattle();
+                break;
+            case BATTLE_RUN_RESULT:
+                showBattleRunResultPopup();
+                break;
+            default:
+                // No popup for other phases
+                break;
         }
-        if (phase == Phases.BATTLE_RUN_RESULT) {
-            showBattleRunResultPopup();
+
+    }
+
+    public void toGameplay() {
+
+        if (currentPopup != null) {
+            currentPopup.close();
+            currentPopup = null;
+        }
+
+        switch (controller.getGamePhase()) {
+            case BATTLE_RUN_OR_FIGHT:
+                currentPopup = new BattleRunOrFightPopup(this.controller);
+                break;
+            case BATTLE_RUN_RESULT:
+                // showBattleRunResultPopup();
+                break;
+            default:
+                // No popup for other phases
+                break;
         }
     }
 

@@ -221,4 +221,11 @@ public class GameController {
         }
     }
 
+    public int getHeroLevel() {
+        if (this.gameModel != null) {
+            return this.gameModel.getHero().getLevel();
+        }
+        return 0; // No hero available
+    }
+
 }

@@ -12,14 +12,15 @@ import com.swingy.model.BattleResult;
 
 
 public class BattleResultPopup {
-    JPanel panel = new JPanel();
 
     public BattleResultPopup(GameController controller) {
         BattleResult battleResult = controller.getBattleResult();
 
         ImageIcon resultIcon = getBattleResultIcon(battleResult);
+        JPanel panel = new JPanel();
+
         JOptionPane.showMessageDialog(
-            this.panel,
+            panel,
             controller.getBattleLog().stream().reduce("", (acc, line) -> acc + line + "\n"),
             "Battle Results",
             JOptionPane.INFORMATION_MESSAGE,
@@ -41,6 +42,8 @@ public class BattleResultPopup {
             icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
         } else if (battleResult == BattleResult.LOSE) {
             icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
+        } else {
+            icon = new ImageIcon(getClass().getResource("/images/battle_draw.png"));
         }
         Image scaled = icon.getImage().getScaledInstance(
             150, 150, Image.SCALE_SMOOTH

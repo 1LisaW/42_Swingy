@@ -10,5 +10,6 @@ public enum Phases {
     BATTLE_RUN_RESULT,    //toBattleRunResult
     BATTLE_RESULT,        //toBattleResult
     BATTLE_ARTIFACT,      //toBattleArtifact
+    HERO_LEVEL_UP,        //toHeroLevelUp
     GAME_OVER             //toGameOver
 }

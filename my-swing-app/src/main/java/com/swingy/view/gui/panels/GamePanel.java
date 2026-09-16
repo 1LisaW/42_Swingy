@@ -182,6 +182,7 @@ public class GamePanel extends JPanel {
             this.controller.setGamePhase(Phases.BATTLE_RUN_OR_FIGHT);
             popupManager.next();
             repaint();
+            System.out.println("CHECK ON GAMEOVER AFTER POPUP");
             if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
                 this.controller.setGamePhase(Phases.GAME_OVER);
                 gameOverWonPanelAction.actionPerformed(null);
@@ -189,7 +190,8 @@ public class GamePanel extends JPanel {
                 this.controller.setGamePhase(Phases.GAME_OVER);
                 gameOverLostPanelAction.actionPerformed(null);
             }
-        } else {
+        }
+        else {
             if (controller.isGameOver()) {
                 this.controller.setGamePhase(Phases.GAME_OVER);
                 gameOverWonPanelAction.actionPerformed(null);
@@ -394,6 +396,16 @@ public class GamePanel extends JPanel {
             int textY = screenY + (CELL_SIZE + textHeight) / 2;
 
             g.drawString(level, textX, textY);
+        }
+    }
+
+    public void checkGameOver() {
+        if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
+            this.controller.setGamePhase(Phases.GAME_OVER);
+            gameOverWonPanelAction.actionPerformed(null);
+        } else if (controller.isGameOver() && controller.getBattleResult() == BattleResult.LOSE) {
+            this.controller.setGamePhase(Phases.GAME_OVER);
+            gameOverLostPanelAction.actionPerformed(null);
         }
     }
 

@@ -9,7 +9,7 @@ public class GameModel {
     private GameMap gameMap;
 
     public GameModel(Hero hero) {
-        this.hero = hero;
+        this.hero = new Hero(hero);
         this.startNewGame();
     }
 

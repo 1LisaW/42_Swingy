@@ -37,6 +37,7 @@ public class HeroParser {
         {
             Hero hero = parseHero(dataParts);
             if (hero != null ) {
+                hero.setOriginalId(heroId);
                 heroMap.put(heroId, hero);
                 System.out.println("HERO "+ heroId);
             }

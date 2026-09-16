@@ -83,9 +83,10 @@ public class BattleResultPopup extends APopup {
                 popupManager.next();
             } else {
                 controller.setGamePhase(Phases.GAMEPLAY);
+                popupManager.checkGameOver();
             }
         } else {
-            controller.setGamePhase(Phases.GAMEPLAY);
+            popupManager.checkGameOver();
         }
 
     }

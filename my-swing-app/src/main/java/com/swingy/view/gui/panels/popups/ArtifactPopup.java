@@ -68,8 +68,10 @@ public class ArtifactPopup extends APopup {
     private void onChoice() {
         if (checkLevelUp())
             controller.setGamePhase(Phases.HERO_LEVEL_UP);
-        else
+        else {
             controller.setGamePhase(Phases.GAMEPLAY);
+            popupManager.checkGameOver();
+        }
         popupManager.next();
     }
 

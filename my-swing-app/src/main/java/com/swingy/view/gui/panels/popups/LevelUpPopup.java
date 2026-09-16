@@ -37,7 +37,7 @@ public class LevelUpPopup extends APopup {
         int heroLevel = controller.getHeroLevel();
         Object[] options = {"OK"};
         String message = heroLevel - 1 + " > " + (heroLevel);
-        
+
         JOptionPane optionPane = new JOptionPane(
             message,
             JOptionPane.INFORMATION_MESSAGE,
@@ -57,6 +57,7 @@ public class LevelUpPopup extends APopup {
                 if (options[0].equals(value)) {
                     currentDialog.dispose();
                     controller.setGamePhase(Phases.GAMEPLAY);
+                    popupManager.checkGameOver();
                 }
             }
         });

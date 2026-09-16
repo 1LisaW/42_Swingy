@@ -31,6 +31,10 @@ public class PopupManager {
         currentPopup = null;
     }
 
+    public void checkGameOver() {
+        gp.checkGameOver();
+    }
+
     public void next() {
         Phases phase = this.controller.getGamePhase();
         System.out.println("POPUP_MANAGER next "+ phase);

@@ -235,26 +235,18 @@ public class GuiView extends View {
                     frame.showPanel("SELECT");
                     break;
                 case GAMEPLAY:
+                case BATTLE_RUN_OR_FIGHT:
+                case BATTLE_RUN_RESULT:
+                case BATTLE_RESULT:
+                case BATTLE_ARTIFACT:
+                case HERO_LEVEL_UP:
                      // Call onHide when switching to GAMEPLAY
                     frame.showPanel("GAME");
+                    frame.showCurrentPopup();
                     break;
-                case BATTLE_RUN_OR_FIGHT:
-                    frame.showPanel("GAME");
+                case GAME_OVER:
+                    frame.showPanel("GAME_OVER");
                     break;
-                case BATTLE_RUN_RESULT:
-                    frame.showPanel("GAME");
-                    // frame.showGamePanelPopup();
-                    break;
-                case BATTLE_RESULT:
-                    frame.showPanel("GAME");
-                    break;
-                case BATTLE_ARTIFACT:
-                    frame.showPanel("GAME");
-                    // frame.showGamePanelPopup();
-                    break;
-                // case GAME_OVER:
-                //     frame.showPanel("GAME_OVER");
-                //     break;
                 default:
                     frame.showPanel("MENU");
             }
@@ -266,7 +258,7 @@ public class GuiView extends View {
     @Override
     public void hide() {
         SwingUtilities.invokeLater(() -> {
-            frame.getGamePanel().onHide();
+            frame.hideActivePopup();
             frame.setVisible(false);
         });
     }

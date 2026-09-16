@@ -177,6 +177,7 @@ public class GameController {
     }
 
     public void setGamePhase(Phases phase) {
+        System.out.println(phase);
         this.currentPhase = phase;
     }
 
@@ -205,6 +206,13 @@ public class GameController {
         return null;
     }
 
+    public Artifact getBattleArtifact() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getArtifact();
+        }
+        return null;
+    }
+
     public String getBattleArtifactName(){
         if (this.currentBattle != null) {
         Artifact artifact = this.currentBattle.getArtifact();
@@ -229,6 +237,14 @@ public class GameController {
         if (this.currentBattle != null) {
             this.currentBattle.collectBattleExperience();
         }
+    }
+
+    public boolean willLevelUp() {
+        if (this.currentBattle == null || this.gameModel == null)
+            return false;
+        int heroExp = this.gameModel.getHero().getExperience() + this.currentBattle.getExperience();
+        int maxHeroExp = this.gameModel.getHero().getMaxExperience();
+        return heroExp >= maxHeroExp;
     }
 
     public int getHeroLevel() {

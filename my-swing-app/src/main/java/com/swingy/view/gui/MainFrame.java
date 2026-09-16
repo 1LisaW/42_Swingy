@@ -117,4 +117,12 @@ class MainFrame extends JFrame {
     public void addLoadHeroesButtonListener(ActionListener listener) {
         mainMenuPanel.addLoadHeroesButtonListener(listener);
     }
+
+    public void hideActivePopup() {
+        gamePanel.onHide();
+    }
+
+    public void showCurrentPopup() {
+        gamePanel.showCurrentPopup();
+    }
 }

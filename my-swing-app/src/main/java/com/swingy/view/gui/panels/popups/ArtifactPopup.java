@@ -77,7 +77,7 @@ public class ArtifactPopup extends APopup {
     }
 
     private boolean checkLevelUp() {
-         int prevLevel = this.controller.getHeroLevel();
+        int prevLevel = this.controller.getHeroLevel();
         controller.collectBattleExperience();
         int nextLevel = this.controller.getHeroLevel();
         return nextLevel > prevLevel;

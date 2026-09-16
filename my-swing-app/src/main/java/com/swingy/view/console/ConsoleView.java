@@ -376,92 +376,101 @@ public class ConsoleView extends View {
     @Override
     public void startGame(Hero hero) {
         this.controller.startGame(hero);
-        toGameplay();
+        GameLoop();
     }
 
-    private void runBattle() {
-        // this.controller.simulateBattle();
-        controller.runBattle();
+    private void toBattleResult() {
+        BattleResult battleResult = controller.getBattleResult();
+        if (battleResult == BattleResult.DRAW) {
+            displayTextAsTyped("THE BATTLE WAS WITHDRAWN. DRAW", 50, ANSI_GREEN);
+            this.controller.setGamePhase(Phases.GAMEPLAY);
+            toGamePhase();
+            return ;
+        }
         displayBattleLog(this.controller.getBattleLog());
-        this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-        toArtifactPhase();
-         //   this.controller.proceedToNextLevel();
-       //     toGameplay();
-        // } else if (this.controller.isGameOver()) {
-        //     toGameOver(false);
-        // } else {
-        //     toGameplay();
-        // }
-        // showBattleResultPopup(battleResult);
+        if (battleResult == BattleResult.WIN && this.controller.isBattleProduceArtifact()) {
+            this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
+            toGamePhase();
+            // toArtifactPhase();
+        } else if (this.controller.willLevelUp()) {
+
+            this.controller.setGamePhase(Phases.HERO_LEVEL_UP);
+            toGamePhase();
+        }
     }
+
+    private void toLevelUp() {
+        displayLevelUp(this.controller.getHero());
+        this.controller.setGamePhase(Phases.GAMEPLAY);
+        toGamePhase();
+    }
+
 
     private void toArtifactPhase() {
-        BattleResult battleResult = this.controller.getBattleResult();
-        if (battleResult == BattleResult.WIN) {
-            Artifact artifact = this.controller.getCurrentBattleSimulator().generateArtifact();
-            if (artifact != null) {
-                displayUseArtifact(artifact);
-                if (promptUseArtifact() == 1) {
-                    this.controller.updateHeroArtifact();
-                }
+            Artifact artifact = this.controller.getBattleArtifact();
+            displayUseArtifact(artifact);
+            if (promptUseArtifact() == 1) {
+                this.controller.updateHeroArtifact();
             }
-        }
-        if (this.controller.isGameOver())
-            this.controller.setGamePhase(Phases.GAME_OVER);
-        toGameOver();
-        // else if (battleResult == BattleResult.LOSE) {
-        //     toGameOver(false);
-        // }
-        // else if (battleResult == BattleResult.DRAW) {
-        //     displayTextAsTyped("Battle ended in a draw.", 50, ANSI_YELLOW);
-        //     toGameOver(false);
+            if (this.controller.willLevelUp()) {
+                this.controller.setGamePhase(Phases.HERO_LEVEL_UP);
+                toGamePhase();
+            }
+            // }
+            if (this.controller.isGameOver()) {
+                this.controller.setGamePhase(Phases.GAME_OVER);
+                toGameOver();
+            } else if( isRunning) {
+                this.controller.setGamePhase(Phases.GAMEPLAY);
+                toGamePhase();
+            }
         // }
     }
 
     private void toGameOver() {
         if (this.controller.getGamePhase() != Phases.GAME_OVER)
             return;
-        boolean isWin = this.controller.levelCleared();
+        Boolean isWin = this.controller.levelCleared();
         displayGameResult(isWin);
     }
-
-    // private void toGameOver(boolean isWin) {
-    //     this.controller.setGamePhase(Phases.GAME_OVER);
-    //     displayGameResult(isWin);
-    // }
 
     private void toBattleRunOrFight() {
         displayBattleParticipants(this.controller.getCurrentBattleSimulator());
         int choice = promptBattleFightOrRun();
         switch (choice) {
             case 1:
-                // runBattle();
+                this.controller.runBattle();
                 this.controller.setGamePhase(Phases.BATTLE_RESULT);
-                runBattle();
+                toGamePhase();
                 break;
             case 2:
                 this.controller.setGamePhase(Phases.BATTLE_RUN_RESULT);
-                int runResult = this.controller.runFromBattle();
-                if (runResult == 1) {
-                    toBattleRunResult(true);
-                    // toGameplay();
-                } else {//if (runResult == 0) {
-                    toBattleRunResult(false);
-                    runBattle();
-                }
+                this.controller.runFromBattle();
+                toGamePhase();
                 break;
         }
         // displayBattleParticipants();
     }
 
-    private void toBattleRunResult(boolean isSuccessful) {
+    private void toBattleRunResult() {
+        boolean isSuccessful = this.controller.runFromBattle() != 0;
         displayOnHeroRun(isSuccessful);
+        if (isSuccessful == false) {
+            controller.runBattle();
+            this.controller.setGamePhase(Phases.BATTLE_RESULT);
+            toGamePhase();
+        } else if(isRunning) {
+            this.controller.setGamePhase(Phases.GAMEPLAY);
+            toGamePhase();
+        }
     }
 
     private void moveHero(String move) {
         this.controller.moveHero(move);
         if (controller.isBattleTriggered()) {
-            toBattleRunOrFight();
+            this.controller.setGamePhase(Phases.BATTLE_RUN_OR_FIGHT);
+            // toBattleRunOrFight();
+            toGamePhase();
         }
         // if (this.controller.levelCleared()) {
         //     onLevelCleared();
@@ -500,14 +509,44 @@ public class ConsoleView extends View {
         //this.controller.proceedToNextLevel();
     }
 
+    private void GameLoop() {
+         while (!this.controller.isGameOver() && isRunning) {
+            toGamePhase();
+         }
+    }
 
     private void toGameplay() {
-        while (!this.controller.isGameOver()) {
-            displayMap(this.controller.getGameMap());
-            String move = promptHeroMove();
-            if (!isRunning)
-                return;
-            moveHero(move);
+        // while (!this.controller.isGameOver()) {
+        displayMap(this.controller.getGameMap());
+        String move = promptHeroMove();
+        if (!isRunning)
+            return;
+        moveHero(move);
+        // }
+    }
+
+    private void toGamePhase() {
+        Phases phase = this.controller.getGamePhase();
+        System.out.println("|| " + phase);
+        switch (phase) {
+            case GAMEPLAY:
+                toGameplay();
+                break;
+            case BATTLE_RUN_OR_FIGHT:
+                toBattleRunOrFight();
+                break;
+            case BATTLE_RUN_RESULT:
+                toBattleRunResult();
+                break;
+            case BATTLE_RESULT:
+                toBattleResult();
+                break;
+            case BATTLE_ARTIFACT:
+                toArtifactPhase();
+                break;
+            case HERO_LEVEL_UP:
+                toLevelUp();
+                break;
         }
     }
 
@@ -563,23 +602,17 @@ public class ConsoleView extends View {
             case HERO_SELECTION:
                 toHeroSelection();
                 break;
-             case GAMEPLAY:
-                toGameplay();
-                break;
+            case GAMEPLAY:
             case BATTLE_RUN_OR_FIGHT:
-                toGameplay();
-                break;
             case BATTLE_RUN_RESULT:
-                toGameplay();
-                break;
             case BATTLE_RESULT:
-                toGameplay();
-                break;
             case BATTLE_ARTIFACT:
-                toGameplay();
+            case HERO_LEVEL_UP:
+                GameLoop();
                 break;
             case GAME_OVER:
-                toGameOver();
+                // GameLoop();
+                // toGameOver();
                 break;
             default:
                 mainMenu();

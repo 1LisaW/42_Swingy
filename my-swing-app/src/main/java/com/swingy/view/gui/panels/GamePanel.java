@@ -370,4 +370,8 @@ public class GamePanel extends JPanel {
         popupManager.closeCurrentPopup();
         System.out.println("GamePanel onHide called. Hero icon reset.");
     }
+
+    public void showCurrentPopup () {
+        popupManager.next();
+    }
 }

@@ -16,8 +16,8 @@ public class LevelUpPopup extends APopup {
 
     private JDialog currentDialog;
 
-    public LevelUpPopup(GameController controller) {
-        super(controller);
+    public LevelUpPopup(GameController controller, PopupManager popupManager) {
+        super(controller, popupManager);
         BattleResult battleResult = controller.getBattleResult();
 
         ImageIcon resultIcon = getBattleResultIcon(battleResult);
@@ -36,10 +36,17 @@ public class LevelUpPopup extends APopup {
         currentDialog.setModal(false);
         currentDialog.setVisible(true);
 
+        optionPane.addPropertyChangeListener(e -> {
+            if (e.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) {
+                currentDialog.dispose();
+                controller.setGamePhase(Phases.GAMEPLAY);
+            }
+        });
+
         if (battleResult == BattleResult.WIN) {
             if (controller.isBattleProduceArtifact()) {
                 controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-                ArtifactPopup artifactPopup = new ArtifactPopup(controller);
+                // ArtifactPopup artifactPopup = new ArtifactPopup(controller);
             }
             controller.collectBattleExperience();
         }

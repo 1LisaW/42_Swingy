@@ -48,4 +48,12 @@ public class Villain {
         this.hitPoints -= Math.min(this.hitPoints, damage);
     }
 
+    public String toFormattedString(String delimiter) {
+        return "villain"
+            + delimiter + "level: " + this.level + delimiter
+            + "HP: " + this.hitPoints + delimiter
+            + "ATK: " + this.attack + delimiter
+            + "DEF: " + this.defense + "\n";
+    }
+
 }

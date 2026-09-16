@@ -11,29 +11,32 @@ import com.swingy.controller.Phases;
 import com.swingy.model.BattleResult;
 
 import com.swingy.view.gui.APopup;
-import com.swingy.view.gui.PopupManager;
 
 
-public class BattleRunOrFightPopup extends APopup {
+public class BattleRunResultPopup extends APopup {
 
     // private JDialog currentDialog;
 
-    public BattleRunOrFightPopup(GameController controller, PopupManager popupManager) {
+    public BattleRunResultPopup(GameController controller, PopupManager popupManager) {
         super(controller, popupManager);
 
-        Object[] options = {"Run", "Fight"};
-        String message = "You met a " + controller.getBattleVillainData() + "! What do you want to do?";
+        Boolean escapedBattle = this.controller.getCurrentBattleSimulator() == null;
+        String message = escapedBattle
+            ? "You successfully ran away!"
+            : "You failed to run away! Prepare to fight!";
 
         JPanel panel = new JPanel();
+        Object[] options = {"Accept"};
+
         JOptionPane optionPane = new JOptionPane(
             message,
             JOptionPane.QUESTION_MESSAGE,
-            JOptionPane.YES_NO_OPTION,
+            JOptionPane.DEFAULT_OPTION,
             null,
             options,
             options[0]
         );
-        currentDialog = optionPane.createDialog(panel, "Battle!");
+        currentDialog = optionPane.createDialog(panel, "Run results");
 
         currentDialog.setModal(false);
 
@@ -43,14 +46,7 @@ public class BattleRunOrFightPopup extends APopup {
 
                 if (options[0].equals(value)) {
                     currentDialog.dispose();
-                    onChoiceToRun();
-                    // showNextPopup();
-                } else if (options[1].equals(value)) {
-
-                    currentDialog.dispose();
-                    onChoiceToFight();
-                    // controller.getGamePhase();
-                    // Do something else
+                    onAccept();
                 }
             }
         });
@@ -78,17 +74,15 @@ public class BattleRunOrFightPopup extends APopup {
             // }
     }
 
-    private void onChoiceToRun() {
-        this.controller.runFromBattle();
-        this.controller.setGamePhase(Phases.BATTLE_RUN_RESULT);
-        popupManager.next();
-
-    }
-
-    private void onChoiceToFight() {
+    private void onAccept() {
+        if (this.controller.getCurrentBattleSimulator() == null) {
+                controller.setGamePhase(Phases.GAMEPLAY);
+                return ;
+        }
         this.controller.setGamePhase(Phases.BATTLE_RESULT);
         this.controller.simulateBattle();
         popupManager.next();
     }
+
 
 }

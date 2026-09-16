@@ -82,8 +82,15 @@ public class BattleSimulator {
     }
 
     public int run() {
-        if (Math.random() <= 0.65)
+        if (battleResult == BattleResult.RUN_AWAY)
             return 1;
+        else if (battleResult == BattleResult.FAIL_TO_RUN)
+            return 0;
+        if (Math.random() <= 0.65) {
+            battleResult = BattleResult.RUN_AWAY;
+            return 1;
+        }
+        battleResult = BattleResult.FAIL_TO_RUN;
         return 0;
     }
 

@@ -10,30 +10,49 @@ import com.swingy.controller.GameController;
 import com.swingy.controller.Phases;
 import com.swingy.model.BattleResult;
 
+import com.swingy.view.gui.APopup;
+import com.swingy.view.gui.PopupManager;
 
-public class BattleResultPopup {
+public class BattleResultPopup extends APopup {
 
-    public BattleResultPopup(GameController controller) {
+    public BattleResultPopup(GameController controller, PopupManager popupManager) {
+        super(controller, popupManager);
+
         BattleResult battleResult = controller.getBattleResult();
 
         ImageIcon resultIcon = getBattleResultIcon(battleResult);
         JPanel panel = new JPanel();
 
-        JOptionPane.showMessageDialog(
-            panel,
-            controller.getBattleLog().stream().reduce("", (acc, line) -> acc + line + "\n"),
-            "Battle Results",
-            JOptionPane.INFORMATION_MESSAGE,
-            resultIcon
-        );
+        Object[] options = {"OK"};
+        String message = controller.getBattleLog().stream().reduce("", (acc, line) -> acc + line + "\n");
 
-        if (battleResult == BattleResult.WIN) {
-            if (controller.isBattleProduceArtifact()) {
-                controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-                ArtifactPopup artifactPopup = new ArtifactPopup(controller);
+        JOptionPane optionPane = new JOptionPane(
+            message,
+            JOptionPane.INFORMATION_MESSAGE,
+            JOptionPane.DEFAULT_OPTION,
+            resultIcon,
+            options,
+            options[0]
+        );
+        currentDialog = optionPane.createDialog(panel, "Battle Results");
+
+        currentDialog.setModal(false);
+
+        optionPane.addPropertyChangeListener(e -> {
+            if (JOptionPane.VALUE_PROPERTY.equals(e.getPropertyName())) {
+                Object value = optionPane.getValue();
+                System.out.println("We got today "+ value);
+
+                if (options[0].equals(value)) {
+                    currentDialog.dispose();
+                    onAccept();
+                }
             }
-            controller.collectBattleExperience();
-        }
+        });
+
+        currentDialog.setVisible(true);
+
+
     }
 
     private ImageIcon getBattleResultIcon(BattleResult battleResult) {
@@ -49,5 +68,30 @@ public class BattleResultPopup {
             150, 150, Image.SCALE_SMOOTH
         );
         return new ImageIcon(scaled);
+    }
+
+    private void onAccept() {
+        BattleResult battleResult = controller.getBattleResult();
+        if (battleResult == BattleResult.WIN) {
+            if (controller.isBattleProduceArtifact()) {
+                controller.setGamePhase(Phases.BATTLE_ARTIFACT);
+                this.popupManager.next();
+                // this.
+                // ArtifactPopup artifactPopup = new ArtifactPopup(controller);
+            } else if (checkLevelUp()) {
+                controller.setGamePhase(Phases.HERO_LEVEL_UP);
+                this.popupManager.next();
+            } else {
+                controller.setGamePhase(Phases.GAMEPLAY);
+            }
+        }
+
+    }
+
+    private boolean checkLevelUp() {
+         int prevLevel = this.controller.getHeroLevel();
+        controller.collectBattleExperience();
+        int nextLevel = this.controller.getHeroLevel();
+        return nextLevel > prevLevel;
     }
 }

@@ -215,6 +215,16 @@ public class GameController {
         return null;
     }
 
+    public String getBattleVillainData() {
+        if (this.currentBattle != null) {
+            Villain villain = this.currentBattle.getVillain();
+            if (villain != null) {
+                return villain.toFormattedString("|");
+            }
+        }
+        return ""; // No villain data available
+    }
+
     public void collectBattleExperience() {
         if (this.currentBattle != null) {
             this.currentBattle.collectBattleExperience();

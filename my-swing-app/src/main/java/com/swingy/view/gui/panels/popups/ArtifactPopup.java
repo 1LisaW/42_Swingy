@@ -9,35 +9,51 @@ import javax.swing.SwingConstants;
 import com.swingy.controller.GameController;
 import com.swingy.controller.Phases;
 
-public class ArtifactPopup {
+import com.swingy.view.gui.APopup;
+import com.swingy.view.gui.PopupManager;
 
-    public ArtifactPopup(GameController controller) {
+public class ArtifactPopup extends APopup {
+
+    public ArtifactPopup(GameController controller, PopupManager popupManager) {
+        super(controller, popupManager);
+
         ImageIcon resultIcon = getArtifactIcon(controller.getBattleArtifactType());
         Object[] options = {"Use", "Drop"};
+        String message = "You have obtained an " + controller.getBattleArtifactName() + "! What would you like to do?";
         JPanel panel = new JPanel();
-        int choice = JOptionPane.showOptionDialog(
-            panel,
-            "You have obtained an " + controller.getBattleArtifactName() + "! What would you like to do?",
-            "Artifact Acquired",
-            JOptionPane.DEFAULT_OPTION,
+
+        JOptionPane optionPane = new JOptionPane(
+            message,
             JOptionPane.PLAIN_MESSAGE,
+            JOptionPane.YES_NO_OPTION,
             resultIcon,
             options,
             options[0]
         );
+        currentDialog = optionPane.createDialog(panel, "Artifact Acquired");
 
-        if (choice == JOptionPane.YES_OPTION) {
-            controller.updateHeroArtifact();
-            onChoice(controller);
-            // Use the artifact
-        } else {
-            // Drop
-            onChoice(controller);
-        }
-    }
+        currentDialog.setModal(false);
 
-    private void onChoice(GameController controller) {
-        controller.setGamePhase(Phases.GAMEPLAY);
+        optionPane.addPropertyChangeListener(e -> {
+            if (JOptionPane.VALUE_PROPERTY.equals(e.getPropertyName())) {
+                Object value = optionPane.getValue();
+
+                if (options[0].equals(value)) {
+                    currentDialog.dispose();
+                    controller.updateHeroArtifact();
+                    onChoice();
+                    // showNextPopup();
+                } else if (options[1].equals(value)) {
+
+                    currentDialog.dispose();
+                    onChoice();
+                    // controller.getGamePhase();
+                    // Do something else
+                }
+            }
+        });
+
+        currentDialog.setVisible(true);
     }
 
     private ImageIcon getArtifactIcon(String artifactType) {
@@ -50,6 +66,21 @@ public class ArtifactPopup {
             150, 150, Image.SCALE_SMOOTH
         );
         return new ImageIcon(scaled);
+    }
+
+    private void onChoice() {
+        if (checkLevelUp())
+            controller.setGamePhase(Phases.HERO_LEVEL_UP);
+        else
+            this.controller.setGamePhase(Phases.GAMEPLAY);
+        this.popupManager.next();
+    }
+
+    private boolean checkLevelUp() {
+         int prevLevel = this.controller.getHeroLevel();
+        controller.collectBattleExperience();
+        int nextLevel = this.controller.getHeroLevel();
+        return nextLevel > prevLevel;
     }
 
 }

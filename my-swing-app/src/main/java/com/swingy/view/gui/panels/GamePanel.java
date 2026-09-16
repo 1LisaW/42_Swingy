@@ -21,6 +21,7 @@ import com.swingy.controller.Phases;
 import com.swingy.view.gui.ArtifactPopup;
 import com.swingy.view.gui.APopup;
 import com.swingy.view.gui.BattleRunOrFightPopup;
+import com.swingy.view.gui.PopupManager;
 
 public class GamePanel extends JPanel {
     private static final int CELL_SIZE = 82;
@@ -37,9 +38,8 @@ public class GamePanel extends JPanel {
     final private ImageIcon equalVillainIcon = getVillainIcon("orc");
     final private ImageIcon strongerVillainIcon = getVillainIcon("golem");
 
-    private APopup currentPopup = null;
+    private final PopupManager popupManager;
 
-    // private GameMap gameMap;
     private ImageIcon getVillainIcon(String name) {
         String imagePath = "/images/villain/" + name.toLowerCase() + ".png";
         ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
@@ -63,6 +63,7 @@ public class GamePanel extends JPanel {
 
     public GamePanel(GameOverWonPanelAction gameOverWonPanelAction, GameOverLostPanelAction gameOverLostPanelAction, GameController controller) {
         this.controller = controller;
+        this.popupManager = new PopupManager(controller, this);
         this.gameOverWonPanelAction = gameOverWonPanelAction;
         this.gameOverLostPanelAction = gameOverLostPanelAction;
 
@@ -71,7 +72,6 @@ public class GamePanel extends JPanel {
 
         JButton back = new JButton("Back to Menu");
 
-        // back.addActionListener(e -> view.showScreen("MENU"));
         JPanel header = new JPanel(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -98,8 +98,6 @@ public class GamePanel extends JPanel {
         add(header, BorderLayout.NORTH);
 
 
-        // gameLabel = new JLabel("Game Screen", SwingConstants.CENTER);
-        // add(gameLabel, BorderLayout.NORTH);
         add(back, BorderLayout.SOUTH);
 
         setFocusable(true);
@@ -148,28 +146,26 @@ public class GamePanel extends JPanel {
         controller.moveHero(movement);
         repaint();
         if (controller.isBattleTriggered()) {
-            startBattle();
+            this.controller.setGamePhase(Phases.BATTLE_RUN_OR_FIGHT);
+            popupManager.next();
+            repaint();
+            if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
+                this.controller.setGamePhase(Phases.GAME_OVER);
+                gameOverWonPanelAction.actionPerformed(null);
+            } else if (controller.isGameOver() && controller.getBattleResult() == BattleResult.LOSE) {
+                this.controller.setGamePhase(Phases.GAME_OVER);
+                gameOverLostPanelAction.actionPerformed(null);
+            }
+        } else {
+            if (controller.isGameOver()) {
+                this.controller.setGamePhase(Phases.GAME_OVER);
+                gameOverWonPanelAction.actionPerformed(null);
+            }
         }
-        repaint();
-         if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
-            gameOverWonPanelAction.actionPerformed(null);
-            // return;
-        } else if (controller.isGameOver() && controller.getBattleResult() == BattleResult.LOSE) {
-            gameOverLostPanelAction.actionPerformed(null);
-            // return;
-        }
+
+
     }
 
-    // public void setMap(GameMap gameMap) {
-    //     this.gameMap = gameMap;
-    // }
-
-    // public void update() {
-    //     // Update the game panel based on the current map state
-    //     if (gameMap == null) {
-    //         return;
-    //     }
-    // }
     @Override
     protected void paintComponent(Graphics g) {
         GameMap gameMap = controller.getGameMap();
@@ -193,16 +189,6 @@ public class GamePanel extends JPanel {
                 + "DEF:   " + hero.getBaseDefense() + " + " + hero.getBonusDefense() + "");
             gameLabelRight.setText(hero.getExperience() + " XP/ " + hero.getMaxExperience() + " XP");
         }
-        //     gameLabel.setText(
-        //         controller.getHero().getName()
-        //         + " - Game Screen - "
-        //         + controller.getHero().getLevel() + " "
-        //         + "(HP: " + hero.getBaseHitPoints() + " + " + hero.getBonusHitPoints() + ") "
-        //         + "(ATK: " + hero.getBaseAttack() + " + " + hero.getBonusAttack() + ") "
-        //         + "(DEF: " + hero.getBaseDefense() + " + " + hero.getBonusDefense() + ")     "
-        //         + controller.getHero().getExperience() + " XP/ "
-        //         + controller.getHero().getMaxExperience() + " XP");
-        // }
 
         drawBoard(g, gameMap, cameraX, cameraY);
         drawVillains(g, gameMap, cameraX, cameraY);
@@ -213,7 +199,6 @@ public class GamePanel extends JPanel {
         if (hero != null) {
             drawHero(g, heroPosition, cameraX, cameraY);
         }
-        // drawHero(g, heroPosition, cameraX, cameraY);
     }
 
     private Point calculateCamera(Point heroPos, GameMap gameMap) {
@@ -252,8 +237,6 @@ public class GamePanel extends JPanel {
         int cameraY
     ) {
 
-        // g.setColor(Color.LIGHT_GRAY);
-
         int mapSize = gameMap.getSize();
 
         // Which map cells are visible?
@@ -291,82 +274,6 @@ public class GamePanel extends JPanel {
         };
     }
 
-    private void showBattleResultPopup() {
-        ImageIcon icon = null;
-        BattleResult battleResult = controller.getBattleResult();
-        if (battleResult == BattleResult.WIN) {
-            icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
-        } else if (battleResult == BattleResult.LOSE) {
-            icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
-        } else {
-            icon = new ImageIcon(getClass().getResource("/images/battle_draw.png"));
-        }
-        Image scaled = icon.getImage().getScaledInstance(
-            150, 150, Image.SCALE_SMOOTH
-        );
-        ImageIcon resultIcon = new ImageIcon(scaled);
-        JPanel panel = new JPanel();
-        JOptionPane.showMessageDialog(
-            panel,
-            controller.getBattleLog().stream().reduce("", (acc, line) -> acc + line + "\n"),
-            "Battle Results",
-            JOptionPane.INFORMATION_MESSAGE,
-            resultIcon
-        );
-
-        if (battleResult == BattleResult.WIN) {
-            if (this.controller.isBattleProduceArtifact()) {
-                this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-                ArtifactPopup artifactPopup = new ArtifactPopup(this.controller);
-            }
-            this.controller.collectBattleExperience();
-        }
-    }
-
-    private void runBattle() {
-            controller.simulateBattle();
-            BattleResult battleResult = controller.getBattleResult();
-            showBattleResultPopup();
-    }
-
-    private void startBattle() {
-        // Implement battle logic here
-        // For example, you can show a dialog or switch to a battle panel
-        Object[] options = {"Run", "Fight"};
-            JPanel panel = new JPanel();
-            int result = JOptionPane.showOptionDialog(
-                panel,
-                "You met a villain! What do you want to do?",
-                "Battle!",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-            );
-
-            if (result == 0) {
-                showBattleRunResultPopup();
-                // Run
-            } else if (result == 1) {
-                runBattle();
-                // Fight
-            }
-    }
-
-    private void showBattleRunResultPopup() {
-        JPanel panel = new JPanel();
-        if (controller.runFromBattle() == 1) {
-            JOptionPane.showMessageDialog(panel, "You successfully ran away!");
-        } else {
-            JOptionPane.showMessageDialog(panel, "You failed to run away! Prepare to fight!");
-            runBattle();
-            // Fight
-        }
-    }
-
-
-
     private void drawHero(
             Graphics g,
             int position,
@@ -384,14 +291,6 @@ public class GamePanel extends JPanel {
         int screenX = col * CELL_SIZE - cameraX;
         int screenY = row * CELL_SIZE - cameraY;
 
-        // g.setColor(Color.BLUE);
-
-        // g.fillOval(
-        //         screenX,
-        //         screenY,
-        //         CELL_SIZE,
-        //         CELL_SIZE
-        // );
         g.drawImage(heroIcon.getImage(), screenX + 1, screenY + 1, CELL_SIZE - 2, CELL_SIZE - 2, null);
     }
 
@@ -401,9 +300,6 @@ public class GamePanel extends JPanel {
              int cameraX,
              int cameraY
     ) {
-
-        // List<Villain> villains = gameMap.getGrid();
-        // GameMap gameMap = controller.getGameMap();
 
         int mapSize = gameMap.getSize();
         int startX = Math.max(0, cameraX / CELL_SIZE);
@@ -467,44 +363,11 @@ public class GamePanel extends JPanel {
             g.drawString(level, textX, textY);
         }
     }
-    public void showPopup(Phases phase) {
-        switch (phase) {
-            case BATTLE_RUN_OR_FIGHT:
-                startBattle();
-                break;
-            case BATTLE_RUN_RESULT:
-                showBattleRunResultPopup();
-                break;
-            default:
-                // No popup for other phases
-                break;
-        }
-
-    }
-
-    public void toGameplay() {
-
-        if (currentPopup != null) {
-            currentPopup.close();
-            currentPopup = null;
-        }
-
-        switch (controller.getGamePhase()) {
-            case BATTLE_RUN_OR_FIGHT:
-                currentPopup = new BattleRunOrFightPopup(this.controller);
-                break;
-            case BATTLE_RUN_RESULT:
-                // showBattleRunResultPopup();
-                break;
-            default:
-                // No popup for other phases
-                break;
-        }
-    }
 
     public void onHide() {
         // This method can be used to perform any cleanup or state saving when the panel is hidden
         heroIcon = null; // Reset hero icon to ensure it gets updated when the panel is shown again
+        popupManager.closeCurrentPopup();
         System.out.println("GamePanel onHide called. Hero icon reset.");
     }
 }

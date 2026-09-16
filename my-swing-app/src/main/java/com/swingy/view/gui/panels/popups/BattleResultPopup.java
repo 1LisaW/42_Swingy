@@ -75,23 +75,25 @@ public class BattleResultPopup extends APopup {
         if (battleResult == BattleResult.WIN) {
             if (controller.isBattleProduceArtifact()) {
                 controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-                this.popupManager.next();
+                popupManager.next();
                 // this.
                 // ArtifactPopup artifactPopup = new ArtifactPopup(controller);
             } else if (checkLevelUp()) {
                 controller.setGamePhase(Phases.HERO_LEVEL_UP);
-                this.popupManager.next();
+                popupManager.next();
             } else {
                 controller.setGamePhase(Phases.GAMEPLAY);
             }
+        } else {
+            controller.setGamePhase(Phases.GAMEPLAY);
         }
 
     }
 
     private boolean checkLevelUp() {
-         int prevLevel = this.controller.getHeroLevel();
+         int prevLevel = controller.getHeroLevel();
         controller.collectBattleExperience();
-        int nextLevel = this.controller.getHeroLevel();
+        int nextLevel = controller.getHeroLevel();
         return nextLevel > prevLevel;
     }
 }

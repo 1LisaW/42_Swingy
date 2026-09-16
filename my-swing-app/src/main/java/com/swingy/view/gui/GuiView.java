@@ -242,7 +242,7 @@ public class GuiView extends View {
                 case HERO_LEVEL_UP:
                      // Call onHide when switching to GAMEPLAY
                     frame.showPanel("GAME");
-                    frame.showCurrentPopup();
+                    // frame.showCurrentPopup();
                     break;
                 case GAME_OVER:
                     frame.showPanel("GAME_OVER");
@@ -252,6 +252,7 @@ public class GuiView extends View {
             }
             frame.setVisible(true);
             frame.requestFocus();
+            frame.showCurrentPopup();
         });
     }
 

@@ -14,51 +14,57 @@ import com.swingy.view.gui.APopup;
 
 public class LevelUpPopup extends APopup {
 
-    private JDialog currentDialog;
+    private static final ImageIcon LEVEL_UP_ICON = createLevelUpIcon();
+
+    private static ImageIcon createLevelUpIcon() {
+        ImageIcon icon = new ImageIcon(
+            LevelUpPopup.class.getResource("/images/level_up.png")
+        );
+
+        Image scaled = icon.getImage().getScaledInstance(
+            150, 150, Image.SCALE_SMOOTH
+        );
+
+        return new ImageIcon(scaled);
+    }
 
     public LevelUpPopup(GameController controller, PopupManager popupManager) {
         super(controller, popupManager);
-        BattleResult battleResult = controller.getBattleResult();
 
-        ImageIcon resultIcon = getBattleResultIcon(battleResult);
+        // ImageIcon resultIcon = getLevelUpIcon();
         JPanel panel = new JPanel();
 
         int heroLevel = controller.getHeroLevel();
-        String message = heroLevel + " > " + (heroLevel + 1);
+        Object[] options = {"OK"};
+        String message = heroLevel - 1 + " > " + (heroLevel);
+        
         JOptionPane optionPane = new JOptionPane(
             message,
             JOptionPane.INFORMATION_MESSAGE,
             JOptionPane.DEFAULT_OPTION,
-            resultIcon
+            LEVEL_UP_ICON,
+            options,
+            options[0]
         );
 
         currentDialog = optionPane.createDialog(panel, "Level Up!");
         currentDialog.setModal(false);
-        currentDialog.setVisible(true);
 
         optionPane.addPropertyChangeListener(e -> {
+
             if (e.getPropertyName().equals(JOptionPane.VALUE_PROPERTY)) {
-                currentDialog.dispose();
-                controller.setGamePhase(Phases.GAMEPLAY);
+                Object value = optionPane.getValue();
+                if (options[0].equals(value)) {
+                    currentDialog.dispose();
+                    controller.setGamePhase(Phases.GAMEPLAY);
+                }
             }
         });
-
-        if (battleResult == BattleResult.WIN) {
-            if (controller.isBattleProduceArtifact()) {
-                controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-                // ArtifactPopup artifactPopup = new ArtifactPopup(controller);
-            }
-            controller.collectBattleExperience();
-        }
+        currentDialog.setVisible(true);
     }
 
-    private ImageIcon getBattleResultIcon(BattleResult battleResult) {
-        ImageIcon icon = null;
-        if (battleResult == BattleResult.WIN) {
-            icon = new ImageIcon(getClass().getResource("/images/battle_won.png"));
-        } else if (battleResult == BattleResult.LOSE) {
-            icon = new ImageIcon(getClass().getResource("/images/battle_lost.png"));
-        }
+    private ImageIcon getLevelUpIcon() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/level_up.png"));
         Image scaled = icon.getImage().getScaledInstance(
             150, 150, Image.SCALE_SMOOTH
         );

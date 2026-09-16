@@ -42,13 +42,10 @@ public class ArtifactPopup extends APopup {
                     currentDialog.dispose();
                     controller.updateHeroArtifact();
                     onChoice();
-                    // showNextPopup();
                 } else if (options[1].equals(value)) {
 
                     currentDialog.dispose();
                     onChoice();
-                    // controller.getGamePhase();
-                    // Do something else
                 }
             }
         });
@@ -72,8 +69,8 @@ public class ArtifactPopup extends APopup {
         if (checkLevelUp())
             controller.setGamePhase(Phases.HERO_LEVEL_UP);
         else
-            this.controller.setGamePhase(Phases.GAMEPLAY);
-        this.popupManager.next();
+            controller.setGamePhase(Phases.GAMEPLAY);
+        popupManager.next();
     }
 
     private boolean checkLevelUp() {

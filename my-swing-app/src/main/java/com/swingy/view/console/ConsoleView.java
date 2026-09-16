@@ -3,6 +3,8 @@ package com.swingy.view.console;
 import java.util.Scanner;
 import java.util.List;
 
+import java.io.IOException;
+
 import com.swingy.view.View;
 import com.swingy.model.Hero;
 import com.swingy.model.HeroCredentials;
@@ -382,8 +384,8 @@ public class ConsoleView extends View {
     private void toBattleResult() {
         BattleResult battleResult = controller.getBattleResult();
         if (battleResult == BattleResult.DRAW) {
-            displayTextAsTyped("THE BATTLE WAS WITHDRAWN. DRAW", 50, ANSI_GREEN);
             this.controller.setGamePhase(Phases.GAMEPLAY);
+            displayTextAsTyped("THE BATTLE WAS WITHDRAWN. DRAW", 50, ANSI_GREEN);
             toGamePhase();
             return ;
         }
@@ -590,6 +592,13 @@ public class ConsoleView extends View {
     }
 
     private void runConsole() {
+        try {
+            while (System.in.available() > 0) {
+                System.in.read();
+            }
+        } catch (IOException e) {
+            // Handle or log the error
+        }
         System.out.println("Console view active");
         Phases gamePhase = this.controller.getGamePhase();
         switch (this.controller.getGamePhase()) {

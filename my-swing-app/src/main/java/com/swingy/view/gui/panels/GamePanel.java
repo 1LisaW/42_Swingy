@@ -9,6 +9,7 @@ import javax.swing.SwingConstants;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleResult;
@@ -34,19 +35,51 @@ public class GamePanel extends JPanel {
     private JLabel gameLabelRight;
 
     private ImageIcon heroIcon = null;
-    final private ImageIcon weakerVillainIcon = getVillainIcon("goblin");
-    final private ImageIcon equalVillainIcon = getVillainIcon("orc");
-    final private ImageIcon strongerVillainIcon = getVillainIcon("golem");
+    final private Image weakerVillainImage = getVillainImage("goblin");
+    final private Image equalVillainImage = getVillainImage("orc");
+    final private Image strongerVillainImage = getVillainImage("golem");
 
     private final PopupManager popupManager;
 
-    private ImageIcon getVillainIcon(String name) {
+    private Image getVillainImage(String name) {
         String imagePath = "/images/villain/" + name.toLowerCase() + ".png";
-        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-        Image scaled = icon.getImage().getScaledInstance(
-            CELL_SIZE - 2, CELL_SIZE - 2, Image.SCALE_SMOOTH
-        );
-        return new ImageIcon(scaled);
+        ImageIcon icon = new ImageIcon(
+        getClass().getResource(imagePath)
+    );
+
+    BufferedImage scaled = new BufferedImage(
+        CELL_SIZE - 2,
+        CELL_SIZE - 2,
+        BufferedImage.TYPE_INT_ARGB
+    );
+
+    Graphics2D g2 = scaled.createGraphics();
+    g2.setRenderingHint(
+        RenderingHints.KEY_INTERPOLATION,
+        RenderingHints.VALUE_INTERPOLATION_BILINEAR
+    );
+    g2.setRenderingHint(
+        RenderingHints.KEY_RENDERING,
+        RenderingHints.VALUE_RENDER_SPEED
+    );
+
+    g2.drawImage(
+        icon.getImage(),
+        0,
+        0,
+        CELL_SIZE - 2,
+        CELL_SIZE - 2,
+        null
+    );
+
+    g2.dispose();
+
+    return scaled;
+        // ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+        // Image scaled = icon.getImage().getScaledInstance(
+        //     CELL_SIZE - 2, CELL_SIZE - 2, Image.SCALE_SMOOTH
+        // );
+        // return scaled;
     }
 
     private ImageIcon getHeroIcon() {
@@ -337,15 +370,15 @@ public class GamePanel extends JPanel {
             }
 
             int heroLevel = controller.getHero().getLevel();
-            ImageIcon villainIcon;
+            Image villainImage;
             if (villainLevel < heroLevel) {
-                villainIcon = weakerVillainIcon;
+                villainImage = weakerVillainImage;
             } else if (villainLevel == heroLevel) {
-                villainIcon = equalVillainIcon;
+                villainImage = equalVillainImage;
             } else {
-                villainIcon = strongerVillainIcon;
+                villainImage = strongerVillainImage;
             }
-            g.drawImage(villainIcon.getImage(), screenX + 1, screenY + 1, CELL_SIZE - 2, CELL_SIZE - 2, null);
+            g.drawImage(villainImage, screenX + 1, screenY + 1, CELL_SIZE - 2, CELL_SIZE - 2, null);
 
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 14));

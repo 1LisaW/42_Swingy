@@ -37,9 +37,14 @@ public class HeroParser {
         {
             Hero hero = parseHero(dataParts);
             if (hero != null ) {
-                hero.setOriginalId(heroId);
+                try {
+                    int value = Integer.parseInt(heroId);
+                    hero.setOriginalId(value);
+                } catch (NumberFormatException e) {
+                    // handle invalid value
+                }
                 heroMap.put(heroId, hero);
-                System.out.println("HERO "+ heroId);
+                // System.out.println("HERO "+ heroId);
             }
         } else if (dataType.equals("artifact"))
         {

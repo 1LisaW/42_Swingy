@@ -10,7 +10,12 @@ public class GameOverPanel extends JPanel {
     private final Color background = new Color(18, 20, 30);
     private final Color cardColor = new Color(30, 34, 48);
 
-    public GameOverPanel(boolean won, Runnable onRestart, Runnable onExit) {
+    public GameOverPanel(
+            boolean won,
+            Runnable onRestart,
+            Runnable onContinue,
+            Runnable onSaveAndContinue,
+            Runnable onExit) {
         setLayout(new GridBagLayout());
         setBackground(background);
 
@@ -34,7 +39,7 @@ public class GameOverPanel extends JPanel {
         };
 
         card.setOpaque(false);
-        card.setPreferredSize(new Dimension(450, 350));
+        card.setPreferredSize(new Dimension(550, 400));
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(new EmptyBorder(35, 45, 35, 45));
 
@@ -63,9 +68,23 @@ public class GameOverPanel extends JPanel {
 
         // Buttons
         JButton restartButton = createButton(
-            "Play Again",
+            "Replay",
             new Color(70, 130, 255)
         );
+
+        JButton continueButton = null;
+        JButton saveAndContinueButton = null;
+        if (won) {
+            continueButton = createButton(
+                "Continue",
+                new Color(70, 130, 255)
+            );
+
+            saveAndContinueButton = createButton(
+                "Save & Continue",
+                new Color(255, 165, 0)
+            );
+        }
 
         JButton exitButton = createButton(
             "Exit",
@@ -78,15 +97,33 @@ public class GameOverPanel extends JPanel {
             }
         });
 
+        if (won) {
+             continueButton.addActionListener(e -> {
+                if (onContinue != null) {
+                    onContinue.run();
+                }
+            });
+
+            saveAndContinueButton.addActionListener(e -> {
+                if (onSaveAndContinue != null) {
+                    onSaveAndContinue.run();
+                }
+            });
+        }
+
         exitButton.addActionListener(e -> {
             if (onExit != null) {
                 onExit.run();
             }
         });
 
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         buttons.setOpaque(false);
         buttons.add(restartButton);
+        if (won) {
+            buttons.add(continueButton);
+            buttons.add(saveAndContinueButton);
+        }
         buttons.add(exitButton);
 
         // Layout
@@ -113,7 +150,7 @@ public class GameOverPanel extends JPanel {
         button.setOpaque(true);
 
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setPreferredSize(new Dimension(130, 45));
+        button.setPreferredSize(new Dimension(180, 45));
 
         return button;
     }

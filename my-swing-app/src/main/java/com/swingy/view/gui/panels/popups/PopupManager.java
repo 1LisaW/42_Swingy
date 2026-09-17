@@ -39,6 +39,9 @@ public class PopupManager {
         Phases phase = this.controller.getGamePhase();
         System.out.println("POPUP_MANAGER next "+ phase);
         switch (phase) {
+            case GAMEPLAY:
+                gp.repaint();
+                break;
             case BATTLE_RUN_OR_FIGHT:
                 currentPopup = new BattleRunOrFightPopup(this.controller, this);
                 break ;
@@ -47,12 +50,12 @@ public class PopupManager {
                 gp.repaint();
                 break ;
             case BATTLE_RESULT:
-                currentPopup = new BattleResultPopup(this.controller, this);
                 gp.repaint();
+                currentPopup = new BattleResultPopup(this.controller, this);
                 break ;
             case BATTLE_ARTIFACT:
-                currentPopup = new ArtifactPopup(this.controller, this);
                 gp.repaint();
+                currentPopup = new ArtifactPopup(this.controller, this);
                 break ;
             case HERO_LEVEL_UP:
                 System.out.println("(next) LevelUpPopup HERO_LEVEL_UP");

@@ -54,8 +54,36 @@ class MainFrame extends JFrame {
         createHeroPanel = new CreateHeroPanel(mainMenuAction, gamePanelAction, controller);
         gamePanel = new GamePanel(gameOverWonPanelAction, gameOverLostPanelAction, controller);
         selectHeroFromListPanel = new SelectHeroFromListPanel(mainMenuAction, gamePanelAction, controller);
-        gameOverPanelWon = new GameOverPanel(true, () -> showPanel("CREATE"), () -> System.exit(0));
-        gameOverPanelLost = new GameOverPanel(false, () -> showPanel("CREATE"), () -> System.exit(0));
+        gameOverPanelWon = new GameOverPanel(
+            true,
+            () -> {
+                controller.restartGame();
+                showPanel("GAME");
+                },
+            () -> {
+                controller.startNewGame();
+                showPanel("GAME");
+            },
+            () -> {
+                controller.saveAndStartNewGame();
+                showPanel("GAME");
+            },
+            () -> System.exit(0)
+            );
+        gameOverPanelLost = new GameOverPanel(false,
+            () -> {
+                controller.restartGame();
+                showPanel("GAME");
+                },
+            () -> {
+                controller.startNewGame();
+                showPanel("GAME");
+            },
+            () -> {
+                controller.saveAndStartNewGame();
+                showPanel("GAME");
+            },
+            () -> System.exit(0));
 
         // Register panels with names
         container.add(mainMenuPanel, "MENU");

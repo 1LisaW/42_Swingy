@@ -14,7 +14,7 @@ public class Hero {
     private Artifact defenseArtifact;
     private Artifact attackArtifact;
     private Artifact hitPointsArtifact;
-    private String originalId = "-1";
+    private int originalId = -1;
 
     public Hero(String name, String archetype, int level, int experience, int hitPoints, int attack, int defense) {
         this.name = name;
@@ -43,7 +43,7 @@ public class Hero {
         this.setMaxExperience();
     }
 
-    public String getOriginalId() {
+    public int getOriginalId() {
         return originalId;
     }
 
@@ -58,7 +58,7 @@ public class Hero {
         this.hitPointsArtifact = hitPointsArtifact;
     }
 
-    public void setOriginalId(String id) {
+    public void setOriginalId(int id) {
         originalId = id;
     }
 
@@ -204,7 +204,7 @@ public class Hero {
             case "weapon":
                 setAttackArtifact(artifact);
                 break;
-            case "helmet":
+            case "helm":
                 setHitPointsArtifact(artifact);
                 break;
             default:

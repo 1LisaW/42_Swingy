@@ -38,6 +38,25 @@ public class GameController {
         System.out.println("Game started with hero: " + hero.getName() + ", class: ");
     }
 
+    public void startNewGame() {
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.startNewGame();
+    }
+
+    public void restartGame() {
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.restartGame();
+    }
+
+    public void saveAndStartNewGame() {
+        this.heroRepository.addHero(this.getHero());
+        try {
+            this.heroRepository.saveHeroesToFile();//java.nio.file.Paths.get(filePath));
+        } catch (Exception e) {}
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.saveAndStartNewGame();
+    }
+
     public void handleMovement() {
         if (this.gameModel.isGameOver())
             return ;
@@ -73,7 +92,7 @@ public class GameController {
         }
         this.gameModel = null;
         try {
-            this.heroRepository.saveHeroesToFile(java.nio.file.Paths.get("save.txt"));
+            this.heroRepository.saveHeroesToFile();//java.nio.file.Paths.get("save.txt"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,7 +159,7 @@ public class GameController {
 
     public void loadHeroesFromFile(String filePath) {
         try {
-            List<String> heroDataList = heroRepository.readHeroesFromFile(java.nio.file.Paths.get(filePath));
+            List<String> heroDataList = heroRepository.readHeroesFromFile();//java.nio.file.Paths.get(filePath));
             heroRepository.parseHeroesFromRepository(heroDataList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -253,5 +272,7 @@ public class GameController {
         }
         return 0; // No hero available
     }
+
+
 
 }

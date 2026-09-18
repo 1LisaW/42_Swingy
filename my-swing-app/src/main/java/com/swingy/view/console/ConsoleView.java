@@ -261,8 +261,8 @@ public class ConsoleView extends View {
         displayTextAsTyped("Make a move (W,A,S,D) :", 50, ANSI_BLUE);
         while (isRunning) {
             String move = scanner.nextLine().toLowerCase().trim();
-                if (checkOnSwitchToGui(move))
-                    return null;
+            if (checkOnSwitchToGui(move))
+                return null;
             switch (move) {
                 case "w":
                     return "up";
@@ -366,6 +366,8 @@ public class ConsoleView extends View {
                 toHeroSelection();
                 break;
             case 3:
+                isRunning = false;
+
                 // this.controller.exitGame();
                 break;
             default:
@@ -382,6 +384,7 @@ public class ConsoleView extends View {
     }
 
     private void toBattleResult() {
+        System.out.println("!!! toBattleResult ConsoleView");
         BattleResult battleResult = controller.getBattleResult();
         if (battleResult == BattleResult.DRAW) {
             this.controller.setGamePhase(Phases.GAMEPLAY);
@@ -492,6 +495,8 @@ public class ConsoleView extends View {
     }
 
     private void onFail() {
+        if (!isRunning)
+            return ;
         // displayTextAsTyped("Your hero have died...", 50, ANSI_RED);
         displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
         displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
@@ -506,6 +511,8 @@ public class ConsoleView extends View {
             case 2:
                 mainMenu();
                 break;
+            case -1:
+                break;
             default:
                 displayOnIncorrectInput();
                 onFail(); // Recursively call toMainMenu() for invalid input
@@ -514,6 +521,8 @@ public class ConsoleView extends View {
     }
 
     private void onLevelCleared() {
+        if (!isRunning)
+            return ;
         // displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
         displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
         displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
@@ -540,6 +549,8 @@ public class ConsoleView extends View {
                 mainMenu();
                 // hide();
                 break;
+            case -1:
+                break;
             default:
                 displayOnIncorrectInput();
                 onLevelCleared(); // Recursively call toMainMenu() for invalid input
@@ -549,7 +560,8 @@ public class ConsoleView extends View {
     }
 
     private void GameLoop() {
-         while (!this.controller.isGameOver() && isRunning) {
+        while (isRunning && this.controller.getGamePhase() != Phases.GAME_OVER) {
+        //  while (!this.controller.isGameOver() && isRunning) {
             toGamePhase();
          }
          if (isRunning && this.controller.getGamePhase() == Phases.GAME_OVER)
@@ -591,16 +603,6 @@ public class ConsoleView extends View {
         }
     }
 
-
-    // @Override
-    // public void onCreateHero() {
-
-    // }
-
-    // @Override
-    // public void onChooseHero() {
-
-    // }
 
     @Override
     protected HeroCredentials createHeroCredentials() {

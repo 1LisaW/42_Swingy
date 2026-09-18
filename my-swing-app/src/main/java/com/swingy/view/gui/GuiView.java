@@ -245,7 +245,10 @@ public class GuiView extends View {
                     // frame.showCurrentPopup();
                     break;
                 case GAME_OVER:
-                    frame.showPanel("GAME_OVER");
+                    if (this.controller.levelCleared())
+                        frame.showPanel("GAME_OVER_WON");
+                    else
+                        frame.showPanel("GAME_OVER_LOST");
                     break;
                 default:
                     frame.showPanel("MENU");

@@ -320,7 +320,7 @@ public class ConsoleView extends View {
     public void displayGameResult(boolean isWin) {
         if (isWin) {
             displayTextAsTyped("CONGRATS! HERO SUCCESSFULLY ESCAPED MAP.", 50, ANSI_GREEN);
-            onLevelCleared();
+            // onLevelCleared();
         }
         else
             displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
@@ -390,6 +390,10 @@ public class ConsoleView extends View {
             return ;
         }
         displayBattleLog(this.controller.getBattleLog());
+        if (battleResult == BattleResult.LOSE) {
+            this.controller.setGamePhase(Phases.GAME_OVER);
+            return ;
+        }
         if (battleResult == BattleResult.WIN && this.controller.isBattleProduceArtifact()) {
             this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
             toGamePhase();
@@ -433,7 +437,8 @@ public class ConsoleView extends View {
         if (this.controller.getGamePhase() != Phases.GAME_OVER)
             return;
         Boolean isWin = this.controller.levelCleared();
-        displayGameResult(isWin);
+        onGameOver(isWin);
+        // toGameOver(isWin);
     }
 
     private void toBattleRunOrFight() {
@@ -474,34 +479,66 @@ public class ConsoleView extends View {
             // toBattleRunOrFight();
             toGamePhase();
         }
-        // if (this.controller.levelCleared()) {
-        //     onLevelCleared();
-        // }
+        if (this.controller.levelCleared()) {
+            onGameOver(true);
+        }
+    }
+    private void onGameOver(Boolean won) {
+        displayGameResult(won);
+        if (won)
+            onLevelCleared();
+        else
+            onFail();
     }
 
-    private void onLevelCleared() {
-        displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
+    private void onFail() {
+        // displayTextAsTyped("Your hero have died...", 50, ANSI_RED);
         displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Save hero and proceed", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. Proceed to next level without saving", 50, ANSI_YELLOW);
-        displayTextAsTyped("    3. To main menu", 50, ANSI_YELLOW);
-        displayTextAsTyped("    4. Quit game", 50, ANSI_YELLOW);
-
-        int choice = getUserIntInputInRange(4);
-        Hero hero = this.controller.getHero();
+        displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
+        displayTextAsTyped("    2. To main menu", 50, ANSI_YELLOW);
+        int choice = getUserIntInputInRange(2);
         switch (choice) {
             case 1:
                 //this.controller.saveHero();
-                this.controller.startGame(hero);
+                this.controller.restartGame();
+                GameLoop();
                 break;
             case 2:
-                this.controller.startGame(hero);
-                break;
-            case 3:
                 mainMenu();
                 break;
+            default:
+                displayOnIncorrectInput();
+                onFail(); // Recursively call toMainMenu() for invalid input
+                break;
+        }
+    }
+
+    private void onLevelCleared() {
+        // displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
+        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
+        displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
+        displayTextAsTyped("    2. Proceed", 50, ANSI_YELLOW);
+        displayTextAsTyped("    3. Save hero and proceed", 50, ANSI_YELLOW);
+        displayTextAsTyped("    4. To main menu", 50, ANSI_YELLOW);
+
+        int choice = getUserIntInputInRange(4);
+        switch (choice) {
+            case 1:
+                //this.controller.saveHero();
+                this.controller.restartGame();
+                GameLoop();
+                break;
+            case 2:
+                this.controller.startNewGame();
+                GameLoop();
+                break;
+            case 3:
+                this.controller.saveAndStartNewGame();
+                GameLoop();
+                break;
             case 4:
-                hide();
+                mainMenu();
+                // hide();
                 break;
             default:
                 displayOnIncorrectInput();
@@ -515,6 +552,8 @@ public class ConsoleView extends View {
          while (!this.controller.isGameOver() && isRunning) {
             toGamePhase();
          }
+         if (isRunning && this.controller.getGamePhase() == Phases.GAME_OVER)
+            toGameOver();
     }
 
     private void toGameplay() {
@@ -620,6 +659,7 @@ public class ConsoleView extends View {
                 GameLoop();
                 break;
             case GAME_OVER:
+                toGameOver();
                 // GameLoop();
                 // toGameOver();
                 break;

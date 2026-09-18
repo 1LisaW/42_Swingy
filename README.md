@@ -21,7 +21,7 @@ Swingy is a simple Java-based role-playing game project that demonstrates core g
 ```bash
     mvn compile
     mvn package
-    java -cp target/my-swing-app-1.0-SNAPSHOT.jar com.example.App
+    java -cp target/my-swing-app-1.0-SNAPSHOT.jar com.swingy.App console
 
 ```
 

@@ -8,7 +8,7 @@ import javax.swing.SwingConstants;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import com.swingy.controller.ExitAction;
+import com.swingy.controller.actions.ExitAction;
 
 public class MainMenuPanel extends JPanel {
     // private Image background;

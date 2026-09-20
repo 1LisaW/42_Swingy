@@ -41,10 +41,8 @@ public class HeroParser {
                     int value = Integer.parseInt(heroId);
                     hero.setOriginalId(value);
                 } catch (NumberFormatException e) {
-                    // handle invalid value
                 }
                 heroMap.put(heroId, hero);
-                // System.out.println("HERO "+ heroId);
             }
         } else if (dataType.equals("artifact"))
         {
@@ -59,7 +57,6 @@ public class HeroParser {
         }
     }
 
-    // name archetype level experience hitPoints attack defense
     private Hero parseHero(String[] parts) {
         if (parts.length != 7) {
             throw new IllegalArgumentException("Invalid hero data format");
@@ -89,7 +86,6 @@ public class HeroParser {
         int attack = Integer.parseInt(parts[4].trim());
         int defense = Integer.parseInt(parts[5].trim());
 
-        // add Factory method to create artifact based on type
         return ArtifactFactory.getInstance().createArtifactFromRepo(name, artifactType, tier, attack, defense, hitPoints);
     }
 

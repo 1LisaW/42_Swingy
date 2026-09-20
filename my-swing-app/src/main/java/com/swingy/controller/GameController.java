@@ -6,14 +6,12 @@ import com.swingy.persistence.HeroRepository;
 import com.swingy.model.HeroBuilder;
 import com.swingy.model.HeroDirector;
 import com.swingy.model.Hero;
-// import com.swingy.view.View;
 import com.swingy.model.HeroCredentials;
 import com.swingy.model.GameModel;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Villain;
 import com.swingy.model.Artifact;
-import com.swingy.model.ArtifactFactory;
 import com.swingy.model.BattleResult;
 
 
@@ -51,15 +49,10 @@ public class GameController {
     public void saveAndStartNewGame() {
         this.heroRepository.addHero(this.getHero());
         try {
-            this.heroRepository.saveHeroesToFile();//java.nio.file.Paths.get(filePath));
+            this.heroRepository.saveHeroesToFile();
         } catch (Exception e) {}
         currentPhase = Phases.GAMEPLAY;
         this.gameModel.saveAndStartNewGame();
-    }
-
-    public void handleMovement() {
-        if (this.gameModel.isGameOver())
-            return ;
     }
 
     public boolean levelCleared() {
@@ -71,7 +64,7 @@ public class GameController {
     }
 
     public boolean isBattleTriggered() {
-        return this.gameModel.getOpponent() != null;
+        return this.gameModel != null && this.gameModel.getOpponent() != null;
     }
 
     public void moveHero(String movement) {
@@ -87,12 +80,11 @@ public class GameController {
         if (hero.getHitPoints() == 0) {
             if (!this.heroRepository.containsHero(hero)) {
                 this.heroRepository.addHero(hero);
-                // this.heroRepository.saveHeroesToFile("save.txt");
             }
         }
         this.gameModel = null;
         try {
-            this.heroRepository.saveHeroesToFile();//java.nio.file.Paths.get("save.txt"));
+            this.heroRepository.saveHeroesToFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,7 +125,6 @@ public class GameController {
     }
 
     private void initBattleSimulator() {
-        System.out.println("Battle triggered (NEW CREATED)!");
         Hero hero = this.gameModel.getHero();
         Villain villain = this.gameModel.getOpponent();
         this.currentBattle = new BattleSimulator(hero, villain);
@@ -157,9 +148,9 @@ public class GameController {
         }
     }
 
-    public void loadHeroesFromFile(String filePath) {
+    public void loadHeroesFromFile() {
         try {
-            List<String> heroDataList = heroRepository.readHeroesFromFile();//java.nio.file.Paths.get(filePath));
+            List<String> heroDataList = heroRepository.readHeroesFromFile();
             heroRepository.parseHeroesFromRepository(heroDataList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -203,7 +194,6 @@ public class GameController {
     public BattleSimulator getCurrentBattleSimulator() {
         return this.currentBattle;
     }
-
 
     // battle data
 
@@ -272,7 +262,5 @@ public class GameController {
         }
         return 0; // No hero available
     }
-
-
 
 }

@@ -2,8 +2,16 @@ package com.swingy.persistence;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+// import java.util.List;
+import java.util.stream.Collectors;
 
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -18,7 +26,8 @@ public class HeroRepository {
     private HeroParser heroParser;
     private List<Hero> heroes;
     private static HeroRepository instance;
-    private final Path filePath = java.nio.file.Paths.get("save.txt");
+    private final Path filePath = Paths.get("save.txt");
+    // private final Path filePath = java.nio.file.Paths.get("save.txt");
 
     private HeroRepository() {
         this.heroParser = new HeroParser(new HeroBuilder());
@@ -32,11 +41,30 @@ public class HeroRepository {
     }
 
     public List<String> readHeroesFromFile() throws Exception {
-        List<String> heroDataList = Files.readAllLines(filePath);
-        heroDataList.removeIf(String::isEmpty); // Remove empty lines
-        heroDataList.removeIf(line -> line.trim().isEmpty()); // Remove lines that are only whitespace
-        heroDataList.removeIf(line -> line.startsWith("#")); // Remove comment lines starting with
-        return heroDataList;
+        InputStream inputStream =
+                getClass().getClassLoader().getResourceAsStream("save.txt");
+
+        if (inputStream == null) {
+            throw new FileNotFoundException("save.txt not found in resources");
+        }
+
+        try (BufferedReader reader =
+                    new BufferedReader(new InputStreamReader(inputStream))) {
+
+            List<String> heroDataList = reader.lines()
+                    .collect(Collectors.toList());
+
+            heroDataList.removeIf(String::isEmpty);
+            heroDataList.removeIf(line -> line.trim().isEmpty());
+            heroDataList.removeIf(line -> line.startsWith("#"));
+
+            return heroDataList;
+        }
+        // List<String> heroDataList = Files.readAllLines(filePath);
+        // heroDataList.removeIf(String::isEmpty); // Remove empty lines
+        // heroDataList.removeIf(line -> line.trim().isEmpty()); // Remove lines that are only whitespace
+        // heroDataList.removeIf(line -> line.startsWith("#")); // Remove comment lines starting with
+        // return heroDataList;
     }
 
     public void saveHeroesToFile() throws Exception {
@@ -63,14 +91,16 @@ public class HeroRepository {
             return ;
         int id = hero.getOriginalId();
         int toBeReplacedId = IntStream.range(0, heroes.size())
-            .filter(i -> Objects.equals(heroes.get(i).getOriginalId(), id))
+            .filter(i -> Objects.equals(heroes.get(i).getOriginalId(), id)
+            )
             .findFirst()
             .orElse(-1);
         if (toBeReplacedId == -1) {
             hero.setOriginalId(heroes.size());
             heroes.add(hero);
-        } else
+        } else {
             heroes.set(toBeReplacedId, hero);
+        }
     }
 
     public boolean containsHero(Hero hero) {

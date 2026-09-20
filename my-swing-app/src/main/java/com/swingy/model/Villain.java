@@ -19,6 +19,12 @@ public class Villain {
         return level;
     }
 
+    protected void setStats(int hp, int atk, int def) {
+        hitPoints = hp;
+        attack = atk;
+        defense = def;
+    }
+
     private void setRandomStats() {
 
         int maxPoints = 5 + this.level * 5;
@@ -45,6 +51,8 @@ public class Villain {
     }
 
     public void applyDamage(int damage) {
+        if (damage < 0)
+            return ;
         this.hitPoints -= Math.min(this.hitPoints, damage);
     }
 

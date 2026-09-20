@@ -15,8 +15,8 @@ import com.swingy.model.GameMap;
 import com.swingy.model.BattleResult;
 import com.swingy.model.Hero;
 import com.swingy.controller.GameController;
-import com.swingy.controller.GameOverWonPanelAction;
-import com.swingy.controller.GameOverLostPanelAction;
+import com.swingy.controller.actions.GameOverWonPanelAction;
+import com.swingy.controller.actions.GameOverLostPanelAction;
 import com.swingy.controller.Phases;
 
 import com.swingy.view.gui.ArtifactPopup;

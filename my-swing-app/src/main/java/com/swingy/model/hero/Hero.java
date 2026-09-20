@@ -226,9 +226,8 @@ public class Hero {
         int i = index.getAndIncrement();
         return (i + "|" + this.toFormattedString()
             + ( this.hitPointsArtifact == null ? "" : i + "|" + this.hitPointsArtifact.toString())
-            + ( this.attackArtifact == null ? "" : i + "|" + this.attackArtifact.toString() )
-            + ( this.defenseArtifact == null ? "" : i + "|" + this.defenseArtifact.toString() )
-
+            + ( this.attackArtifact == null ? "" : i + "|" + this.attackArtifact.toString())
+            + ( this.defenseArtifact == null ? "" : i + "|" + this.defenseArtifact.toString())
         );
     }
 }

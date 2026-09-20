@@ -13,11 +13,11 @@ import javax.swing.UIManager;
 import com.swingy.controller.GameController;
 import com.swingy.controller.Phases;
 import com.swingy.controller.NavigationController;
-import com.swingy.controller.MainMenuAction;
-import com.swingy.controller.GamePanelAction;
-import com.swingy.controller.GameOverWonPanelAction;
-import com.swingy.controller.GameOverLostPanelAction;
-import com.swingy.controller.ExitAction;
+import com.swingy.controller.actions.MainMenuAction;
+import com.swingy.controller.actions.GamePanelAction;
+import com.swingy.controller.actions.GameOverWonPanelAction;
+import com.swingy.controller.actions.GameOverLostPanelAction;
+import com.swingy.controller.actions.ExitAction;
 
 class MainFrame extends JFrame {
     private final GameController controller;

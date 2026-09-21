@@ -35,7 +35,6 @@ public class GuiView extends View {
         super(controller, viewManager);
         frame = new MainFrame(controller);
         frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
-        // setupKeyBindings();
         setupGlobalKeyBindings();
     }
 
@@ -163,40 +162,11 @@ public class GuiView extends View {
 
     }
 
-    //     @Override
-    // public void onCreateHero() {
-
-    // }
-
-    // @Override
-    // public void onChooseHero() {
-
-    // }
     @Override
     protected HeroCredentials createHeroCredentials() {
         HeroCredentials heroCredentials = new HeroCredentials();
         return heroCredentials;
     }
-
-    // private void setupGlobalKeyBindings() {
-    //     KeyboardFocusManager.getCurrentKeyboardFocusManager()
-    //     .addKeyEventDispatcher(e -> {
-    //         if (e.getID() != KeyEvent.KEY_PRESSED
-    //                 || e.getKeyCode() != KeyEvent.VK_C
-    //                 || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
-    //             return false;
-    //         }
-
-    //         Component focused = e.getComponent();
-
-    //         if (focused instanceof JTextComponent) {
-    //             return false;
-    //         }
-
-    //         viewManager.switchToConsole();
-    //         return true;
-    //     });
-    // }
 
     private void setupGlobalKeyBindings() {
         globalKeyDispatcher = e -> {

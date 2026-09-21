@@ -11,5 +11,5 @@
 3|artifact|Common Dagger|weapon|Common|0|5|0
 3|artifact|Common Gauntlets|armor|Common|0|0|5
 
-4|hero|koko|wizard|1|0|5|5|0
+4|hero|koko|wizard|70|0|5|5|0
 

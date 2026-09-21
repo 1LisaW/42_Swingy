@@ -75,11 +75,7 @@ public class GamePanel extends JPanel {
     g2.dispose();
 
     return scaled;
-        // ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-        // Image scaled = icon.getImage().getScaledInstance(
-        //     CELL_SIZE - 2, CELL_SIZE - 2, Image.SCALE_SMOOTH
-        // );
-        // return scaled;
+
     }
 
     private ImageIcon getHeroIcon() {
@@ -234,12 +230,16 @@ public class GamePanel extends JPanel {
     }
 
     private Point calculateCamera(Point heroPos, GameMap gameMap) {
-        int mapPixelWidth = gameMap.getSize() * CELL_SIZE;
-        int mapPixelHeight = gameMap.getSize() * CELL_SIZE + CELL_SIZE;
+        int gameMapSize = gameMap.getSize();
+        int winWidth = getWidth();
+        int diff = Math.max(0, winWidth / 2 - CELL_SIZE * gameMapSize / 2);
+        int mapPixelWidth = gameMapSize * CELL_SIZE + CELL_SIZE + diff;
+        int mapPixelHeight = gameMapSize * CELL_SIZE + CELL_SIZE;
+
 
         int cameraX = heroPos.x * CELL_SIZE
                 + CELL_SIZE / 2
-                - getWidth() / 2;
+                - winWidth / 2;
 
         int cameraY = heroPos.y * CELL_SIZE
                 + CELL_SIZE / 2
@@ -251,7 +251,7 @@ public class GamePanel extends JPanel {
 
         cameraX = Math.min(
                 cameraX,
-                Math.max(0, mapPixelWidth - getWidth())
+                Math.max(0, CELL_SIZE * 3 + mapPixelWidth - winWidth)
         );
 
         cameraY = Math.min(

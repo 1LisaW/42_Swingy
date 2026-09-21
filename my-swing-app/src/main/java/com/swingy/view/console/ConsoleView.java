@@ -192,15 +192,14 @@ public class ConsoleView extends View {
 
 
     public int getUserIntInputInRange(int maxNum) {
-        // Scanner scanner = new Scanner(System.in);
         while (isRunning) {
             System.out.print("Please enter your choice: ");
             String input = scanner.nextLine();
             while (!input.matches("\\d+") ) {
                 if (checkOnSwitchToGui(input.trim()))
                     return -1;
-                input = scanner.nextLine();
                 this.displayOnIncorrectInput();
+                input = scanner.nextLine();
             }
             int choice = Integer.parseInt(input);
             if (choice > 0 && choice <= maxNum)

@@ -13,6 +13,8 @@ public class BattleSimulator {
     private Hero hero;
     private Villain villain;
     private List<String> log = new ArrayList<>();
+    private BattleResult battleResult = BattleResult.NOT_STARTED;
+    private Artifact artifact = null;
 
     public BattleSimulator(Hero hero, Villain villain) {
         this.hero = hero;
@@ -54,6 +56,7 @@ public class BattleSimulator {
         int damageFromVillain = this.villain.getAttack() - this.hero.getDefense();
         if (damageFromVillain <= 0 && damageFromHero <= 0) {
             this.log.add("This villain is too tough for you. Just as you are for him. Come back when you are stronger.");
+            battleResult = BattleResult.DRAW;
             return 0;
         }
         while(this.hero.getHitPoints() > 0 && this.villain.getHitPoints() > 0) {
@@ -70,15 +73,24 @@ public class BattleSimulator {
         }
         if (this.hero.getHitPoints() <= 0) {
             this.log.add("Hero lost the battle.");
+            battleResult = BattleResult.LOSE;
             return -1;
         }
         this.log.add("Hero won the battle!");
+        battleResult = BattleResult.WIN;
         return 1;
     }
 
     public int run() {
-        if (Math.random() <= 0.65)
+        if (battleResult == BattleResult.RUN_AWAY)
             return 1;
+        else if (battleResult == BattleResult.FAIL_TO_RUN)
+            return 0;
+        if (Math.random() <= 0.65) {
+            battleResult = BattleResult.RUN_AWAY;
+            return 1;
+        }
+        battleResult = BattleResult.FAIL_TO_RUN;
         return 0;
     }
 
@@ -86,9 +98,26 @@ public class BattleSimulator {
         return this.villain.getLevel() * 300;
     }
 
+    public void collectBattleExperience() {
+        int experience = this.getExperience();
+        this.hero.setExperience(experience);
+        this.hero.checkLevelUp();
+    }
+
     public Artifact generateArtifact() {
         ArtifactFactory artifactFactory = ArtifactFactory.getInstance();
-        return (artifactFactory.createArtifact(this.villain.getAttack()));
+        artifact = artifactFactory.createArtifact(this.villain.getAttack());
+        return (artifact);
+    }
+
+    public Artifact getArtifact() {
+        return artifact;
+    }
+
+    public void updateHeroArtifact() {
+        if (artifact != null) {
+            this.hero.addArtifact(artifact);
+        }
     }
 
     public Hero getHero() {
@@ -98,7 +127,12 @@ public class BattleSimulator {
     public Villain getVillain() {
         return this.villain;
     }
+
     public List<String> getLog() {
         return this.log;
+    }
+
+    public BattleResult getBattleResult() {
+        return this.battleResult;
     }
 }

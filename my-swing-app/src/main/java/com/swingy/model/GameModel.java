@@ -5,16 +5,28 @@ import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
 
 public class GameModel {
+    private Hero lastSavedHero;
     private Hero hero;
     private GameMap gameMap;
 
     public GameModel(Hero hero) {
-        this.hero = hero;
+        this.lastSavedHero = hero;
+        this.hero = new Hero(hero);
         this.startNewGame();
     }
 
     public void startNewGame() {
         this.gameMap = new GameMap(this.hero.getLevel());
+    }
+
+    public void restartGame() {
+        this.hero = new Hero(lastSavedHero);
+        startNewGame();
+    }
+
+    public void saveAndStartNewGame() {
+        this.lastSavedHero = hero;
+        restartGame();
     }
 
     public Hero getHero() {
@@ -32,7 +44,9 @@ public class GameModel {
         );
     }
 
-
+    public boolean levelCleared() {
+        return this.gameMap.isHeroEscaped() && this.hero.isAlive();
+    }
 
     public void moveHero(String movement) {
         this.gameMap.moveHero(movement);

@@ -1,8 +1,9 @@
-package com.swingy.controller;
+package com.swingy.controller.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
+import com.swingy.controller.NavigationController;
 
 public class MainMenuAction extends AbstractAction {
     private final NavigationController navigation;

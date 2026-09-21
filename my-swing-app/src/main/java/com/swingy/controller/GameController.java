@@ -6,56 +6,74 @@ import com.swingy.persistence.HeroRepository;
 import com.swingy.model.HeroBuilder;
 import com.swingy.model.HeroDirector;
 import com.swingy.model.Hero;
-import com.swingy.view.View;
 import com.swingy.model.HeroCredentials;
 import com.swingy.model.GameModel;
+import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
 import com.swingy.model.Villain;
 import com.swingy.model.Artifact;
-import com.swingy.model.ArtifactFactory;
+import com.swingy.model.BattleResult;
+
+import java.nio.file.Path;
 
 
 public class GameController {
     private HeroRepository heroRepository;
-    private View view;
     private GameModel gameModel;
 
+    private BattleSimulator currentBattle = null;
+
+    private Phases currentPhase = Phases.MAIN_MENU;
+
     // Controller implementation
-    public GameController(View view) {
+    public GameController() {
         // Initialize the game controller
         this.heroRepository = HeroRepository.getInstance();
-        this.view = view;
     }
 
     public void startGame(Hero hero) {
         // Logic to start the game
+        currentPhase = Phases.GAMEPLAY;
         this.gameModel = new GameModel(hero);
-        this.view.displayMap(this.gameModel.getMap());
-        this.gameLoop();
     }
 
-    public void handleMovement() {
-        if (this.gameModel.isGameOver())
-            return ;
-
+    public void startNewGame() {
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.startNewGame();
     }
 
-    private void gameLoop() {
-        while (!(this.gameModel.isGameOver())) {
-            String movement = this.view.promptHeroMove();
-            this.gameModel.moveHero(movement);
-            this.view.displayMap(this.gameModel.getMap());
-            if (this.gameModel.getOpponent() != null)
-                this.initBattleSimulator();
-        }
-        this.gameEnd();
+    public void restartGame() {
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.restartGame();
+    }
+
+    public void saveAndStartNewGame() {
+        this.heroRepository.addHero(this.getHero());
+        try {
+            this.heroRepository.saveHeroesToFile();
+        } catch (Exception e) {}
+        currentPhase = Phases.GAMEPLAY;
+        this.gameModel.saveAndStartNewGame();
+    }
+
+    public boolean levelCleared() {
+        return this.gameModel.levelCleared();
+    }
+
+    public boolean isGameOver() {
+        return this.gameModel.isGameOver();
+    }
+
+    public boolean isBattleTriggered() {
+        return this.gameModel != null && this.gameModel.getOpponent() != null;
     }
 
     public void moveHero(String movement) {
         this.gameModel.moveHero(movement);
-        this.view.displayMap(this.gameModel.getMap());
-        if (this.gameModel.getOpponent() != null)
+        if (this.gameModel.getOpponent() != null) {
             this.initBattleSimulator();
+            this.currentPhase = Phases.BATTLE_RUN_OR_FIGHT;
+        }
     }
 
     private void gameEnd() {
@@ -63,79 +81,79 @@ public class GameController {
         if (hero.getHitPoints() == 0) {
             if (!this.heroRepository.containsHero(hero)) {
                 this.heroRepository.addHero(hero);
-                // this.heroRepository.saveHeroesToFile("save.txt");
             }
-            this.view.displayGameResult(false);
         }
-        else
-            this.view.displayGameResult(true);
         this.gameModel = null;
         try {
-            this.heroRepository.saveHeroesToFile(java.nio.file.Paths.get("save.txt"));
+            this.heroRepository.saveHeroesToFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.toMainMenu();
     }
 
-    private void simulateBattle(BattleSimulator battleSimulator) {
-        int fightResult = battleSimulator.fight();
+    public void runBattle() {
+        if (this.currentBattle != null) {
+            int fightResult = this.currentBattle.fight();
+            if (fightResult != 1)
+                this.gameModel.retreatHero();
+            if (fightResult == 1) {
+                Villain villain = this.gameModel.removeOpponent();
+            }
+        }
+    }
+
+    public void simulateBattle() {
+        int fightResult = this.currentBattle.fight();
         if (fightResult != 1)
             this.gameModel.retreatHero();
         if (fightResult == 1) {
             Villain villain = this.gameModel.removeOpponent();
         }
-        this.view.displayBattleLog(battleSimulator);
-        if (fightResult == 1) {
-            Hero hero = this.gameModel.getHero();
-            hero.setExperience(battleSimulator.getExperience());
-            if (hero.checkLevelUp())
-                this.view.displayLevelUp(hero);
+    }
 
-             Artifact artifact = battleSimulator.generateArtifact();
-            if (artifact != null) {
-                this.view.displayUseArtifact(artifact);
-                if (this.view.promptUseArtifact() == 1) {
-                    hero.addArtifact(artifact);
-                }
-            }
+    public BattleResult getBattleResult() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getBattleResult();
         }
+        return BattleResult.NOT_STARTED; // No battle in progress
+    }
+
+    public List<String> getBattleLog() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getLog();
+        }
+        return null; // No battle in progress
     }
 
     private void initBattleSimulator() {
         Hero hero = this.gameModel.getHero();
         Villain villain = this.gameModel.getOpponent();
-        BattleSimulator battleSimulator = new BattleSimulator(hero, villain);
-        this.view.displayBattleParticipants(battleSimulator);
-        int option = this.view.promptBattleFightOrRun();
-        switch(option) {
-            case 1:
-                this.simulateBattle(battleSimulator);
-                break;
-            case 2:
-                if (battleSimulator.run() == 1) {
-                    this.view.displayOnHeroRun(true);
-                    this.gameModel.retreatHero();
-                }
-                else {
-                    this.view.displayOnHeroRun(false);
-                    this.simulateBattle(battleSimulator);
-                }
-                break;
+        this.currentBattle = new BattleSimulator(hero, villain);
+    }
+
+    public int runFromBattle() {
+        if (this.currentBattle != null) {
+            int result = this.currentBattle.run();
+            if (result == 1) {
+                this.currentBattle = null;
+                this.gameModel.retreatHero();
+            }
+            return result;
+        }
+        return -1; // No battle to run from
+    }
+
+    public void updateHeroArtifact() {
+        if (this.currentBattle != null) {
+            this.currentBattle.updateHeroArtifact();
         }
     }
 
-    public void saveGame() {
-        // Logic to save the game state
-    }
-
-    public void exitGame() {
-        // Logic to exit the game
-    }
-
-    public void loadHeroesFromFile(String filePath) {
+    public void loadHeroesFromFile(Path path) {
         try {
-            List<String> heroDataList = heroRepository.readHeroesFromFile(java.nio.file.Paths.get(filePath));
+            if (path != null)
+                heroRepository.updateFilePath(path);
+            List<String> heroDataList = heroRepository.readHeroesFromFile();
             heroRepository.parseHeroesFromRepository(heroDataList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,73 +162,107 @@ public class GameController {
 
     private HeroCredentials createHeroCredentials() {
         HeroCredentials heroCredentials = new HeroCredentials();
-        heroCredentials.setName(view.getUserInput("Enter hero name"));
-        while (heroCredentials.getName().isEmpty()) {
-            view.displayOnIncorrectInput();
-            heroCredentials.setName(view.getUserInput("Enter hero name"));
-        }
-        view.promptChooseHeroClass();
-        String archetype = view.getUserInput("Choose an option ");
-        while (!archetype.equals("1") && !archetype.equals("2") && !archetype.equals("3")) {
-            view.displayOnIncorrectInput();
-            archetype = view.getUserInput("Choose an option ");
-        }
-        switch (archetype) {
-            case "1":
-                heroCredentials.setHeroArchetype("wizard");
-                break;
-             case "2":
-                heroCredentials.setHeroArchetype("warrior");
-                break;
-             case "3":
-                heroCredentials.setHeroArchetype("barbarian");
-                break;
-        }
         return heroCredentials;
     }
 
-    private Hero createHero() {
-        HeroCredentials heroCredentials = this.createHeroCredentials();
+    public Hero createHero(HeroCredentials heroCredentials) {
         HeroDirector director = new HeroDirector(new HeroBuilder());
         return director.constructNewHero(heroCredentials.getName(), heroCredentials.getHeroType());
-        // Logic to create a new hero with the given name and archetype
-    }
-
-    public void toMainMenu() {
-        // Logic to return to the main menu
-        this.view.displayMainMenu();
-        int chosenOption = this.view.promptMainMenu();
-        this.view.displayMainMenuStatus(chosenOption);
-        Hero currentHero = null;
-        switch (chosenOption) {
-            case 1:
-                currentHero = this.createHero();
-                this.view.displayHeroStats(currentHero);
-                this.startGame(currentHero);
-                // Logic to create a new hero
-                break;
-            case 2:
-                List<Hero> heroes = this.heroRepository.getHeroes();
-                this.view.displayChooseHeroFromList(heroes);
-                int choice = this.view.promptChooseHeroFromList(heroes.size());
-                currentHero = heroes.get(choice - 1);
-                this.view.displayChooseHeroFromListStatus(currentHero);
-                this.startGame(currentHero);
-                break;
-            case 3:
-                exitGame();
-                break;
-            default:
-                view.displayOnIncorrectInput();
-                toMainMenu(); // Recursively call toMainMenu() for invalid input
-                break;
-        }
     }
 
     public List<Hero> getHeroes() {
         return heroRepository.getHeroes();
     }
 
+    public GameMap getGameMap() {
+        return this.gameModel.getMap();
+    }
 
+    public Hero getHero() {
+        if (this.gameModel != null) {
+            return this.gameModel.getHero();
+        }
+        return null;
+    }
+
+    public Phases getGamePhase() {
+        return this.currentPhase;
+    }
+
+    public void setGamePhase(Phases phase) {
+        this.currentPhase = phase;
+    }
+
+    public BattleSimulator getCurrentBattleSimulator() {
+        return this.currentBattle;
+    }
+
+    // battle data
+
+    public boolean isBattleProduceArtifact() {
+        if (this.currentBattle != null) {
+            Artifact artifact = this.currentBattle.generateArtifact();
+            return artifact != null;
+        }
+        return false;
+    }
+
+    public String getBattleArtifactType(){
+        if (this.currentBattle != null) {
+            Artifact artifact = this.currentBattle.getArtifact();
+            if (artifact != null) {
+                return artifact.getArtifactType();
+            }
+        }
+        return null;
+    }
+
+    public Artifact getBattleArtifact() {
+        if (this.currentBattle != null) {
+            return this.currentBattle.getArtifact();
+        }
+        return null;
+    }
+
+    public String getBattleArtifactName(){
+        if (this.currentBattle != null) {
+        Artifact artifact = this.currentBattle.getArtifact();
+            if (artifact != null) {
+                return artifact.toString();
+            }
+        }
+        return null;
+    }
+
+    public String getBattleVillainData() {
+        if (this.currentBattle != null) {
+            Villain villain = this.currentBattle.getVillain();
+            if (villain != null) {
+                return villain.toFormattedString("|");
+            }
+        }
+        return ""; // No villain data available
+    }
+
+    public void collectBattleExperience() {
+        if (this.currentBattle != null) {
+            this.currentBattle.collectBattleExperience();
+        }
+    }
+
+    public boolean willLevelUp() {
+        if (this.currentBattle == null || this.gameModel == null)
+            return false;
+        int heroExp = this.gameModel.getHero().getExperience() + this.currentBattle.getExperience();
+        int maxHeroExp = this.gameModel.getHero().getMaxExperience();
+        return heroExp >= maxHeroExp;
+    }
+
+    public int getHeroLevel() {
+        if (this.gameModel != null) {
+            return this.gameModel.getHero().getLevel();
+        }
+        return 0; // No hero available
+    }
 
 }

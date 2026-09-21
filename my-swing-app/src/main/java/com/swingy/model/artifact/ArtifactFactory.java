@@ -21,13 +21,16 @@ public class ArtifactFactory {
         boolean shouldCreateArtifact = calculateRandomProbability() <= 70; // 50% chance to create an artifact
         if (!shouldCreateArtifact)
             return null;
-        int randomArtifactType = random.nextInt(2) + 1; // Currently only creating Weapon and Armor artifacts, can be extended for other types
+        int randomArtifactType = random.nextInt(3) + 1; // Currently only creating Weapon and Armor artifacts, can be extended for other types
         switch (randomArtifactType) {
             case 1:
                 return new Weapon(tier);
             case 2:
                 // Future implementation for creating other artifact types (e.g., Armor, Accessory)
                 return new Armor(tier);
+            case 3:
+                // Future implementation for creating other artifact types (e.g., Armor, Accessory)
+                return new Helm(tier);
             default:
                 return null;
         }

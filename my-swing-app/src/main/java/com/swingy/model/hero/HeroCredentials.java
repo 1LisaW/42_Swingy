@@ -8,6 +8,11 @@ public class HeroCredentials {
 
     public HeroCredentials() {}
 
+    public HeroCredentials(String name, String archetype) {
+        setName(name);
+        setHeroArchetype(archetype);
+    }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -8,25 +8,20 @@ import javax.swing.SwingConstants;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import com.swingy.controller.ExitAction;
+import com.swingy.controller.actions.ExitAction;
 
 public class MainMenuPanel extends JPanel {
-    private Image background;
 
     private final JButton newGameButton = new JButton("Create new hero");
     private final JButton loadHeroesButton = new JButton("Load hero");
     private JButton exitButton;
 
     public MainMenuPanel(ExitAction exitAction) {
-    // (GuiView view) {
         exitButton = new JButton(exitAction);
         setLayout(new GridBagLayout());
-        // setLayout(new BorderLayout());
 
         JLabel title = new JLabel("Swingy", SwingConstants.CENTER);
 
-        // JButton play = new JButton("Start Game");
-        // JPanel root = new JPanel(new GridBagLayout());
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
@@ -51,35 +46,7 @@ public class MainMenuPanel extends JPanel {
         buttonPanel.add(exitButton);
         buttonPanel.setOpaque(false);
 
-        // play.addActionListener(e -> view.showScreen("GAME"));
-
-        // add(title, BorderLayout.CENTER);
         add(buttonPanel);
-        // add(play, BorderLayout.SOUTH);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        Graphics2D g2 = (Graphics2D) g.create();
-
-        g2.drawImage(background, 0, 0, getWidth(), getHeight(), this);
-
-        RadialGradientPaint paint = new RadialGradientPaint(
-                getWidth() / 2f,
-                getHeight() / 2f,
-                getWidth() / 2f,
-                new float[]{0f, 1f},
-                new Color[]{
-                        new Color(255, 255, 255, 0),
-                        new Color(0, 0, 0, 180)
-                });
-
-        g2.setPaint(paint);
-        g2.fillRect(0, 0, getWidth(), getHeight());
-
-        g2.dispose();
     }
 
     public void addNewGameListener(ActionListener listener) {

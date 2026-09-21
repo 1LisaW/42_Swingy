@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 public abstract class Artifact {
     private String name;
-    ArtifactTier tier;
-    String artifactType;
+    private ArtifactTier tier;
+    private String artifactType;
     private int attackBonus;
     private int defenseBonus;
     private int hitPointsBonus;

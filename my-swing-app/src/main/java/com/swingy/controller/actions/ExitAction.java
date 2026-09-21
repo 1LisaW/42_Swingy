@@ -1,4 +1,4 @@
-package com.swingy.controller;
+package com.swingy.controller.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.*;

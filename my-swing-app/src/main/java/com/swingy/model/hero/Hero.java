@@ -14,6 +14,7 @@ public class Hero {
     private Artifact defenseArtifact;
     private Artifact attackArtifact;
     private Artifact hitPointsArtifact;
+    private int originalId = -1;
 
     public Hero(String name, String archetype, int level, int experience, int hitPoints, int attack, int defense) {
         this.name = name;
@@ -27,6 +28,38 @@ public class Hero {
         this.attackArtifact = null;
         this.hitPointsArtifact = null;
         this.setMaxExperience();
+    }
+
+    public Hero(Hero repoHero) {
+        this.name = repoHero.getName();
+        this.archetype = repoHero.getArchetype();
+        this.level = repoHero.getLevel();
+        this.experience = repoHero.getExperience();
+        this.hitPoints = repoHero.getHitPoints();
+        this.attack = repoHero.getAttack();
+        this.defense = repoHero.getDefense();
+        repoHero.lendArtifacts(this);
+        this.originalId = repoHero.getOriginalId();
+        this.setMaxExperience();
+    }
+
+    public int getOriginalId() {
+        return originalId;
+    }
+
+    public void lendArtifacts(Hero hero) {
+        hero.setArtifacts(defenseArtifact, attackArtifact, hitPointsArtifact);
+    }
+
+    private void setArtifacts(Artifact defenseArtifact,
+    Artifact attackArtifact, Artifact hitPointsArtifact) {
+        this.defenseArtifact = defenseArtifact;
+        this.attackArtifact = attackArtifact;
+        this.hitPointsArtifact = hitPointsArtifact;
+    }
+
+    public void setOriginalId(int id) {
+        originalId = id;
     }
 
     // Getters and setters for the fields
@@ -78,6 +111,10 @@ public class Hero {
 
     public int getHitPoints() {
         return hitPoints;
+    }
+
+    public boolean isAlive() {
+        return this.hitPoints > 0;
     }
 
     public void setHitPoints(int hitPoints) {
@@ -167,7 +204,7 @@ public class Hero {
             case "weapon":
                 setAttackArtifact(artifact);
                 break;
-            case "helmet":
+            case "helm":
                 setHitPointsArtifact(artifact);
                 break;
             default:
@@ -189,9 +226,8 @@ public class Hero {
         int i = index.getAndIncrement();
         return (i + "|" + this.toFormattedString()
             + ( this.hitPointsArtifact == null ? "" : i + "|" + this.hitPointsArtifact.toString())
-            + ( this.attackArtifact == null ? "" : i + "|" + this.attackArtifact.toString() )
-            + ( this.defenseArtifact == null ? "" : i + "|" + this.defenseArtifact.toString() )
-
+            + ( this.attackArtifact == null ? "" : i + "|" + this.attackArtifact.toString())
+            + ( this.defenseArtifact == null ? "" : i + "|" + this.defenseArtifact.toString())
         );
     }
 }

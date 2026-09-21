@@ -1,0 +1,15 @@
+0|hero|Rincewind|wizard|1|910|5|21|35
+0|artifact|Common Sword|weapon|Common|0|2|0
+0|artifact|Common Gauntlets|armor|Common|0|0|5
+
+1|hero|Konan|warrior|2|210|8|15|11
+
+2|hero|Waschenbare|barbarian|1|210|1|1|1
+
+3|hero|kukuha|warrior|2|200|12|29|29
+3|artifact|Common Chain Helm|helm|Common|5|0|0
+3|artifact|Common Dagger|weapon|Common|0|5|0
+3|artifact|Common Gauntlets|armor|Common|0|0|5
+
+4|hero|koko|wizard|1|0|5|5|0
+

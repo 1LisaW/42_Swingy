@@ -4,49 +4,46 @@ import java.util.List;
 
 import com.swingy.view.View;
 import com.swingy.model.Hero;
+import com.swingy.model.HeroCredentials;
 import com.swingy.model.Villain;
 import com.swingy.model.GameMap;
 import com.swingy.model.BattleSimulator;
-
 import com.swingy.model.Artifact;
+import com.swingy.controller.GameController;
+import com.swingy.controller.Phases;
+import com.swingy.view.ViewManager;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import java.awt.*;
+import javax.swing.*;
+import java.awt.event.*;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.text.JTextComponent;
+import java.awt.KeyEventDispatcher;
 
 
 public class GuiView extends View {
     private MainFrame frame;
-    // private JPanel mainPanel;
-    // private CardLayout cardLayout;
+    private KeyEventDispatcher globalKeyDispatcher;
 
 
-    public GuiView() {
-        frame = new MainFrame();
-        // Initialize the view
-        // this.frame = new JFrame("Swingy");
-        // this.cardLayout = new CardLayout();
-        // this.mainPanel = new JPanel(this.cardLayout);
-        // this.mainPanel.add(new MainMenuPanel(), "MENU");
-        // this.mainPanel.add(new GamePanel(), "GAME");
-        // this.mainPanel.add(new CreateHeroPanel(), "CREATE");
-        // this.frame.setContentPane(this.mainPanel);
-
-        // this.frame.setSize(1200, 600);
-        // this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// frame.setVisible(true);
+    public GuiView(GameController controller, ViewManager viewManager) {
+        super(controller, viewManager);
+        frame = new MainFrame(controller);
+        frame.getSelectHeroFromListPanel().updateHeroList(controller.getHeroes());
+        // setupKeyBindings();
+        setupGlobalKeyBindings();
     }
 
     @Override
     public void start() {
-        // this.frame.showPanel("MENU");
         this.frame.setVisible(true);
-        // this
     }
+
     @Override
     public void displayHeroStats(Hero hero) {
 
@@ -68,15 +65,13 @@ public class GuiView extends View {
     }
 
     @Override
-    public void displayBattleLog(BattleSimulator battleSimulator) {
+    public void displayBattleLog(List<String> log) {
 
     }
 
     @Override
     public void displayMainMenu() {
         this.frame.showPanel("MENU");
-
-    //    this.cardLayout.show(this.mainPanel, "MENU");
 
     }
 
@@ -112,11 +107,9 @@ public class GuiView extends View {
 
     // Choose hero from Repo
     @Override
-    public void displayChooseHeroFromList(List<Hero> heroes) {
-        // this.frame.showPanel("CREATE");
-        System.out.println("Opening hero selection");
+    public void displayChooseHeroFromList() {
+        List<Hero> heroes = this.controller.getHeroes();
         this.frame.getSelectHeroFromListPanel().updateHeroList(heroes);
-        // this.frame.showPanel("SELECT");
     }
 
     @Override
@@ -157,5 +150,132 @@ public class GuiView extends View {
     @Override
     public void displayGameResult(boolean isWin) {
 
+    }
+
+    @Override
+    public void mainMenu() {
+        // this.frame.showPanel("MENU");
+    }
+
+    @Override
+    public void startGame(Hero hero) {
+        this.controller.startGame(hero);
+
+    }
+
+    //     @Override
+    // public void onCreateHero() {
+
+    // }
+
+    // @Override
+    // public void onChooseHero() {
+
+    // }
+    @Override
+    protected HeroCredentials createHeroCredentials() {
+        HeroCredentials heroCredentials = new HeroCredentials();
+        return heroCredentials;
+    }
+
+    // private void setupGlobalKeyBindings() {
+    //     KeyboardFocusManager.getCurrentKeyboardFocusManager()
+    //     .addKeyEventDispatcher(e -> {
+    //         if (e.getID() != KeyEvent.KEY_PRESSED
+    //                 || e.getKeyCode() != KeyEvent.VK_C
+    //                 || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
+    //             return false;
+    //         }
+
+    //         Component focused = e.getComponent();
+
+    //         if (focused instanceof JTextComponent) {
+    //             return false;
+    //         }
+
+    //         viewManager.switchToConsole();
+    //         return true;
+    //     });
+    // }
+
+    private void setupGlobalKeyBindings() {
+        globalKeyDispatcher = e -> {
+            if (e.getID() != KeyEvent.KEY_PRESSED
+                    || e.getKeyCode() != KeyEvent.VK_C
+                    || (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) == 0) {
+                return false;
+            }
+
+            Component focused = e.getComponent();
+
+            if (focused instanceof JTextComponent) {
+                return false;
+            }
+
+            viewManager.switchToConsole();
+            return true;
+        };
+
+        KeyboardFocusManager
+            .getCurrentKeyboardFocusManager()
+            .addKeyEventDispatcher(globalKeyDispatcher);
+    }
+
+    KeyEventDispatcher getGlobalKeyDispatcherForTest() {
+        return globalKeyDispatcher;
+    }
+
+
+    @Override
+    public void show() {
+        SwingUtilities.invokeLater(() -> {
+
+            Phases phase = this.controller.getGamePhase();
+
+            if (phase == null) {
+                frame.showPanel("MENU");
+            } else {
+                switch(this.controller.getGamePhase()) {
+                    case MAIN_MENU:
+                        frame.showPanel("MENU");
+                        break;
+                    case HERO_CREATION:
+                        frame.showPanel("CREATE");
+                        break;
+                    case HERO_SELECTION:
+                        frame.showPanel("SELECT");
+                        break;
+                    case GAMEPLAY:
+                    case BATTLE_RUN_OR_FIGHT:
+                    case BATTLE_RUN_RESULT:
+                    case BATTLE_RESULT:
+                    case BATTLE_ARTIFACT:
+                    case HERO_LEVEL_UP:
+                        // Call onHide when switching to GAMEPLAY
+                        frame.showPanel("GAME");
+                        // frame.showCurrentPopup();
+                        break;
+                    case GAME_OVER:
+                        if (this.controller.levelCleared())
+                            frame.showPanel("GAME_OVER_WON");
+                        else
+                            frame.showPanel("GAME_OVER_LOST");
+                        break;
+                    default:
+                        frame.showPanel("MENU");
+                }
+            }
+            frame.setVisible(true);
+            frame.requestFocus();
+            frame.showCurrentPopup();
+        });
+    }
+
+    @Override
+    public void hide() {
+        SwingUtilities.invokeLater(() -> {
+            frame.hideActivePopup();
+            frame.setVisible(false);
+        });
     }
 }

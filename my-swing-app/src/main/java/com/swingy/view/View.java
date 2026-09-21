@@ -68,8 +68,5 @@ public abstract class View {
     public abstract void show();
 
     public abstract void hide();
-    // public abstract void onCreateHero();
-
-    // public abstract void onChooseHero();
 
 }

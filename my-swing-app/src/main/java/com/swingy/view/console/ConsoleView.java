@@ -26,6 +26,8 @@ public class ConsoleView extends View {
     static final String ANSI_GREEN = "\u001B[32m";
 
     private Thread consoleThread;
+    private int textDelay = 50;
+
     private boolean isRunning = false;
 
     public ConsoleView(GameController controller, ViewManager viewManager) {
@@ -39,6 +41,10 @@ public class ConsoleView extends View {
             return true;
         }
         return false;
+    }
+
+    void setTextDelay(int delay) {
+        this.textDelay = delay;
     }
 
     @Override
@@ -72,23 +78,23 @@ public class ConsoleView extends View {
 
     @Override
     public int promptBattleFightOrRun(){
-        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Fight", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. Run", 50, ANSI_YELLOW);
+        displayTextAsTyped("Choose action from a list :", ANSI_BLUE);
+        displayTextAsTyped("    1. Fight", ANSI_YELLOW);
+        displayTextAsTyped("    2. Run", ANSI_YELLOW);
         return getUserIntInputInRange(2);
     }
 
     @Override
     public void displayBattleLog(List<String> log) {
-        displayTextAsTyped("BATTLE LOG :", 50, ANSI_GREEN);
+        displayTextAsTyped("BATTLE LOG :", ANSI_GREEN);
         for (String record:log) {
-            displayTextAsTyped("    "  + record, 50, ANSI_GREEN);
+            displayTextAsTyped("    "  + record, ANSI_GREEN);
         }
     }
 
     @Override
     public void displayMap(GameMap gameMap) {
-        displayTextAsTyped("Current map state:", 50, ANSI_GREEN);
+        displayTextAsTyped("Current map state:", ANSI_GREEN);
         int heroPosition = gameMap.getHeroPosition();
         int size = gameMap.getSize();
         for (int i = 0; i < size * size; i++) {
@@ -138,12 +144,12 @@ public class ConsoleView extends View {
     public void displayMainMenu() {
         if (!isRunning)
             return;
-        displayTextAsTyped("WELCOME TO SWINGY!", 50, ANSI_BLUE);
+        displayTextAsTyped("WELCOME TO SWINGY!", ANSI_BLUE);
         System.out.println();
-        displayTextAsTyped("Please choose an option:", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Create Hero", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. Load Hero", 50, ANSI_YELLOW);
-        displayTextAsTyped("    3. Exit", 50, ANSI_YELLOW);
+        displayTextAsTyped("Please choose an option:", ANSI_BLUE);
+        displayTextAsTyped("    1. Create Hero", ANSI_YELLOW);
+        displayTextAsTyped("    2. Load Hero", ANSI_YELLOW);
+        displayTextAsTyped("    3. Exit", ANSI_YELLOW);
     }
 
 
@@ -158,23 +164,23 @@ public class ConsoleView extends View {
             return;
         switch (choice) {
             case 1:
-                displayTextAsTyped("Creating new hero ...", 50, ANSI_GREEN);
+                displayTextAsTyped("Creating new hero ...", ANSI_GREEN);
                 break;
             case 2:
-                displayTextAsTyped("Loading list of heroes...", 50, ANSI_GREEN);
+                displayTextAsTyped("Loading list of heroes...", ANSI_GREEN);
                 break;
             case 3:
-                displayTextAsTyped("It was nice to see you. Have a nice day!", 50, ANSI_GREEN);
+                displayTextAsTyped("It was nice to see you. Have a nice day!", ANSI_GREEN);
                 break;
         }
     }
 
 
     public void promptChooseHeroClass() {
-        displayTextAsTyped("Choose a hero class :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Wizard", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. Warrior", 50, ANSI_YELLOW);
-        displayTextAsTyped("    3. Barbarian", 50, ANSI_YELLOW);
+        displayTextAsTyped("Choose a hero class :", ANSI_BLUE);
+        displayTextAsTyped("    1. Wizard", ANSI_YELLOW);
+        displayTextAsTyped("    2. Warrior", ANSI_YELLOW);
+        displayTextAsTyped("    3. Barbarian", ANSI_YELLOW);
     }
 
     public String getUserInput(String prompt) {
@@ -206,14 +212,14 @@ public class ConsoleView extends View {
 
 
     public void displayOnIncorrectInput() {
-        displayTextAsTyped("Invalid input. Please try again.", 50, ANSI_RED);
+        displayTextAsTyped("Invalid input. Please try again.", ANSI_RED);
     }
 
-    private void displayTextAsTyped(String text, int delay, String color) {
+    private void displayTextAsTyped(String text, String color) {
         for (char c : text.toCharArray()) {
             System.out.print(color+c+ANSI_RESET); // Print each character in the specified color
             try {
-                Thread.sleep(delay);
+                Thread.sleep(textDelay);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -223,7 +229,7 @@ public class ConsoleView extends View {
 
     @Override
     public void promptChooseFromHeroList(List<Hero> heroes) {
-        displayTextAsTyped("Choose a hero from list :", 50, ANSI_BLUE);
+        displayTextAsTyped("Choose a hero from list :", ANSI_BLUE);
         int i = 1;
         for (Hero hero: heroes) {
             System.out.println(i++);
@@ -234,7 +240,7 @@ public class ConsoleView extends View {
     @Override
     public void displayChooseHeroFromList() {
         List<Hero> heroes = this.controller.getHeroes();
-        displayTextAsTyped("Choose a hero from a list :", 50, ANSI_BLUE);
+        displayTextAsTyped("Choose a hero from a list :", ANSI_BLUE);
         int i = 1;
         for (Hero hero: heroes) {
             System.out.println(i++);
@@ -245,20 +251,20 @@ public class ConsoleView extends View {
     // Choose hero from Repo
     @Override
     public int promptChooseHeroFromList(int maxNum) {
-        displayTextAsTyped("Choose a hero from list :", 50, ANSI_BLUE);
+        displayTextAsTyped("Choose a hero from list :", ANSI_BLUE);
         return getUserIntInputInRange(maxNum);
     }
 
     @Override
     public void displayChooseHeroFromListStatus(Hero hero) {
-        displayTextAsTyped("You choose a hero :", 50, ANSI_GREEN);
+        displayTextAsTyped("You choose a hero :", ANSI_GREEN);
         displayHeroStats(hero);
     }
 
     @Override
     public String promptHeroMove() {
         Scanner scanner = new Scanner(System.in);
-        displayTextAsTyped("Make a move (W,A,S,D) :", 50, ANSI_BLUE);
+        displayTextAsTyped("Make a move (W,A,S,D) :", ANSI_BLUE);
         while (isRunning) {
             String move = scanner.nextLine().toLowerCase().trim();
             if (checkOnSwitchToGui(move))
@@ -289,41 +295,41 @@ public class ConsoleView extends View {
 
     @Override
     public void displayUseArtifact(Artifact artifact) {
-        displayTextAsTyped("Congrats! You got a new Artifact!", 50, ANSI_BLUE);
+        displayTextAsTyped("Congrats! You got a new Artifact!", ANSI_BLUE);
         this.displayArtifact(artifact);
-        displayTextAsTyped("What you can do with an artifact :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. use", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. drop", 50, ANSI_YELLOW);
+        displayTextAsTyped("What you can do with an artifact :", ANSI_BLUE);
+        displayTextAsTyped("    1. use", ANSI_YELLOW);
+        displayTextAsTyped("    2. drop", ANSI_YELLOW);
     }
 
     @Override
     public int promptUseArtifact() {
-        displayTextAsTyped("Choose an option from list :", 50, ANSI_BLUE);
+        displayTextAsTyped("Choose an option from list :", ANSI_BLUE);
         return getUserIntInputInRange(2);
     }
 
     @Override
     public void displayOnHeroRun(boolean isSuccessful)  {
         if (isSuccessful)
-            displayTextAsTyped("Hero successfully ran out of danger.", 50, ANSI_GREEN);
+            displayTextAsTyped("Hero successfully ran out of danger.", ANSI_GREEN);
         else
-            displayTextAsTyped("Hero couldn't ran away. Prepare for a fight!", 50, ANSI_RED);
+            displayTextAsTyped("Hero couldn't ran away. Prepare for a fight!", ANSI_RED);
 
     }
 
     public void displayLevelUp(Hero hero) {
-        displayTextAsTyped("HERO LEVELED UP!", 50, ANSI_YELLOW);
+        displayTextAsTyped("HERO LEVELED UP!", ANSI_YELLOW);
         displayHeroStats(hero);
     }
 
     @Override
     public void displayGameResult(boolean isWin) {
         if (isWin) {
-            displayTextAsTyped("CONGRATS! HERO SUCCESSFULLY ESCAPED MAP.", 50, ANSI_GREEN);
+            displayTextAsTyped("CONGRATS! HERO SUCCESSFULLY ESCAPED MAP.", ANSI_GREEN);
             // onLevelCleared();
         }
         else
-            displayTextAsTyped("YOU HAVE DIED...", 50, ANSI_RED);
+            displayTextAsTyped("YOU HAVE DIED...", ANSI_RED);
 
     }
 
@@ -388,7 +394,7 @@ public class ConsoleView extends View {
         BattleResult battleResult = controller.getBattleResult();
         if (battleResult == BattleResult.DRAW) {
             this.controller.setGamePhase(Phases.GAMEPLAY);
-            displayTextAsTyped("THE BATTLE WAS WITHDRAWN. DRAW", 50, ANSI_GREEN);
+            displayTextAsTyped("THE BATTLE WAS WITHDRAWN. DRAW", ANSI_GREEN);
             toGamePhase();
             return ;
         }
@@ -498,9 +504,9 @@ public class ConsoleView extends View {
         if (!isRunning)
             return ;
         // displayTextAsTyped("Your hero have died...", 50, ANSI_RED);
-        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. To main menu", 50, ANSI_YELLOW);
+        displayTextAsTyped("Choose action from a list :", ANSI_BLUE);
+        displayTextAsTyped("    1. Restart game", ANSI_YELLOW);
+        displayTextAsTyped("    2. To main menu", ANSI_YELLOW);
         int choice = getUserIntInputInRange(2);
         switch (choice) {
             case 1:
@@ -524,11 +530,11 @@ public class ConsoleView extends View {
         if (!isRunning)
             return ;
         // displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
-        displayTextAsTyped("Choose action from a list :", 50, ANSI_BLUE);
-        displayTextAsTyped("    1. Restart game", 50, ANSI_YELLOW);
-        displayTextAsTyped("    2. Proceed", 50, ANSI_YELLOW);
-        displayTextAsTyped("    3. Save hero and proceed", 50, ANSI_YELLOW);
-        displayTextAsTyped("    4. To main menu", 50, ANSI_YELLOW);
+        displayTextAsTyped("Choose action from a list :",  ANSI_BLUE);
+        displayTextAsTyped("    1. Restart game", ANSI_YELLOW);
+        displayTextAsTyped("    2. Proceed", ANSI_YELLOW);
+        displayTextAsTyped("    3. Save hero and proceed", ANSI_YELLOW);
+        displayTextAsTyped("    4. To main menu", ANSI_YELLOW);
 
         int choice = getUserIntInputInRange(4);
         switch (choice) {

@@ -13,6 +13,7 @@ import com.swingy.view.gui.APopup;
 import com.swingy.view.gui.PopupManager;
 
 public class ArtifactPopup extends APopup {
+    private JOptionPane optionPane;
 
     public ArtifactPopup(GameController controller, PopupManager popupManager) {
         super(controller, popupManager);
@@ -22,7 +23,7 @@ public class ArtifactPopup extends APopup {
         String message = "You have obtained an " + controller.getBattleArtifactName() + "! What would you like to do?";
         JPanel panel = new JPanel();
 
-        JOptionPane optionPane = new JOptionPane(
+        optionPane = new JOptionPane(
             message,
             JOptionPane.PLAIN_MESSAGE,
             JOptionPane.YES_NO_OPTION,
@@ -53,12 +54,25 @@ public class ArtifactPopup extends APopup {
         currentDialog.setVisible(true);
     }
 
+    JOptionPane getOptionPane() {
+        return optionPane;
+    }
+
     private ImageIcon getArtifactIcon(String artifactType) {
         if (artifactType == null) {
             return null;
         }
         String imagePath = "/images/artifact/" + artifactType.toLowerCase() + ".png";
-        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+        java.net.URL resource = getClass().getResource(imagePath);
+
+        if (resource == null) {
+            throw new IllegalStateException(
+                    "Artifact image not found: " + imagePath
+            );
+        }
+
+        // ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+        ImageIcon icon = new ImageIcon(resource);
         Image scaled = icon.getImage().getScaledInstance(
             150, 150, Image.SCALE_SMOOTH
         );

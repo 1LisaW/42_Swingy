@@ -63,19 +63,7 @@ public class CreateHeroPanel extends JPanel {
                 );
                 gamePanelAction.actionPerformed(e);
             }
-            // if (heroNameField.getText().trim().isEmpty()
-            //     ) {
-            //     gbc.gridx = 0;
-            //     gbc.gridy = 1;
-            //     add(heroNameErrorLabel, gbc);
-            //     revalidate();
-            //     repaint();
-            // }
-            // else {
-            //     remove(heroNameErrorLabel);
-            //     revalidate();
-            //     repaint();
-            // }
+
         });
 
         JButton backButton = new JButton(mainMenuAction);
@@ -110,10 +98,5 @@ public class CreateHeroPanel extends JPanel {
     public String getHeroClass() {
         return (String) heroClassBox.getSelectedItem();
     }
-
-    // public void addStartGameListener(ActionListener listener) {
-    //     submitButton.addActionListener(listener);
-    // }
-
 
 }

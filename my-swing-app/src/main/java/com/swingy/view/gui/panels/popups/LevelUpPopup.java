@@ -56,8 +56,7 @@ public class LevelUpPopup extends APopup {
                 Object value = optionPane.getValue();
                 if (options[0].equals(value)) {
                     currentDialog.dispose();
-                    controller.setGamePhase(Phases.GAMEPLAY);
-                    popupManager.checkGameOver();
+                    onAccept();
                 }
             }
         });
@@ -70,6 +69,11 @@ public class LevelUpPopup extends APopup {
             150, 150, Image.SCALE_SMOOTH
         );
         return new ImageIcon(scaled);
+    }
+
+    private void onAccept() {
+        controller.setGamePhase(Phases.GAMEPLAY);
+        popupManager.checkGameOver();
     }
 
 }

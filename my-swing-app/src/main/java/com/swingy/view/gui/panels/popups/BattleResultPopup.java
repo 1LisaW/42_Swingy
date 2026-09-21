@@ -51,8 +51,6 @@ public class BattleResultPopup extends APopup {
         });
 
         currentDialog.setVisible(true);
-
-
     }
 
     private ImageIcon getBattleResultIcon(BattleResult battleResult) {
@@ -76,8 +74,6 @@ public class BattleResultPopup extends APopup {
             if (controller.isBattleProduceArtifact()) {
                 controller.setGamePhase(Phases.BATTLE_ARTIFACT);
                 popupManager.next();
-                // this.
-                // ArtifactPopup artifactPopup = new ArtifactPopup(controller);
             } else if (checkLevelUp()) {
                 controller.setGamePhase(Phases.HERO_LEVEL_UP);
                 popupManager.next();

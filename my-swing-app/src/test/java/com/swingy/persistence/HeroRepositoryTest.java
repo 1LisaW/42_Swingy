@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class HeroRepositoryTest {
 
     private HeroRepository repository;
-    private final Path saveFile = Path.of("save.txt");
+    private final Path saveFile = Path.of("src/test/resources/save.txt");
 
     @BeforeEach
     void setUp() throws Exception {
@@ -28,6 +29,7 @@ class HeroRepositoryTest {
         Files.deleteIfExists(saveFile);
 
         repository = HeroRepository.getInstance();
+        repository.updateFilePath(Paths.get("src/test/resources/save.txt"));
 
         /*
          * parseHeroesFromRepository initializes the internal

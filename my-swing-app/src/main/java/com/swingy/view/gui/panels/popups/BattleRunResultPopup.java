@@ -53,25 +53,6 @@ public class BattleRunResultPopup extends APopup {
 
         currentDialog.setVisible(true);
 
-
-            // int result = JOptionPane.showOptionDialog(
-            //     panel,
-            //     "You met a villain! What do you want to do?",
-            //     "Battle!",
-            //     JOptionPane.DEFAULT_OPTION,
-            //     JOptionPane.QUESTION_MESSAGE,
-            //     null,
-            //     options,
-            //     options[0]
-            // );
-
-            // if (result == 0) {
-            //     // showBattleRunResultPopup();
-            //     // Run
-            // } else if (result == 1) {
-            //     // runBattle();
-            //     // Fight
-            // }
     }
 
     private void onAccept() {

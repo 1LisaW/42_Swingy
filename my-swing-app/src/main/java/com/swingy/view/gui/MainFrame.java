@@ -118,9 +118,6 @@ class MainFrame extends JFrame {
         cardLayout.show(container, name);
     }
 
-    // public void showGamePanelPopup() {
-    //     gamePanel.showPopup(this.controller.getGamePhase());
-    // }
 
     public MainMenuPanel getMainMenuPanel() {
         return mainMenuPanel;

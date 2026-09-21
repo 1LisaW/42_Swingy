@@ -14,6 +14,8 @@ import com.swingy.model.Villain;
 import com.swingy.model.Artifact;
 import com.swingy.model.BattleResult;
 
+import java.nio.file.Path;
+
 
 public class GameController {
     private HeroRepository heroRepository;
@@ -148,8 +150,10 @@ public class GameController {
         }
     }
 
-    public void loadHeroesFromFile() {
+    public void loadHeroesFromFile(Path path) {
         try {
+            if (path != null)
+                heroRepository.updateFilePath(path);
             List<String> heroDataList = heroRepository.readHeroesFromFile();
             heroRepository.parseHeroesFromRepository(heroDataList);
         } catch (Exception e) {

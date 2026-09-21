@@ -16,6 +16,9 @@ import com.swingy.model.Hero;
 import com.swingy.model.HeroCredentials;
 import com.swingy.model.Villain;
 
+import java.nio.file.Paths;
+
+
 class GameControllerTest {
 
     private GameController controller;
@@ -114,7 +117,7 @@ class GameControllerTest {
     void getHeroes_shouldReturnHeroesFromRepository() {
 
         GameController controller = new GameController();
-        controller.loadHeroesFromFile();
+        controller.loadHeroesFromFile(Paths.get("src/test/resources/save.txt"));
 
         assertNotNull(controller.getHeroes());
     }

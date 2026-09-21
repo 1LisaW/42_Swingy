@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -24,10 +25,11 @@ import com.swingy.persistence.HeroParser;
 
 public class HeroRepository {
     private HeroParser heroParser;
-    private List<Hero> heroes;
+    private List<Hero> heroes = Collections.emptyList();
     private static HeroRepository instance;
-    private final Path filePath = Paths.get("save.txt");
-    // private final Path filePath = java.nio.file.Paths.get("save.txt");
+    // private final Path filePath = Paths.get("src/test/resources/save.txt");
+    // private Path filePath = java.nio.file.Paths.get("save.txt");
+    private Path filePath = Paths.get("src/main/resources/save.txt");
 
     private HeroRepository() {
         this.heroParser = new HeroParser(new HeroBuilder());
@@ -40,31 +42,35 @@ public class HeroRepository {
         return instance;
     }
 
+    public void updateFilePath(Path filePath) {
+        this.filePath = filePath;
+    }
+
     public List<String> readHeroesFromFile() throws Exception {
-        InputStream inputStream =
-                getClass().getClassLoader().getResourceAsStream("save.txt");
+        // InputStream inputStream =
+        //         getClass().getClassLoader().getResourceAsStream("save.txt");
 
-        if (inputStream == null) {
-            throw new FileNotFoundException("save.txt not found in resources");
-        }
+        // if (inputStream == null) {
+        //     throw new FileNotFoundException("save.txt not found in resources");
+        // }
 
-        try (BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(inputStream))) {
+        // try (BufferedReader reader =
+        //             new BufferedReader(new InputStreamReader(inputStream))) {
 
-            List<String> heroDataList = reader.lines()
-                    .collect(Collectors.toList());
+        //     List<String> heroDataList = reader.lines()
+        //             .collect(Collectors.toList());
 
-            heroDataList.removeIf(String::isEmpty);
-            heroDataList.removeIf(line -> line.trim().isEmpty());
-            heroDataList.removeIf(line -> line.startsWith("#"));
+        //     heroDataList.removeIf(String::isEmpty);
+        //     heroDataList.removeIf(line -> line.trim().isEmpty());
+        //     heroDataList.removeIf(line -> line.startsWith("#"));
 
-            return heroDataList;
-        }
-        // List<String> heroDataList = Files.readAllLines(filePath);
-        // heroDataList.removeIf(String::isEmpty); // Remove empty lines
-        // heroDataList.removeIf(line -> line.trim().isEmpty()); // Remove lines that are only whitespace
-        // heroDataList.removeIf(line -> line.startsWith("#")); // Remove comment lines starting with
-        // return heroDataList;
+        //     return heroDataList;
+        // }
+        List<String> heroDataList = Files.readAllLines(filePath);
+        heroDataList.removeIf(String::isEmpty); // Remove empty lines
+        heroDataList.removeIf(line -> line.trim().isEmpty()); // Remove lines that are only whitespace
+        heroDataList.removeIf(line -> line.startsWith("#")); // Remove comment lines starting with
+        return heroDataList;
     }
 
     public void saveHeroesToFile() throws Exception {

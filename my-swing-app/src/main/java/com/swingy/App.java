@@ -18,7 +18,7 @@ public class App
         }
 
         GameController gameController = new GameController();
-        gameController.loadHeroesFromFile();
+        gameController.loadHeroesFromFile(null);
 
         ViewManager viewManager = new ViewManager(gameController);
 

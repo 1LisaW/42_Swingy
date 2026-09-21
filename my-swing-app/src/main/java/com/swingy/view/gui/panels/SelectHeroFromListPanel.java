@@ -28,7 +28,7 @@ class SelectHeroFromListPanel extends JPanel {
         setLayout(new GridBagLayout());
 
         contentPanel = new JPanel(new GridLayout(2, 2));
-        buttonPanel = new JPanel(new GridLayout(2, 1));
+        buttonPanel = new JPanel(new GridLayout(2, 1, 0, 5));
 
         GridBagConstraints gbcWrap = new GridBagConstraints();
         gbcWrap.insets = new Insets(8, 8, 8, 8);

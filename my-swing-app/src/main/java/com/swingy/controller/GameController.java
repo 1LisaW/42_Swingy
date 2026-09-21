@@ -35,7 +35,6 @@ public class GameController {
         // Logic to start the game
         currentPhase = Phases.GAMEPLAY;
         this.gameModel = new GameModel(hero);
-        System.out.println("Game started with hero: " + hero.getName() + ", class: ");
     }
 
     public void startNewGame() {
@@ -191,7 +190,6 @@ public class GameController {
     }
 
     public void setGamePhase(Phases phase) {
-        System.out.println(phase);
         this.currentPhase = phase;
     }
 

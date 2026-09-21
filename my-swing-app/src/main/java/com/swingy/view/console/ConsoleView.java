@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.List;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.swingy.view.View;
 import com.swingy.model.Hero;
@@ -26,16 +27,26 @@ public class ConsoleView extends View {
     static final String ANSI_GREEN = "\u001B[32m";
 
     private Thread consoleThread;
-    private int textDelay = 50;
+    private int textDelay = 10;
 
-    private boolean isRunning = false;
+    private Scanner scanner;
+    private volatile boolean isRunning = false;
+
 
     public ConsoleView(GameController controller, ViewManager viewManager) {
         super(controller, viewManager);
+        scanner = new Scanner(System.in);
+    }
+
+    ConsoleView (
+        GameController controller,
+        ViewManager viewManager,
+        InputStream input) {
+        super(controller, viewManager);
+        this.scanner = new Scanner(input);
     }
 
     private boolean checkOnSwitchToGui(String input) {
-        System.out.println("Input received: " + input);
         if (input.equalsIgnoreCase("gui")) {
             viewManager.switchToSwing();
             return true;
@@ -128,17 +139,6 @@ public class ConsoleView extends View {
         System.out.println();
     }
 
-    // public void displayVillainStats(Villain villain) {
-    //     System.out.println("Villain Stats:");
-    //     System.out.println("Level: " + villain.getLevel());
-    //     System.out.println("Hit Points: " + villain.getHitPoints());
-    //     System.out.println("Attack: " + villain.getAttack());
-    //     System.out.println("Defense: " + villain.getDefense());
-    // }
-    // public void promptHeroCreation() {
-    //     System.out.println("Enter hero name:");
-    // }
-
     //  MainMenu
     @Override
     public void displayMainMenu() {
@@ -185,14 +185,14 @@ public class ConsoleView extends View {
 
     public String getUserInput(String prompt) {
         // Implement logic to get user input from the console
-        Scanner scanner = new Scanner(System.in);
-        System.out.print(prompt+": ");
+        if (!prompt.isEmpty())
+            System.out.println(prompt);
         return scanner.nextLine(); // Placeholder return value
     }
 
 
     public int getUserIntInputInRange(int maxNum) {
-        Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         while (isRunning) {
             System.out.print("Please enter your choice: ");
             String input = scanner.nextLine();
@@ -263,7 +263,7 @@ public class ConsoleView extends View {
 
     @Override
     public String promptHeroMove() {
-        Scanner scanner = new Scanner(System.in);
+        // Scanner scanner = new Scanner(System.in);
         displayTextAsTyped("Make a move (W,A,S,D) :", ANSI_BLUE);
         while (isRunning) {
             String move = scanner.nextLine().toLowerCase().trim();
@@ -334,6 +334,7 @@ public class ConsoleView extends View {
     }
 
     private void toHeroCreation() {
+        System.out.println("ConsoleView toHeroCreation");
         Hero currentHero = this.controller.createHero(createHeroCredentials());
         displayHeroStats(currentHero);
         controller.setGamePhase(Phases.GAMEPLAY);
@@ -373,8 +374,8 @@ public class ConsoleView extends View {
                 break;
             case 3:
                 isRunning = false;
-
-                // this.controller.exitGame();
+                viewManager.exit();
+                // hide();
                 break;
             default:
                 displayOnIncorrectInput();
@@ -390,7 +391,6 @@ public class ConsoleView extends View {
     }
 
     private void toBattleResult() {
-        System.out.println("!!! toBattleResult ConsoleView");
         BattleResult battleResult = controller.getBattleResult();
         if (battleResult == BattleResult.DRAW) {
             this.controller.setGamePhase(Phases.GAMEPLAY);
@@ -403,14 +403,21 @@ public class ConsoleView extends View {
             this.controller.setGamePhase(Phases.GAME_OVER);
             return ;
         }
-        if (battleResult == BattleResult.WIN && this.controller.isBattleProduceArtifact()) {
-            this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
-            toGamePhase();
-            // toArtifactPhase();
-        } else if (this.controller.willLevelUp()) {
+        if (battleResult == BattleResult.WIN) {
+            Boolean hasArtifact = this.controller.isBattleProduceArtifact();
+            if (hasArtifact) {
+                this.controller.setGamePhase(Phases.BATTLE_ARTIFACT);
+                toGamePhase();
+            } else if (this.controller.willLevelUp()) {
 
-            this.controller.setGamePhase(Phases.HERO_LEVEL_UP);
-            toGamePhase();
+                this.controller.setGamePhase(Phases.HERO_LEVEL_UP);
+                toGamePhase();
+            } else if (this.controller.isGameOver()) {
+                this.controller.setGamePhase(Phases.GAME_OVER);
+                toGameOver();
+            } else {
+                this.controller.setGamePhase(Phases.GAMEPLAY);
+            }
         }
     }
 
@@ -485,7 +492,6 @@ public class ConsoleView extends View {
         this.controller.moveHero(move);
         if (controller.isBattleTriggered()) {
             this.controller.setGamePhase(Phases.BATTLE_RUN_OR_FIGHT);
-            // toBattleRunOrFight();
             toGamePhase();
         }
         if (this.controller.levelCleared()) {
@@ -503,14 +509,12 @@ public class ConsoleView extends View {
     private void onFail() {
         if (!isRunning)
             return ;
-        // displayTextAsTyped("Your hero have died...", 50, ANSI_RED);
         displayTextAsTyped("Choose action from a list :", ANSI_BLUE);
         displayTextAsTyped("    1. Restart game", ANSI_YELLOW);
         displayTextAsTyped("    2. To main menu", ANSI_YELLOW);
         int choice = getUserIntInputInRange(2);
         switch (choice) {
             case 1:
-                //this.controller.saveHero();
                 this.controller.restartGame();
                 GameLoop();
                 break;
@@ -529,7 +533,6 @@ public class ConsoleView extends View {
     private void onLevelCleared() {
         if (!isRunning)
             return ;
-        // displayTextAsTyped("Level cleared! Proceeding to the next level.", 50, ANSI_GREEN);
         displayTextAsTyped("Choose action from a list :",  ANSI_BLUE);
         displayTextAsTyped("    1. Restart game", ANSI_YELLOW);
         displayTextAsTyped("    2. Proceed", ANSI_YELLOW);
@@ -567,7 +570,6 @@ public class ConsoleView extends View {
 
     private void GameLoop() {
         while (isRunning && this.controller.getGamePhase() != Phases.GAME_OVER) {
-        //  while (!this.controller.isGameOver() && isRunning) {
             toGamePhase();
          }
          if (isRunning && this.controller.getGamePhase() == Phases.GAME_OVER)
@@ -586,7 +588,6 @@ public class ConsoleView extends View {
 
     private void toGamePhase() {
         Phases phase = this.controller.getGamePhase();
-        System.out.println("|| " + phase);
         switch (phase) {
             case GAMEPLAY:
                 toGameplay();
@@ -613,16 +614,17 @@ public class ConsoleView extends View {
     @Override
     protected HeroCredentials createHeroCredentials() {
         HeroCredentials heroCredentials = new HeroCredentials();
-        heroCredentials.setName(getUserInput("Enter hero name"));
+        heroCredentials.setName(getUserInput("Enter hero name:"));
         while (heroCredentials.getName().isEmpty()) {
             displayOnIncorrectInput();
-            heroCredentials.setName(getUserInput("Enter hero name"));
+            heroCredentials.setName(getUserInput("Enter hero name:"));
         }
         promptChooseHeroClass();
-        String archetype = getUserInput("Choose an option ");
+        String archetype = getUserInput("");
         while (!archetype.equals("1") && !archetype.equals("2") && !archetype.equals("3")) {
             displayOnIncorrectInput();
-            archetype = getUserInput("Choose an option ");
+            promptChooseHeroClass();
+            archetype = getUserInput("");
         }
         switch (archetype) {
             case "1":
@@ -639,16 +641,8 @@ public class ConsoleView extends View {
     }
 
     private void runConsole() {
-        try {
-            while (System.in.available() > 0) {
-                System.in.read();
-            }
-        } catch (IOException e) {
-            // Handle or log the error
-        }
-        System.out.println("Console view active");
         Phases gamePhase = this.controller.getGamePhase();
-        switch (this.controller.getGamePhase()) {
+        switch (gamePhase) {
             case MAIN_MENU:
                 mainMenu();
                 break;
@@ -675,12 +669,30 @@ public class ConsoleView extends View {
                 mainMenu();
         }
     }
+
+    private void clearPendingInput() {
+        try {
+            while (System.in.available() > 0) {
+                System.in.read();
+            }
+        } catch (IOException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
     public void show() {
         // Logic to show the console view
-        // mainMenu();
         isRunning = true;
-        consoleThread = new Thread(this::runConsole);
+        clearPendingInput();
+
+        scanner = new Scanner(System.in);
+        consoleThread = new Thread(() -> {
+            while (isRunning) {
+                runConsole();
+            }
+        }, "ConsoleView");
+
         consoleThread.start();
     }
 
@@ -692,4 +704,5 @@ public class ConsoleView extends View {
         if (consoleThread != Thread.currentThread())
             consoleThread.interrupt();
     }
+
 }

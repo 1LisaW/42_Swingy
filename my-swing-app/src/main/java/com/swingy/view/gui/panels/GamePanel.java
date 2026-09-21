@@ -182,7 +182,6 @@ public class GamePanel extends JPanel {
             this.controller.setGamePhase(Phases.BATTLE_RUN_OR_FIGHT);
             popupManager.next();
             repaint();
-            System.out.println("CHECK ON GAMEOVER AFTER POPUP");
             if (controller.isGameOver() && controller.getBattleResult() == BattleResult.WIN) {
                 this.controller.setGamePhase(Phases.GAME_OVER);
                 gameOverWonPanelAction.actionPerformed(null);
@@ -217,7 +216,6 @@ public class GamePanel extends JPanel {
 
         Hero hero = controller.getHero();
         if (hero != null) {
-            System.out.println("Updating game label with hero info: " + controller.getHero().getName() + " - Level: " + controller.getHero().getLevel() + ", XP: " + controller.getHero().getExperience() + "/" + controller.getHero().getMaxExperience());
             gameLabelLeft.setText("Hero: " + hero.getName() + " | Level: " + hero.getLevel());
             gameLabelCenter.setText(" HP:   " + hero.getBaseHitPoints() + " + " + hero.getBonusHitPoints() + "   "
                 + "ATK:   " + hero.getBaseAttack() + " + " + hero.getBonusAttack() + "   "
@@ -229,7 +227,6 @@ public class GamePanel extends JPanel {
         drawVillains(g, gameMap, cameraX, cameraY);
         if (hero != null && heroIcon == null) {
             heroIcon = getHeroIcon();
-            System.out.println("Hero icon set for archetype: " + controller.getHero().getArchetype());
         }
         if (hero != null) {
             drawHero(g, heroPosition, cameraX, cameraY);
@@ -349,7 +346,6 @@ public class GamePanel extends JPanel {
                 mapSize,
                 (cameraY + getHeight()) / CELL_SIZE + 1
         );
-        System.out.println("Drawing villains from position: " + startX + "," + startY + " to " + endX + "," + endY);
 
         for (int position = 0; position < mapSize * mapSize; position++) {
             int villainLevel = gameMap.getVillainAtPos(position);
@@ -413,7 +409,6 @@ public class GamePanel extends JPanel {
         // This method can be used to perform any cleanup or state saving when the panel is hidden
         heroIcon = null; // Reset hero icon to ensure it gets updated when the panel is shown again
         popupManager.closeCurrentPopup();
-        System.out.println("GamePanel onHide called. Hero icon reset.");
     }
 
     public void showCurrentPopup () {

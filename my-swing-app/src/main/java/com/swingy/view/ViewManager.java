@@ -34,4 +34,11 @@ public class ViewManager {
     public void switchToSwing() {
         switchTo(guiView);
     }
+
+    public void exit() {
+        consoleView.hide();
+        guiView.hide();
+        System.exit(0);
+    // dispose Swing windows/resources
+    }
 }

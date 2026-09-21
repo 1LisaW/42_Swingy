@@ -190,15 +190,60 @@ class CreateHeroPanelTest {
         return null;
     }
 
+    // private JButton findButton(String text) {
+    //     for (Component component : panel.getComponents()) {
+    //         if (component instanceof JButton button
+    //                 && text.equals(button.getText())) {
+    //             return button;
+    //         }
+    //     }
+
+    //     fail("Could not find button: " + text);
+    //     return null;
+    // }
     private JButton findButton(String text) {
-        for (Component component : panel.getComponents()) {
+        JButton button = findButton((Container) panel, text);
+
+        if (button == null) {
+            throw new AssertionError("Could not find button: " + text);
+        }
+
+        return button;
+    }
+
+    private JButton findButton(Container container, String text) {
+        for (Component component : container.getComponents()) {
             if (component instanceof JButton button
                     && text.equals(button.getText())) {
                 return button;
             }
+
+            if (component instanceof Container child) {
+                JButton result = findButton(child, text);
+                if (result != null) {
+                    return result;
+                }
+            }
         }
 
-        fail("Could not find button: " + text);
-        return null;
+        return null;  // <-- important
     }
+
+    private void printComponents(Container container, String indent) {
+        for (Component component : container.getComponents()) {
+            System.out.println(
+                    indent
+                    + component.getClass().getSimpleName()
+                    + " : "
+                    + (component instanceof JButton
+                        ? ((JButton) component).getText()
+                        : "")
+            );
+
+            if (component instanceof Container child) {
+                printComponents(child, indent + "  ");
+            }
+        }
+    }
+
 }

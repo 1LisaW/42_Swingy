@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -34,6 +36,7 @@ class ConsoleViewTest {
     @BeforeEach
     void setUp() {
         controller = mock(GameController.class);
+        controller.setGamePhase(Phases.MAIN_MENU);
         viewManager = mock(ViewManager.class);
 
         view = new ConsoleView(controller, viewManager);
@@ -50,6 +53,8 @@ class ConsoleViewTest {
     void tearDown() {
         System.setOut(originalOut);
         System.setIn(originalIn);
+
+        // view.show();
     }
 
     private String consoleOutput() {
@@ -311,13 +316,21 @@ class ConsoleViewTest {
     void getUserIntInputInRange_acceptsValidInput()
             throws Exception {
 
-        setRunning(true);
 
-        System.setIn(
-                new ByteArrayInputStream(
-                        "2\n".getBytes()
-                )
+        // controller.setGamePhase(Phases.MAIN_MENU);
+        // view.show();
+
+        // System.setIn(
+        //     new ByteArrayInputStream(
+        //             "2\n".getBytes()
+        //     )
+        // );
+        InputStream input = new ByteArrayInputStream(
+            "2\n".getBytes(StandardCharsets.UTF_8)
         );
+
+        view = new ConsoleView(controller, viewManager, input);
+        setRunning(true);
 
         int result = view.getUserIntInputInRange(3);
 
@@ -328,13 +341,21 @@ class ConsoleViewTest {
     void getUserIntInputInRange_rejectsInvalidThenAcceptsValid()
             throws Exception {
 
-        setRunning(true);
 
-        System.setIn(
-                new ByteArrayInputStream(
-                        "abc\n2\n".getBytes()
-                )
+        // controller.setGamePhase(Phases.MAIN_MENU);
+        // // view.show();
+
+        // System.setIn(
+        //         new ByteArrayInputStream(
+        //                 "abc\n2\n".getBytes()
+        //         )
+        // );
+        InputStream input = new ByteArrayInputStream(
+            "abc\n2\n".getBytes(StandardCharsets.UTF_8)
         );
+
+        view = new ConsoleView(controller, viewManager, input);
+        setRunning(true);
 
         int result = view.getUserIntInputInRange(3);
 
@@ -361,8 +382,8 @@ class ConsoleViewTest {
         assertEquals("Gandalf", credentials.getName());
         assertEquals(HeroArchetype.WIZARD, credentials.getHeroType());
 
-        verify(spyView).getUserInput("Enter hero name");
-        verify(spyView).getUserInput("Choose an option ");
+        verify(spyView).getUserInput("Enter hero name:");
+        verify(spyView).getUserInput("");
     }
 
     @Test
@@ -379,8 +400,8 @@ class ConsoleViewTest {
         assertEquals("Aragorn", credentials.getName());
         assertEquals(HeroArchetype.WARRIOR, credentials.getHeroType());
 
-        verify(spyView).getUserInput("Enter hero name");
-        verify(spyView).getUserInput("Choose an option ");
+        verify(spyView).getUserInput("Enter hero name:");
+        verify(spyView).getUserInput("");
     }
 
     @Test
@@ -397,8 +418,8 @@ class ConsoleViewTest {
         assertEquals("Conan", credentials.getName());
         assertEquals(HeroArchetype.BARBARIAN, credentials.getHeroType());
 
-        verify(spyView).getUserInput("Enter hero name");
-        verify(spyView).getUserInput("Choose an option ");
+        verify(spyView).getUserInput("Enter hero name:");
+        verify(spyView).getUserInput("");
     }
 
     @Test

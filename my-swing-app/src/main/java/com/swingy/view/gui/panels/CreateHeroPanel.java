@@ -48,11 +48,13 @@ public class CreateHeroPanel extends JPanel {
         gbc.gridx = 1;
         add(heroClassBox, gbc);
 
-        // Button
-        submitButton = new JButton("Start");
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 0, 5));
         gbc.gridx = 1;
         gbc.gridy = 3;
-        add(submitButton, gbc);
+
+        // Button
+        submitButton = new JButton("Start");
+        buttonPanel.add(submitButton);
 
         submitButton.addActionListener(e -> {
             if (validatePanel(gbc)) {
@@ -67,9 +69,8 @@ public class CreateHeroPanel extends JPanel {
         });
 
         JButton backButton = new JButton(mainMenuAction);
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        add(backButton, gbc);
+        buttonPanel.add(backButton);
+        add(buttonPanel, gbc);
     }
 
     private boolean validatePanel(GridBagConstraints gbc) {

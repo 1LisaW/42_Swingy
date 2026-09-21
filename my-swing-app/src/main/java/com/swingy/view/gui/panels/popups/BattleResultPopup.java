@@ -41,7 +41,6 @@ public class BattleResultPopup extends APopup {
         optionPane.addPropertyChangeListener(e -> {
             if (JOptionPane.VALUE_PROPERTY.equals(e.getPropertyName())) {
                 Object value = optionPane.getValue();
-                System.out.println("We got today "+ value);
 
                 if (options[0].equals(value)) {
                     currentDialog.dispose();

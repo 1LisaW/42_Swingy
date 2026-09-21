@@ -37,7 +37,6 @@ public class PopupManager {
 
     public void next() {
         Phases phase = this.controller.getGamePhase();
-        System.out.println("POPUP_MANAGER next "+ phase);
         switch (phase) {
             case GAMEPLAY:
                 gp.repaint();
@@ -58,7 +57,6 @@ public class PopupManager {
                 currentPopup = new ArtifactPopup(this.controller, this);
                 break ;
             case HERO_LEVEL_UP:
-                System.out.println("(next) LevelUpPopup HERO_LEVEL_UP");
                 currentPopup = new LevelUpPopup(this.controller, this);
                 gp.repaint();
                 break ;
